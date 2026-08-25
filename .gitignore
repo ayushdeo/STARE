@@ -1,0 +1,31 @@
+# Data & large artifacts — never commit (HEST is >1TB; papers are copyrighted)
+data/
+cache/
+papers/
+*.h5ad
+*.npy
+*.pt
+*.ckpt
+*.tiff
+*.svs
+*.zip
+
+# Results: keep committed JSON summaries, ignore raw arrays
+results/**
+!results/**/
+!results/**/*.json
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+env/
+*.egg-info/
+.ipynb_checkpoints/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
