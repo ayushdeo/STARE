@@ -38,15 +38,51 @@ class KNNImputer(BaseImputer):
         self.metric = metric
 
     def _neighbors(self, state: AcquisitionState):
-        """Return (n_unprofiled, k) indices into state.profiled of nearest profiled regions.
-        TODO: cosine kNN between image_embeddings[unprofiled] and [profiled]."""
-        raise NotImplementedError("Stage-0 TODO: cosine kNN in image-embedding space")
+        """Return (n_unprofiled, k) indices into state.profiled of nearest profiled regions."""
+        unprofiled = state.unprofiled
+        profiled = state.profiled
+        if unprofiled.size == 0 or profiled.size == 0:
+            return np.empty((0, 0), dtype=int)
+
+        q = state.slide.image_embeddings[unprofiled]
+        p = state.slide.image_embeddings[profiled]
+        q_norm = np.linalg.norm(q, axis=1, keepdims=True)
+        p_norm = np.linalg.norm(p, axis=1, keepdims=True)
+        denom = q_norm * p_norm.T
+        sims = np.divide(q @ p.T, np.clip(denom, a_min=1e-12, a_max=None), out=np.zeros_like(q @ p.T), where=denom > 0)
+        d = 1.0 - sims
+        k_eff = min(self.k, profiled.size)
+        if k_eff <= 0:
+            return np.empty((unprofiled.size, 0), dtype=int)
+        order = np.argsort(d, axis=1)[:, :k_eff]
+        return order
 
     def impute(self, state: AcquisitionState) -> np.ndarray:
-        raise NotImplementedError("Stage-0 TODO: mean of measured_expression over neighbors")
+        profiled = state.profiled
+        if profiled.size == 0:
+            return np.zeros((state.unprofiled.size, state.slide.expression.shape[1]), dtype=float)
+
+        nn = self._neighbors(state)
+        if nn.size == 0:
+            return np.zeros((state.unprofiled.size, state.slide.expression.shape[1]), dtype=float)
+
+        expr = state.slide.expression[profiled]
+        preds = expr[nn]
+        return preds.mean(axis=1)
 
     def uncertainty(self, state: AcquisitionState) -> np.ndarray:
-        raise NotImplementedError("Stage-0 TODO: neighbor variance as info-gain signal")
+        profiled = state.profiled
+        if profiled.size == 0:
+            return np.zeros(state.unprofiled.size, dtype=float)
+
+        nn = self._neighbors(state)
+        if nn.size == 0:
+            return np.zeros(state.unprofiled.size, dtype=float)
+
+        expr = state.slide.expression[profiled]
+        neighbor_expr = expr[nn]
+        var = np.var(neighbor_expr, axis=1)
+        return var.mean(axis=1)
 
 
 def build_imputer(name: str = config.IMPUTER) -> BaseImputer:

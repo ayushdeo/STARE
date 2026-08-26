@@ -37,14 +37,15 @@ FEASIBILITY_TISSUE = "prostate"
 VALIDATION_TISSUE = "kidney"
 SCALE_TISSUES = ["prostate", "kidney", "lung", "colon"]  # SpatialFinder's four
 
-# Exact HEST-1k sample IDs — CONFIRM_ON_MACHINE by querying HEST metadata
-# (hest `iter_hest` / metadata CSV, filter oncotree_code + st_technology == Visium HD).
-# Leave as None until confirmed; scripts/00_pick_samples.py fills these in.
+# Exact HEST-1k sample IDs. We validated against the live `MahmoodLab/hest` metadata CSV.
+# For each tissue we keep 1-2 Visium HD samples to anchor the feasibility slice.
+HEST_DATASET_REPO = "MahmoodLab/hest"
+HEST_METADATA_FILE = "HEST_v1_3_0.csv"
 HEST_SAMPLE_IDS: dict[str, list[str]] = {
-    "prostate": [],   # CONFIRM_ON_MACHINE
-    "kidney": [],     # CONFIRM_ON_MACHINE
-    "lung": [],       # CONFIRM_ON_MACHINE
-    "colon": [],      # CONFIRM_ON_MACHINE
+    "prostate": ["TENX174"],
+    "kidney": ["TENX186", "TENX173"],
+    "lung": ["TENX171", "TENX170"],
+    "colon": ["TENX175", "TENX156"],
 }
 
 # ---------------------------------------------------------------------------

@@ -86,9 +86,16 @@ class AcquisitionSimulator:
 
     # -- scoring -------------------------------------------------------------
     def score(self) -> dict:
-        """Impute unprofiled regions from profiled ones, score vs ground truth.
-        Returns dict of metrics (see metrics.py). TODO: wire to imputer + metrics."""
-        raise NotImplementedError("Stage-0 TODO: call imputer.impute(state) then metrics.evaluate(...)")
+        """Impute unprofiled regions from profiled ones, score vs ground truth."""
+        state = self._state()
+        if state.unprofiled.size == 0:
+            return {"pcc_mean": float("nan"), "pcc_top50": float("nan"), "mse": 0.0, "morans_i": float("nan")}
+
+        from . import metrics
+        y_true = self.slide.expression[state.unprofiled]
+        y_pred = self.imputer.impute(state)
+        coords = self.slide.region_coords[state.unprofiled]
+        return metrics.evaluate(y_true, y_pred, self.slide.hvg_idx, coords)
 
 
 @dataclass
