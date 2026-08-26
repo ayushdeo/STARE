@@ -72,10 +72,10 @@ def run_policy(slide, imputer, policy_name, budget_fraction, policy_kwargs=None)
     The imputer is passed to build_policy ONLY for policies that require it (no duplicate arg)."""
     pkw = dict(policy_kwargs or {})
     if policy_name in NEEDS_IMPUTER:
-        pkw.setdefault("imputer", imputer)
+        pkw.setdefault("imputer", imputer)   # inject imputer ONLY for policies that accept it
     sim = AcquisitionSimulator(slide, imputer, budget_fraction)
-    # ensure policies that require the imputer receive it
-    policy = build_policy(policy_name, imputer=imputer, **pkw)
+    # pkw already carries `imputer` iff the policy needs it -> never pass it twice / to the wrong policy
+    policy = build_policy(policy_name, **pkw)
     state = sim.reset()
     while not sim.done:
         state = sim.reveal(policy.select(state))
