@@ -34,6 +34,32 @@ def evaluate(y_true: np.ndarray, y_pred: np.ndarray, hvg_idx: np.ndarray,
 
 def morans_i(values: np.ndarray, coords: np.ndarray, k: int = 6) -> float:
     """Mean Moran's I across genes (spatial-pattern preservation; cf. ReconST).
-    TODO(4070): build k-NN spatial weights on coords and compute Moran's I per gene, average.
-    Stub returns nan until implemented (not needed for the Stage-2 gate)."""
-    return float("nan")
+
+    Builds a symmetric binary k-NN spatial-weight matrix on `coords`, computes Moran's I
+    per gene, averages over genes with nonzero variance.
+        I = (N / W) * (sum_ij w_ij (x_i - x_bar)(x_j - x_bar)) / sum_i (x_i - x_bar)^2
+    `values`: (N_regions, G). Returns nan if fewer than k+1 regions.
+    """
+    values = np.asarray(values, dtype=float)
+    n = coords.shape[0]
+    if n < k + 1 or values.shape[0] != n:
+        return float("nan")
+
+    # k-NN adjacency (exclude self), symmetrized to binary weights
+    d = np.linalg.norm(coords[:, None, :] - coords[None, :, :], axis=2)
+    np.fill_diagonal(d, np.inf)
+    nn = np.argsort(d, axis=1)[:, :k]
+    W = np.zeros((n, n), dtype=float)
+    rows = np.repeat(np.arange(n), k)
+    W[rows, nn.ravel()] = 1.0
+    W = np.maximum(W, W.T)
+    w_sum = W.sum()
+    if w_sum == 0:
+        return float("nan")
+
+    xs = values - values.mean(axis=0, keepdims=True)      # (N, G)
+    denom = (xs ** 2).sum(axis=0)                          # (G,)
+    num = np.einsum("ij,ig,jg->g", W, xs, xs)              # (G,)
+    with np.errstate(invalid="ignore", divide="ignore"):
+        gene_I = np.where(denom > 0, (n / w_sum) * (num / denom), np.nan)
+    return float(np.nanmean(gene_I))
