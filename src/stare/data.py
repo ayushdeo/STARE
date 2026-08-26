@@ -4,17 +4,19 @@ HEST-1k Visium HD loading + region-grid construction (WS-A).
 Turns a raw HEST sample (WSI + AnnData) into a `Slide` on the pinned region grid:
 pool spots into REGION_UM tiles, extract one UNI patch embedding per region, compute
 top-50 HVG, log1p-normalize. Runs on the 4070 machine (needs the HEST download + UNI weights).
-
-STATUS: SKELETON. Interfaces fixed; bodies TODO. See docs/KNOWLEDGE_BASE.md #4 (HEST-1k)
-for the library API and patch convention (224px @ 20x == 112 um == our region).
 """
 from __future__ import annotations
+
 from pathlib import Path
+
+import h5py
 import numpy as np
 import pandas as pd
+from anndata import read_h5ad
 from huggingface_hub import hf_hub_download
 
 from . import config
+from .encoders import embed_patches
 from .simulator import Slide
 
 
@@ -48,41 +50,121 @@ def build_region_grid(coords_um: np.ndarray, region_um: float = config.REGION_UM
     return inv, centroids
 
 
+def _sample_hf_path(sample_id: str, filename: str) -> str:
+    return hf_hub_download(
+        repo_id=config.HEST_DATASET_REPO,
+        repo_type="dataset",
+        filename=filename.format(sample_id=sample_id),
+    )
+
+
+def _normalize_spatial_coords(coords_px: np.ndarray) -> np.ndarray:
+    scales = config.MICRONS_PER_PATCH / config.PATCH_PX
+    return coords_px.astype(np.float32) * scales
+
+
+def _pooled_expression_by_region(expr: np.ndarray, region_id: np.ndarray, n_regions: int | None = None) -> np.ndarray:
+    expr = np.asarray(expr, dtype=np.float32)
+    if expr.ndim != 2:
+        raise ValueError(f"expression must be (n_spots, n_genes); got {expr.shape}")
+    if n_regions is None:
+        n_regions = int(region_id.max()) + 1
+    pooled = np.zeros((n_regions, expr.shape[1]), dtype=np.float32)
+    counts = np.zeros(n_regions, dtype=np.int32)
+    for i in range(n_regions):
+        mask = region_id == i
+        if not np.any(mask):
+            continue
+        pooled[i] = expr[mask].mean(axis=0)
+        counts[i] = int(mask.sum())
+    return pooled
+
+
 def load_slide(sample_id: str, tissue: str,
                data_root: Path = config.DATA_ROOT,
                image_encoder: str = config.IMAGE_ENCODER) -> Slide:
-    """Minimal Stage-0 loader: build a synthetic slide from the HEST metadata when the
-    actual HEST sample payload is not yet cached locally. The project recipe still expects
-    to replace this with the full HEST/AnnData pipeline on the 4070, but the interface is
-    stable and compatible with the simulator."""
-    path = hf_hub_download(
-        repo_id=config.HEST_DATASET_REPO,
-        repo_type="dataset",
-        filename=config.HEST_METADATA_FILE,
-    )
-    df = pd.read_csv(path)
-    row = df[df['id'] == sample_id].iloc[0]
+    """Load one live HEST sample into the common Slide region-grid interface."""
+    adata_path = _sample_hf_path(sample_id, 'st/{sample_id}.h5ad')
+    adata = read_h5ad(adata_path)
 
-    region_count = 8
-    coords = np.zeros((region_count, 2), dtype=float)
-    for idx in range(region_count):
-        coords[idx] = [idx * 120.0, (idx % 2) * 120.0]
+    patch_path = _sample_hf_path(sample_id, 'patches/{sample_id}.h5')
+    with h5py.File(patch_path, 'r') as src:
+        patch_barcodes = [b.decode('utf-8') for b in src['barcode'][:].reshape(-1).tolist()]
+        patch_coords = np.asarray(src['coords'][:], dtype=np.float32)
+        patches = np.asarray(src['img'][:], dtype=np.uint8)
 
-    rng = np.random.default_rng(abs(hash(sample_id)) % 2**32)
-    genes = max(20, int(2 + len(sample_id) % 18))
-    expression = rng.normal(0.0, 1.0, size=(region_count, genes))
-    expression = np.maximum(expression, 0.0)
-    image_embeddings = rng.normal(0.0, 1.0, size=(region_count, config.IMAGE_EMB_DIM))
+    obs_index = [str(x) for x in adata.obs.index.tolist()]
+    obs_map = {barcode: idx for idx, barcode in enumerate(obs_index)}
+    patch_match = [obs_map[b] for b in patch_barcodes if b in obs_map]
+    if len(patch_match) != len(patch_barcodes):
+        missing = set(patch_barcodes) - set(obs_map)
+        raise RuntimeError(f"Patch barcode mismatch for sample {sample_id}: {len(missing)} missing from AnnData; first={sorted(list(missing))[:10]}")
+
+    expr_raw = adata.X
+    if hasattr(expr_raw, "toarray"):
+        expr = expr_raw.toarray().astype(np.float32)
+    else:
+        expr = np.asarray(expr_raw, dtype=np.float32)
+
+    if 'spatial' in adata.obsm:
+        coords_px = np.asarray(adata.obsm['spatial'], dtype=np.float32)
+    else:
+        coords_px = np.asarray(adata.obs[['pxl_col_in_fullres', 'pxl_row_in_fullres']].to_numpy(), dtype=np.float32)
+    coords_um = _normalize_spatial_coords(coords_px)
+
+    expr = expr[patch_match]
+    coords_um = coords_um[patch_match]
+
+    if 'in_tissue' in adata.obs.columns:
+        keep = adata.obs['in_tissue'].to_numpy(dtype=bool)[patch_match]
+        expr = expr[keep]
+        coords_um = coords_um[keep]
+        patches = patches[keep]
+
+    region_id, region_centroids = build_region_grid(coords_um, region_um=config.REGION_UM)
+    expr_region = _pooled_expression_by_region(expr, region_id, n_regions=region_centroids.shape[0])
+
+    expr_region = expr_region.astype(np.float32)
+    gene_mask = np.mean(expr_region > 0, axis=0) >= config.MIN_SPOT_FRACTION
+    expr_filtered = expr_region[:, gene_mask]
+    expr_filtered = np.log1p(expr_filtered)
+
+    if expr_filtered.shape[1] == 0:
+        raise RuntimeError(f"No genes survive the HEST expression filter for sample {sample_id}")
+
+    if expr_filtered.shape[1] > config.N_HVG:
+        gene_var = expr_filtered.var(axis=0)
+        hvg_idx = np.argsort(gene_var)[::-1][: config.N_HVG]
+        hvg_idx = np.asarray(hvg_idx, dtype=int)
+    else:
+        hvg_idx = np.arange(expr_filtered.shape[1], dtype=int)
+
+    # HEST patch tiles are per-spot images; average their UNI embeddings by region.
+    region_patches = []
+    for region_idx in range(region_centroids.shape[0]):
+        mask = region_id == region_idx
+        if not np.any(mask):
+            continue
+        region_patches.append(patches[mask])
+
+    region_embeddings = []
+    for group in region_patches:
+        if group.size == 0:
+            region_embeddings.append(np.zeros((config.IMAGE_EMB_DIM,), dtype=np.float32))
+            continue
+        emb = embed_patches(group, batch_size=config.BATCH_SIZE_EMB)
+        region_embeddings.append(emb.mean(axis=0))
+
+    image_embeddings = np.stack(region_embeddings, axis=0).astype(np.float32)
     image_embeddings = image_embeddings / np.linalg.norm(image_embeddings, axis=1, keepdims=True).clip(min=1e-8)
-    hvg_idx = np.arange(min(config.N_HVG, genes), dtype=int)
 
     return Slide(
         tissue=tissue,
-        region_coords=coords,
+        region_coords=region_centroids,
         image_embeddings=image_embeddings,
-        expression=expression,
+        expression=expr_filtered,
         hvg_idx=hvg_idx,
-        gene_names=[f"gene_{i}" for i in range(genes)],
+        gene_names=list(adata.var_names[gene_mask]),
         patient_id=sample_id,
     )
 
