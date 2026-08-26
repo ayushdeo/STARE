@@ -70,6 +70,13 @@ BUDGET_FRACTIONS = [0.01, 0.02, 0.05, 0.10, 0.20]
 FEASIBILITY_BUDGET_FRACTION = 0.05   # single-point budget for the Stage-2 go/no-go
 ACQUISITION_ROUND_SIZE = 1           # regions revealed per closed-loop round (1 = fully sequential)
 
+# Budget sweep (scripts/03_budget_sweep.py). Include LOW budgets where region choice actually
+# matters (at high budget the task saturates and every policy looks equal). This produces the
+# imputation-error-vs-budget Pareto curve — the field-standard presentation (cf. PERSIST panel-size
+# curves, AFA-RL reward-vs-#features). The diagnostic, not a single-point pass/fail.
+SWEEP_BUDGET_FRACTIONS = [0.005, 0.01, 0.02, 0.05, 0.10, 0.20]
+RANDOM_SEEDS = [0, 1, 2, 3, 4]       # random baseline is stochastic -> average over seeds (mean +/- std)
+
 # ---------------------------------------------------------------------------
 # GENE TARGETS  (HEST-Benchmark protocol)
 # ---------------------------------------------------------------------------

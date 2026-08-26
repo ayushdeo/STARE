@@ -69,7 +69,14 @@ Five workstreams; each is a checklist block. WS-A/B/C parallel; D needs A+B+C; E
 
 ## 6. What "beating the baselines" must show (the paper's core claim)
 
-At equal region budget $B$, our closed-loop image-conditioned policy achieves lower whole-transcriptome imputation error than (a) **one-shot region selection (SpatialFinder-style)** — the primary claim, isolating the *closed loop*; (b) a **static gene panel** (PERSIST/ReconST); and (c) naive region sampling — AND an ablation shows the gain comes specifically from conditioning on measured expression + image + spatial structure, not merely from being sequential. **If closed-loop does not beat one-shot at equal budget, we have reinvented SpatialFinder and there is no paper** — this is the go/no-go gate (WS-D early-signal + WS-E).
+At equal region budget $B$, our closed-loop image-conditioned policy must achieve lower whole-transcriptome imputation error than the baselines, AND an ablation must show the gain comes specifically from conditioning on measured expression + image + spatial structure, not merely from being sequential.
+
+**Corrected gate criterion (do not single-point false-pass).** A first prostate run at 5% budget exposed that a naive "ours > one-shot" gate FALSE-PASSES: one-shot (SpatialFinder-style) seeks *diverse/outlier* regions, which are poor anchors for reconstruction, so it underperforms even random — beating it proves nothing. The tests that actually matter, evaluated across a **budget sweep** (not one point), are:
+1. **Beat random** — ours(closed-loop) > random (the real floor; random averaged over seeds).
+2. **The closed loop helps** — ours(measured-on) > ours(no_measured ablation).
+Beating one-shot and static panels (PERSIST/ReconST) is reported but is *not sufficient* on its own.
+
+**Iterate, don't binary-fail.** The go/no-go is a *diagnostic across budgets*, not a single pass/fail. At high budget the task saturates (every policy ~equal); the signal lives at LOW budgets. If the two core tests fail at all tested budgets with the current setup, the response is to ITERATE — stronger imputer (STFlow/SpaIM vs kNN), a better acquisition score (expected error-reduction vs raw uncertainty), or a harder target (full transcriptome) — and re-sweep, BEFORE concluding STOP. Only a persistent failure across iterations is a real STOP (then reassess with the TA, §8). Tooling: `scripts/03_budget_sweep.py` produces the imputation-error-vs-budget Pareto + per-budget verdicts (the field-standard presentation, cf. PERSIST panel-size curves, AFA-RL reward-vs-#features).
 
 ## 7. Target venues & timing
 
