@@ -1,0 +1,33 @@
+{
+  "tissue": "prostate",
+  "budget_fraction": 0.05,
+  "encoder": "uni2h",
+  "imputer": "knn",
+  "primary_metric": "pcc_top50",
+  "results": {
+    "random": {
+      "error": "TypeError: RandomPolicy.__init__() got an unexpected keyword argument 'imputer'",
+      "traceback": "Traceback (most recent call last):\n  File \"C:\\Users\\User\\Downloads\\STARE\\scripts\\02_run_feasibility.py\", line 123, in main\n    per_slide = [run_policy(s, imputer, policy_name, bf, pkw) for s in slides]\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\User\\Downloads\\STARE\\scripts\\02_run_feasibility.py\", line 78, in run_policy\n    policy = build_policy(policy_name, imputer=imputer, **pkw)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\User\\Downloads\\STARE\\src\\stare\\policies\\__init__.py\", line 20, in build_policy\n    return REGISTRY[name](**kw)\n           ^^^^^^^^^^^^^^^^^^^^\nTypeError: RandomPolicy.__init__() got an unexpected keyword argument 'imputer'\n"
+    },
+    "oneshot_spatialfinder": {
+      "error": "TypeError: OneShotSpatialFinderPolicy.__init__() got an unexpected keyword argument 'imputer'",
+      "traceback": "Traceback (most recent call last):\n  File \"C:\\Users\\User\\Downloads\\STARE\\scripts\\02_run_feasibility.py\", line 123, in main\n    per_slide = [run_policy(s, imputer, policy_name, bf, pkw) for s in slides]\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\User\\Downloads\\STARE\\scripts\\02_run_feasibility.py\", line 78, in run_policy\n    policy = build_policy(policy_name, imputer=imputer, **pkw)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\User\\Downloads\\STARE\\src\\stare\\policies\\__init__.py\", line 20, in build_policy\n    return REGISTRY[name](**kw)\n           ^^^^^^^^^^^^^^^^^^^^\nTypeError: OneShotSpatialFinderPolicy.__init__() got an unexpected keyword argument 'imputer'\n"
+    },
+    "ours_closed_loop": {
+      "error": "TypeError: stare.policies.build_policy() got multiple values for keyword argument 'imputer'",
+      "traceback": "Traceback (most recent call last):\n  File \"C:\\Users\\User\\Downloads\\STARE\\scripts\\02_run_feasibility.py\", line 123, in main\n    per_slide = [run_policy(s, imputer, policy_name, bf, pkw) for s in slides]\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\User\\Downloads\\STARE\\scripts\\02_run_feasibility.py\", line 78, in run_policy\n    policy = build_policy(policy_name, imputer=imputer, **pkw)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nTypeError: stare.policies.build_policy() got multiple values for keyword argument 'imputer'\n"
+    },
+    "ablate_no_measured": {
+      "error": "TypeError: stare.policies.build_policy() got multiple values for keyword argument 'imputer'",
+      "traceback": "Traceback (most recent call last):\n  File \"C:\\Users\\User\\Downloads\\STARE\\scripts\\02_run_feasibility.py\", line 123, in main\n    per_slide = [run_policy(s, imputer, policy_name, bf, pkw) for s in slides]\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\User\\Downloads\\STARE\\scripts\\02_run_feasibility.py\", line 78, in run_policy\n    policy = build_policy(policy_name, imputer=imputer, **pkw)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nTypeError: stare.policies.build_policy() got multiple values for keyword argument 'imputer'\n"
+    },
+    "ablate_no_image": {
+      "error": "TypeError: stare.policies.build_policy() got multiple values for keyword argument 'imputer'",
+      "traceback": "Traceback (most recent call last):\n  File \"C:\\Users\\User\\Downloads\\STARE\\scripts\\02_run_feasibility.py\", line 123, in main\n    per_slide = [run_policy(s, imputer, policy_name, bf, pkw) for s in slides]\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\User\\Downloads\\STARE\\scripts\\02_run_feasibility.py\", line 78, in run_policy\n    policy = build_policy(policy_name, imputer=imputer, **pkw)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nTypeError: stare.policies.build_policy() got multiple values for keyword argument 'imputer'\n"
+    },
+    "ablate_no_spatial": {
+      "error": "TypeError: stare.policies.build_policy() got multiple values for keyword argument 'imputer'",
+      "traceback": "Traceback (most recent call last):\n  File \"C:\\Users\\User\\Downloads\\STARE\\scripts\\02_run_feasibility.py\", line 123, in main\n    per_slide = [run_policy(s, imputer, policy_name, bf, pkw) for s in slides]\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\User\\Downloads\\STARE\\scripts\\02_run_feasibility.py\", line 78, in run_policy\n    policy = build_policy(policy_name, imputer=imputer, **pkw)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nTypeError: stare.policies.build_policy() got multiple values for keyword argument 'imputer'\n"
+    }
+  }
+}
