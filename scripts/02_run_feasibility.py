@@ -74,7 +74,8 @@ def run_policy(slide, imputer, policy_name, budget_fraction, policy_kwargs=None)
     if policy_name in NEEDS_IMPUTER:
         pkw.setdefault("imputer", imputer)
     sim = AcquisitionSimulator(slide, imputer, budget_fraction)
-    policy = build_policy(policy_name, **pkw)
+    # ensure policies that require the imputer receive it
+    policy = build_policy(policy_name, imputer=imputer, **pkw)
     state = sim.reset()
     while not sim.done:
         state = sim.reveal(policy.select(state))
@@ -103,6 +104,7 @@ def main():
         "ablate_no_spatial":      ("greedy_ig", {"use_spatial": False}),
     }
 
+    
     out = Path(config.RESULTS_ROOT) / f"feasibility_{tissue}.json"
     out.parent.mkdir(parents=True, exist_ok=True)
     results = {}

@@ -100,7 +100,8 @@ def embed_patches(patches: np.ndarray, batch_size: int | None = None) -> np.ndar
             batch = patches[start : start + bs]
             x = _transform_batch(batch)
             if device.type == "cuda":
-                with torch.cuda.amp.autocast():
+                # Use the public API for autocast to avoid FutureWarning
+                with torch.amp.autocast(device_type="cuda"):
                     features = model(x)
             else:
                 features = model(x)
