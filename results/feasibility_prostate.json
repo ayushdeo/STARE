@@ -6,28 +6,76 @@
   "primary_metric": "pcc_top50",
   "results": {
     "random": {
-      "error": "TypeError: RandomPolicy.__init__() got an unexpected keyword argument 'imputer'",
-      "traceback": "Traceback (most recent call last):\n  File \"C:\\Users\\User\\Downloads\\STARE\\scripts\\02_run_feasibility.py\", line 123, in main\n    per_slide = [run_policy(s, imputer, policy_name, bf, pkw) for s in slides]\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\User\\Downloads\\STARE\\scripts\\02_run_feasibility.py\", line 78, in run_policy\n    policy = build_policy(policy_name, imputer=imputer, **pkw)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\User\\Downloads\\STARE\\src\\stare\\policies\\__init__.py\", line 20, in build_policy\n    return REGISTRY[name](**kw)\n           ^^^^^^^^^^^^^^^^^^^^\nTypeError: RandomPolicy.__init__() got an unexpected keyword argument 'imputer'\n"
+      "mean": 0.8508406281471252,
+      "per_slide": [
+        {
+          "pcc_mean": 0.3945319652557373,
+          "pcc_top50": 0.8508406281471252,
+          "mse": 0.1489444226026535,
+          "morans_i": 0.6528582677906288
+        }
+      ]
     },
     "oneshot_spatialfinder": {
-      "error": "TypeError: OneShotSpatialFinderPolicy.__init__() got an unexpected keyword argument 'imputer'",
-      "traceback": "Traceback (most recent call last):\n  File \"C:\\Users\\User\\Downloads\\STARE\\scripts\\02_run_feasibility.py\", line 123, in main\n    per_slide = [run_policy(s, imputer, policy_name, bf, pkw) for s in slides]\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\User\\Downloads\\STARE\\scripts\\02_run_feasibility.py\", line 78, in run_policy\n    policy = build_policy(policy_name, imputer=imputer, **pkw)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\User\\Downloads\\STARE\\src\\stare\\policies\\__init__.py\", line 20, in build_policy\n    return REGISTRY[name](**kw)\n           ^^^^^^^^^^^^^^^^^^^^\nTypeError: OneShotSpatialFinderPolicy.__init__() got an unexpected keyword argument 'imputer'\n"
+      "mean": 0.47924450039863586,
+      "per_slide": [
+        {
+          "pcc_mean": 0.11936349421739578,
+          "pcc_top50": 0.47924450039863586,
+          "mse": 0.23355035483837128,
+          "morans_i": 0.3691482003384196
+        }
+      ]
     },
     "ours_closed_loop": {
-      "error": "TypeError: stare.policies.build_policy() got multiple values for keyword argument 'imputer'",
-      "traceback": "Traceback (most recent call last):\n  File \"C:\\Users\\User\\Downloads\\STARE\\scripts\\02_run_feasibility.py\", line 123, in main\n    per_slide = [run_policy(s, imputer, policy_name, bf, pkw) for s in slides]\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\User\\Downloads\\STARE\\scripts\\02_run_feasibility.py\", line 78, in run_policy\n    policy = build_policy(policy_name, imputer=imputer, **pkw)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nTypeError: stare.policies.build_policy() got multiple values for keyword argument 'imputer'\n"
+      "mean": 0.8463265299797058,
+      "per_slide": [
+        {
+          "pcc_mean": 0.39344826340675354,
+          "pcc_top50": 0.8463265299797058,
+          "mse": 0.14703279733657837,
+          "morans_i": 0.657122879287438
+        }
+      ]
     },
     "ablate_no_measured": {
-      "error": "TypeError: stare.policies.build_policy() got multiple values for keyword argument 'imputer'",
-      "traceback": "Traceback (most recent call last):\n  File \"C:\\Users\\User\\Downloads\\STARE\\scripts\\02_run_feasibility.py\", line 123, in main\n    per_slide = [run_policy(s, imputer, policy_name, bf, pkw) for s in slides]\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\User\\Downloads\\STARE\\scripts\\02_run_feasibility.py\", line 78, in run_policy\n    policy = build_policy(policy_name, imputer=imputer, **pkw)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nTypeError: stare.policies.build_policy() got multiple values for keyword argument 'imputer'\n"
+      "mean": 0.853227436542511,
+      "per_slide": [
+        {
+          "pcc_mean": 0.3881487250328064,
+          "pcc_top50": 0.853227436542511,
+          "mse": 0.149087056517601,
+          "morans_i": 0.6468594093897758
+        }
+      ]
     },
     "ablate_no_image": {
-      "error": "TypeError: stare.policies.build_policy() got multiple values for keyword argument 'imputer'",
-      "traceback": "Traceback (most recent call last):\n  File \"C:\\Users\\User\\Downloads\\STARE\\scripts\\02_run_feasibility.py\", line 123, in main\n    per_slide = [run_policy(s, imputer, policy_name, bf, pkw) for s in slides]\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\User\\Downloads\\STARE\\scripts\\02_run_feasibility.py\", line 78, in run_policy\n    policy = build_policy(policy_name, imputer=imputer, **pkw)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nTypeError: stare.policies.build_policy() got multiple values for keyword argument 'imputer'\n"
+      "mean": 0.8438979983329773,
+      "per_slide": [
+        {
+          "pcc_mean": 0.3973142206668854,
+          "pcc_top50": 0.8438979983329773,
+          "mse": 0.14574284851551056,
+          "morans_i": 0.6482323378614262
+        }
+      ]
     },
     "ablate_no_spatial": {
-      "error": "TypeError: stare.policies.build_policy() got multiple values for keyword argument 'imputer'",
-      "traceback": "Traceback (most recent call last):\n  File \"C:\\Users\\User\\Downloads\\STARE\\scripts\\02_run_feasibility.py\", line 123, in main\n    per_slide = [run_policy(s, imputer, policy_name, bf, pkw) for s in slides]\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\User\\Downloads\\STARE\\scripts\\02_run_feasibility.py\", line 78, in run_policy\n    policy = build_policy(policy_name, imputer=imputer, **pkw)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nTypeError: stare.policies.build_policy() got multiple values for keyword argument 'imputer'\n"
+      "mean": 0.834627628326416,
+      "per_slide": [
+        {
+          "pcc_mean": 0.3651859164237976,
+          "pcc_top50": 0.834627628326416,
+          "mse": 0.15893594920635223,
+          "morans_i": 0.6107491105622005
+        }
+      ]
     }
+  },
+  "go_no_go": {
+    "closed_loop": 0.8463265299797058,
+    "one_shot": 0.47924450039863586,
+    "passed": true,
+    "verdict": "PROCEED to scale"
   }
 }
