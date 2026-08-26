@@ -15,10 +15,17 @@ Hardened runner:
 Run it unbuffered so you see progress live:
     python -u scripts/02_run_feasibility.py
 
-See docs/REPRODUCTION_PLAN.md §4 Stage 2 and docs/SOURCE_OF_TRUTH.md §6.
+See docs/REPRODUCTION_PLAN.md sec.4 Stage 2 and docs/SOURCE_OF_TRUTH.md sec.6.
 """
 import os
 os.environ.setdefault("LOKY_MAX_CPU_COUNT", "4")  # silence sklearn/joblib wmic warning on Windows
+
+import sys
+try:  # force UTF-8 console so non-ASCII in logs never crashes on Windows cp1252
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+except Exception:
+    pass
 
 import json
 import pickle
@@ -82,7 +89,7 @@ def main():
 
     slides = load_or_cache_slides(tissue)
     log(f"[data] {len(slides)} slide(s); "
-        f"regions={[s.n_regions for s in slides]}; budget≈{int(round(bf*slides[0].n_regions))}")
+        f"regions={[s.n_regions for s in slides]}; budget~{int(round(bf*slides[0].n_regions))}")
     imputer = build_imputer(config.IMPUTER)   # frozen, shared across all policies
 
     # run-name -> (policy_name, policy_kwargs). imputer is NOT put here; run_policy injects it.
@@ -135,7 +142,7 @@ def main():
         flush_json(extra={"go_no_go": {"closed_loop": ours, "one_shot": base,
                                        "passed": bool(gate), "verdict": verdict}})
     else:
-        log("\nGO/NO-GO: could not evaluate — one of the key runs errored (see JSON).")
+        log("\nGO/NO-GO: could not evaluate - one of the key runs errored (see JSON).")
 
 
 if __name__ == "__main__":
