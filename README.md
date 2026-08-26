@@ -3,7 +3,7 @@
 > **Closed-loop, budget-constrained ROI/spot acquisition that minimizes whole-transcriptome imputation error.**
 > Given a fixed measurement budget on a tissue slide, learn a policy that decides *which regions to profile next* — conditioned on the H&E image **and on the expression measured so far** — so the unprofiled transcriptome is reconstructed as accurately as possible.
 
-Target venues: NeurIPS / ICLR / ICML / CVPR. This repo is the working home for the project (CSCI 566 → conference paper). **The provisional name STARE is a placeholder; rename freely.**
+Target venues: NeurIPS / ICLR / ICML / CVPR. This repo is the working home for the project. **The provisional name STARE is a placeholder; rename freely.**
 
 ---
 
