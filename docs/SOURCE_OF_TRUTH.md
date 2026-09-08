@@ -114,7 +114,9 @@ Primary targets (last-2-year acceptances in this exact space prove the venue fit
 - gpsFISH — Genome Biology 2024. https://genomebiology.biomedcentral.com/articles/10.1186/s13059-024-03174-1
 - RL gene-panel (2501.04718) — arXiv 2025. https://arxiv.org/html/2501.04718
 
-**Active feature acquisition / experimental design (method template)**
+**Active feature acquisition / sensor placement / experimental design (method template + theory)**
+- Krause, Guestrin, Singh — "Near-Optimal Sensor Placements in Gaussian Processes." JMLR 2008 (ICML 2005). https://jmlr.org/papers/v9/krause08a.html
+  — THE framing for "select measurement locations to reconstruct a spatial field": MI placement is submodular ((1−1/e)-optimal); for a fixed-kernel GP the posterior variance is data-independent, so adaptive placement gives no gain over one-shot. Explains our World-2 finding and defines the correct non-adaptive baselines (variance-greedy, MI-greedy). See `ITERATION_LOG.md`.
 - RL with Efficient Active Feature Acquisition — arXiv 2011.00825. https://arxiv.org/abs/2011.00825
 - Stochastic Encodings for AFA — 2025. https://arxiv.org/html/2508.01957v3
 - NOCTA (non-greedy AFA) — 2025. https://arxiv.org/pdf/2507.12412

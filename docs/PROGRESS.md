@@ -56,16 +56,22 @@ the reality check.)
   over seeds, grid, variance, k-means).
 - **Our closed-loop policy + ablations** (`use_measured`/`use_image`/`use_spatial` toggles).
 
-## 5. What we have found so far ([OURS] — `results/sweep_prostate.json`, prostate, 2249 regions, UNI2-h)
-**Result 1 (World-2 diagnosis).** With an **image-similarity kNN imputer**, acquisition degenerates to
-image-space coverage: a *one-shot k-means* wins at every budget (0.5–20%), our closed-loop policy never
-wins, and closed-loop ≈ no-loop (loop off is often marginally better). → *at this setting the closed
-loop adds no value.*
-**Interpretation (reviewer-facing, [LIT]-anchored, NOT an excuse):** this is precisely the AFA-RL
-"zero-imputing NonSeq baseline" failure mode — the closed loop can only help if the imputer models the
-*joint* distribution, so that a measurement updates beliefs about *neighbours* [AFA-RL]. An image-kNN
-imputer has no such channel; the acquisition problem collapses to coverage, which one-shot solves. The
-experiment is working; it localized the bottleneck to the **imputer**, not the idea.
+## 5. What we have found so far ([OURS] — `results/sweep_prostate.json`; see `ITERATION_LOG.md`)
+**Robust finding across 2 acquisition heuristics × 2 imputers (prostate, 2249 regions, UNI2-h):**
+**one-shot spatial+image COVERAGE (k-means) is near-optimal for reconstruction; conditioning
+acquisition on measured expression does not help.** Iteration-0 (image-kNN + uncertainty greedy):
+closed-loop ≈ no-loop, k-means wins. Iteration-1 (joint image+spatial kNN + error-reduction greedy):
+*worse* — our policy over-clusters and loses to random/k-means/no-loop at every budget.
+
+**Interpretation — this is a KNOWN THEOREM, not an engineering failure [LIT].** Krause, Guestrin &
+Singh (JMLR 2008, "Near-Optimal Sensor Placements in Gaussian Processes") show that for spatial
+reconstruction modelled as a GP with a **fixed/known kernel**, the posterior variance is **independent
+of the observed values** → the optimal set of measurement locations can be chosen **offline**, and
+**adaptive (closed-loop) placement gives no gain over one-shot placement.** A kNN imputer *is* that
+fixed-kernel regime, so our World-2 result is the predicted behaviour. Corollary (the pivot): the
+closed loop can only earn its complexity when the imputer's uncertainty **depends on measured values**
+— i.e. a **non-stationary / learned** imputer (STFlow/SpaIM), the same precondition AFA-RL identifies
+[AFA-RL]. Hand-tuning greedy heuristics on a stationary kNN imputer is provably futile.
 
 ## 6. The one existential question we must answer honestly (the reviewer's kill-shot)
 > **Does the closed loop earn its complexity, or is coverage-based one-shot selection already optimal
@@ -78,21 +84,34 @@ beats SpatialFinder's diversity objective and static panels*," which is still a 
 but it is a different, smaller paper. We do **not** get to assume the closed loop wins. Iterations 1–2
 (§7) are designed to *test* this, not to force it.
 
-## 7. Next steps — each justified, none on assumption
-- **Iteration 1 (DONE, re-sweep running) [OURS+LIT].** Joint image+spatial imputer (a measured region
-  now has local consequence) + **expected-error-reduction** acquisition (measure the region that most
-  reduces error over its neighbourhood — the standard AFA / Bayesian-experimental-design objective
-  [AFA-RL]). Test: does closed-loop now beat random/k-means AND loop-on beat loop-off at 1–2% budget?
-- **Iteration 2 (if 1 fails) [LIT].** Replace the kNN imputer with a genuine **joint spatial imputer**
-  the field already uses — SpaIM (Nat Commun'25), STFlow (ICML'25 Spotlight), or a spatial GNN. These
-  *do* model the joint/spatial distribution, the precondition AFA-RL identifies. This is the WS-B
-  "scale imputer," pulled forward by the diagnosis rather than scheduled by assumption.
-- **Iteration 3 (only after a working imputer) [LIT].** Learned/amortized policy (AFA-RL seq-VAE-over-
-  partial-state template) and non-greedy lookahead (NOCTA) *if* greedy leaves headroom — escalate only
-  on evidence.
-- **Scale [LIT].** Extend prostate → kidney + SpatialFinder's 4 tissues + HEST Visium; report the full
-  imputation-error-vs-budget Pareto (the field-standard presentation, cf. PERSIST panel-size curves,
-  AFA-RL reward-vs-#features).
+## 7. Next steps — reframed around LITERATURE REPLICABILITY (stop inventing heuristics)
+Iterations 0–1 hand-rolled greedy heuristics and both failed exactly as the sensor-placement theory
+predicts. The disciplined move is to **replicate established frameworks/methods**, not invent more.
+
+- **Step A — adopt the sensor-placement framing + its named baselines [LIT: Krause 2008].** Our problem
+  IS "select measurement locations to reconstruct a spatial field." Implement the field's principled
+  non-adaptive baselines: **variance-greedy** and **mutual-information-greedy** placement (submodular,
+  (1−1/e)-optimal). These — not our ad-hoc greedy, not bare k-means — are the correct references. This
+  gives our method a name, guarantees, and a fair comparison, and reproduces a known result.
+- **Step B — replicate a REAL imputer so the verdict isn't a kNN artifact [LIT].** Two regimes:
+  (i) a **GP/kriging** spatial regressor = the stationary-kernel reference (closed-form variance;
+  theory predicts closed-loop gives ≈0 gain — we should reproduce that as a sanity check);
+  (ii) a **learned / non-stationary** imputer the field uses — **SpaIM (Nat Commun'25)** or **STFlow
+  (ICML'25)** — where the posterior CAN depend on measured values, so closed-loop *can* help. This is
+  the decisive experiment; it replaces "tune our greedy" with "swap in a published imputer."
+- **Step C — faithful Tier-1 SpatialFinder reproduction [LIT].** Current one-shot port gives near-zero/
+  negative PCC → unfaithful. Reproduce SpatialFinder's native ρ before any head-to-head is trusted.
+- **Step D — decide the paper's identity on evidence (§6):** if closed-loop beats non-adaptive
+  placement ONLY under a learned imputer → the agentic/adaptive-acquisition paper, grounded in the
+  Krause stationary-vs-nonstationary distinction. If it never beats non-adaptive placement → the honest
+  paper is "reconstruction-objective sensor-placement selection beats SpatialFinder's diversity
+  objective and static panels," a benchmarking/negative result. Either is publishable; evidence picks.
+- **Scale [LIT].** prostate → kidney + SpatialFinder's 4 tissues + HEST Visium; report the full
+  imputation-error-vs-budget Pareto (field-standard: PERSIST panel-size curves, AFA-RL reward-vs-budget).
+
+**Fixes owed before more runs (see `ITERATION_LOG.md`):** redefine the now-degenerate ablations
+(`no_image`==`no_spatial`==`ours` under error_reduction); add the variance/MI-greedy placement
+baselines; do the Tier-1 SpatialFinder repro.
 
 ## 8. Reviewer caveats we must own up front (not hide)
 1. **In-silico, not wet-lab.** We simulate acquisition by masking Visium HD; real GeoMx ROI acquisition
