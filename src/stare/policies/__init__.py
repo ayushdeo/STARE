@@ -3,14 +3,17 @@ from .base import Policy
 from .naive import RandomPolicy, GridPolicy, VariancePolicy, KMeansImagePolicy
 from .oneshot import OneShotSpatialFinderPolicy
 from .greedy_ig import GreedyInfoGainPolicy
+from .placement import VarianceGreedyPolicy, MIGreedyPolicy
 
 REGISTRY = {
     "random": RandomPolicy,
     "grid": GridPolicy,
     "variance": VariancePolicy,
     "kmeans": KMeansImagePolicy,
-    "oneshot": OneShotSpatialFinderPolicy,   # SpatialFinder-style — PRIMARY competitor
-    "greedy_ig": GreedyInfoGainPolicy,       # ours (closed-loop)
+    "oneshot": OneShotSpatialFinderPolicy,       # SpatialFinder-style — PRIMARY competitor
+    "var_greedy": VarianceGreedyPolicy,          # Krause non-adaptive placement (variance)
+    "mi_greedy": MIGreedyPolicy,                 # Krause non-adaptive placement (mutual information)
+    "greedy_ig": GreedyInfoGainPolicy,           # ours (closed-loop)
 }
 
 

@@ -76,6 +76,9 @@ ACQUISITION_ROUND_SIZE = 1           # regions revealed per closed-loop round (1
 # curves, AFA-RL reward-vs-#features). The diagnostic, not a single-point pass/fail.
 SWEEP_BUDGET_FRACTIONS = [0.005, 0.01, 0.02, 0.05, 0.10, 0.20]
 RANDOM_SEEDS = [0, 1, 2, 3, 4]       # random baseline is stochastic -> average over seeds (mean +/- std)
+# The decisive contrast: run every policy under a STATIONARY imputer (kNN; theory => no closed-loop
+# gain) AND a LEARNED non-stationary one (kriging; closed loop CAN help). One file per imputer.
+SWEEP_IMPUTERS = ["knn", "kriging"]
 
 # ---------------------------------------------------------------------------
 # GENE TARGETS  (HEST-Benchmark protocol)
@@ -115,6 +118,23 @@ IMPUTER_JOINT_ALPHA = 0.5         # joint feats = sqrt(a)*L2norm(image) (+) sqrt
 # reduces total imputation error over its NEIGHBOURHOOD (AFA / Bayesian experimental design).
 GREEDY_CRITERION = "error_reduction"   # {"uncertainty","error_reduction"}
 GREEDY_ER_K = 15                       # neighbourhood size for the error-reduction score
+
+# --- Iteration 2 (2026-09-08): the decisive regime change --------------------------------------
+# kNN is STATIONARY -> Krause 2008 says adaptivity gap = 0 (our World-2). To let the closed loop
+# even be ABLE to help, the imputer's posterior must DEPEND ON MEASURED VALUES. Regression-kriging:
+# an image->expression ridge REFIT on the profiled regions (so the predictor changes with what we
+# measure => non-stationary) + spatial residual kriging. IMPUTER="kriging" selects it.
+KRIGING_PCA_DIM = 64             # PCA-reduce UNI emb before ridge so per-step refit is cheap
+KRIGING_RIDGE_ALPHA = 10.0       # ridge strength for the image->expression predictor
+KRIGING_RESID_K = 10             # spatial-kNN for residual kriging (data-dependent uncertainty)
+
+# Principled NON-ADAPTIVE placement baselines [Krause, Guestrin & Singh, JMLR 2008]: submodular,
+# (1-1/e)-optimal; the correct references for "select locations to reconstruct a field". RBF kernel
+# on joint (PCA-image (+) unit-box coords) features. These use only the kernel, never measured
+# values -> they are the honest open-loop opponents our closed-loop policy must beat.
+PLACEMENT_PCA_DIM = 64
+PLACEMENT_LENGTHSCALE = 1.0      # RBF lengthscale in standardized joint-feature space
+PLACEMENT_NOISE = 1e-2           # jitter / observation noise for the kernel
 
 # ---------------------------------------------------------------------------
 # METRICS  (SOURCE_OF_TRUTH §5 WS-E)

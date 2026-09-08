@@ -74,98 +74,94 @@ def score_policy(slides, imputer, policy_name, bf, pkw, seed=None):
     return {m: float(sum(r[m] for r in per) / len(per)) for m in METRICS}
 
 
-def main():
-    tissue = config.FEASIBILITY_TISSUE
-    slides = load_or_cache_slides(tissue)
-    imputer = build_imputer(config.IMPUTER)
+# policy_name, kwargs, stochastic?  (random averaged over seeds)
+POLICIES = {
+    "random":                ("random",    {}, True),
+    "grid":                  ("grid",      {}, False),
+    "kmeans":                ("kmeans",    {}, False),
+    "oneshot_spatialfinder": ("oneshot",   {}, False),   # SpatialFinder-style competitor
+    "var_greedy":            ("var_greedy", {}, False),   # Krause non-adaptive (variance)
+    "mi_greedy":             ("mi_greedy",  {}, False),   # Krause non-adaptive (MI) — principled opponent
+    "ours_closed_loop":      ("greedy_ig", {}, False),    # ours (closed-loop, adaptive)
+    "ablate_no_measured":    ("greedy_ig", {"use_measured": False}, False),
+}
+
+
+def run_one_imputer(imputer_name: str, tissue: str, slides, budgets):
     R = slides[0].n_regions
-    budgets = config.SWEEP_BUDGET_FRACTIONS
-    log(f"=== budget sweep | tissue={tissue} regions={R} encoder={config.IMAGE_ENCODER} "
-        f"imputer={config.IMPUTER} budgets={budgets} ===")
-
-    # policy_name, kwargs, stochastic?  (random averaged over seeds)
-    policies = {
-        "random":              ("random",    {}, True),
-        "grid":                ("grid",      {}, False),
-        "variance":            ("variance",  {}, False),
-        "kmeans":              ("kmeans",    {}, False),
-        "oneshot_spatialfinder": ("oneshot", {}, False),
-        "ours_closed_loop":    ("greedy_ig", {}, False),
-        "ablate_no_measured":  ("greedy_ig", {"use_measured": False}, False),
-        "ablate_no_image":     ("greedy_ig", {"use_image": False}, False),
-        "ablate_no_spatial":   ("greedy_ig", {"use_spatial": False}, False),
-    }
-
-    # results[policy][budget] = {"pcc_top50": mean, "pcc_top50_std": s, "pcc_mean": ...}
-    results = {name: {} for name in policies}
-    out = Path(config.RESULTS_ROOT) / f"sweep_{tissue}.json"
+    imputer = build_imputer(imputer_name)
+    log(f"\n########## IMPUTER = {imputer_name} (regions={R}) ##########")
+    results = {name: {} for name in POLICIES}
+    out = Path(config.RESULTS_ROOT) / f"sweep_{tissue}_{imputer_name}.json"
     out.parent.mkdir(parents=True, exist_ok=True)
 
     def flush(extra=None):
         payload = {"tissue": tissue, "regions": R, "encoder": config.IMAGE_ENCODER,
-                   "imputer": config.IMPUTER, "budgets": budgets, "metrics": METRICS,
+                   "imputer": imputer_name, "budgets": budgets, "metrics": METRICS,
                    "results": results}
         if extra: payload.update(extra)
         out.write_text(json.dumps(payload, indent=2))
 
     for bf in budgets:
-        k = int(round(bf * R))
-        log(f"\n--- budget {bf:.3f}  (~{k} regions) ---")
-        for name, (pn, pkw, stochastic) in policies.items():
+        log(f"\n--- {imputer_name} | budget {bf:.3f} (~{int(round(bf*R))} regions) ---")
+        for name, (pn, pkw, stochastic) in POLICIES.items():
             t0 = time.time()
             try:
                 if stochastic:
-                    runs = [score_policy(slides, imputer, pn, bf, pkw, seed=s)
-                            for s in config.RANDOM_SEEDS]
+                    runs = [score_policy(slides, imputer, pn, bf, pkw, seed=s) for s in config.RANDOM_SEEDS]
                     cell = {}
                     for m in METRICS:
                         vals = [r[m] for r in runs]
-                        cell[m] = float(statistics.mean(vals))
-                        cell[m + "_std"] = float(statistics.pstdev(vals))
+                        cell[m] = float(statistics.mean(vals)); cell[m + "_std"] = float(statistics.pstdev(vals))
                 else:
                     cell = score_policy(slides, imputer, pn, bf, pkw)
                 results[name][f"{bf:.3f}"] = cell
-                log(f"    {name:24s} pcc_top50={cell['pcc_top50']:.4f} "
-                    f"pcc_mean={cell['pcc_mean']:.4f} ({time.time()-t0:.1f}s)")
+                log(f"    {name:24s} pcc_top50={cell['pcc_top50']:.4f} pcc_mean={cell['pcc_mean']:.4f} ({time.time()-t0:.1f}s)")
             except Exception:
                 import traceback
                 results[name][f"{bf:.3f}"] = {"error": traceback.format_exc().splitlines()[-1]}
                 log(f"    {name:24s} FAILED: {results[name][f'{bf:.3f}']['error']}")
             flush()
 
-    # ---- diagnostic verdicts per budget (the real read) ----
-    log("\n=== DIAGNOSTIC (primary metric = pcc_top50; higher is better) ===")
+    # Honest gate: ours (adaptive/closed-loop) vs mi_greedy (principled NON-ADAPTIVE opponent) [Krause],
+    # AND closed_loop_helps (ours vs ablate_no_measured). Beating random/kmeans is table stakes.
+    log(f"\n=== DIAGNOSTIC (imputer={imputer_name}; pcc_top50) ===")
     verdicts = {}
     for bf in budgets:
         b = f"{bf:.3f}"
         def val(n): return results.get(n, {}).get(b, {}).get("pcc_top50")
-        ours, rand = val("ours_closed_loop"), val("random")
-        nomeas, oneshot = val("ablate_no_measured"), val("oneshot_spatialfinder")
+        ours, mi, rand, nomeas = val("ours_closed_loop"), val("mi_greedy"), val("random"), val("ablate_no_measured")
         v = {}
+        if ours is not None and mi is not None:
+            v["beats_mi_greedy"] = bool(ours > mi); v["ours_minus_mi"] = round(ours - mi, 4)
         if ours is not None and rand is not None:
-            v["beats_random"] = bool(ours > rand); v["ours_minus_random"] = round(ours - rand, 4)
+            v["beats_random"] = bool(ours > rand)
         if ours is not None and nomeas is not None:
             v["closed_loop_helps"] = bool(ours > nomeas); v["closed_minus_nomeasured"] = round(ours - nomeas, 4)
-        if ours is not None and oneshot is not None:
-            v["beats_oneshot"] = bool(ours > oneshot)
         verdicts[b] = v
-        log(f"  budget {b}: beats_random={v.get('beats_random')} (Δ{v.get('ours_minus_random')}) | "
-            f"closed_loop_helps={v.get('closed_loop_helps')} (Δ{v.get('closed_minus_nomeasured')}) | "
-            f"beats_oneshot={v.get('beats_oneshot')}")
-
-    # overall read: at how many budgets do BOTH core tests hold?
-    core_pass = [b for b, v in verdicts.items()
-                 if v.get("beats_random") and v.get("closed_loop_helps")]
-    log(f"\nCORE-PASS budgets (beat random AND closed loop helps): {core_pass if core_pass else 'NONE'}")
-    if core_pass:
-        log("  => the closed loop adds value in this budget regime; iterate/scale there.")
-    else:
-        log("  => closed loop adds no value at any tested budget with the CURRENT imputer/criterion.")
-        log("     ITERATE before deciding STOP: (a) stronger imputer (STFlow/SpaIM instead of kNN),")
-        log("     (b) better acquisition score (expected error-reduction, not raw uncertainty),")
-        log("     (c) harder target (full transcriptome / lower-signal genes). Then re-sweep.")
+        log(f"  budget {b}: beats_mi_greedy={v.get('beats_mi_greedy')} (d={v.get('ours_minus_mi')}) | "
+            f"closed_loop_helps={v.get('closed_loop_helps')} (d={v.get('closed_minus_nomeasured')}) | "
+            f"beats_random={v.get('beats_random')}")
+    core_pass = [b for b, v in verdicts.items() if v.get("beats_mi_greedy") and v.get("closed_loop_helps")]
+    log(f"\n[{imputer_name}] CORE-PASS budgets (beat MI-greedy AND closed loop helps): {core_pass or 'NONE'}")
     flush(extra={"verdicts": verdicts, "core_pass_budgets": core_pass})
-    log(f"\n[write] {out}")
+    log(f"[write] {out}")
+    return imputer_name, core_pass
+
+
+def main():
+    tissue = config.FEASIBILITY_TISSUE
+    slides = load_or_cache_slides(tissue)
+    budgets = config.SWEEP_BUDGET_FRACTIONS
+    log(f"=== budget sweep | tissue={tissue} encoder={config.IMAGE_ENCODER} "
+        f"imputers={config.SWEEP_IMPUTERS} budgets={budgets} ===")
+    summary = [run_one_imputer(name, tissue, slides, budgets) for name in config.SWEEP_IMPUTERS]
+    log("\n===== HEADLINE =====")
+    for name, cp in summary:
+        log(f"  imputer={name:8s} closed-loop earns its keep at budgets: {cp or 'NONE'}")
+    log("Expectation from theory [Krause 2008]: stationary (knn) -> NONE; learned (kriging) -> maybe some.\n"
+        "If kriging is ALSO NONE, the agentic framing does not survive -> pivot to the reconstruction-"
+        "placement benchmark paper (see docs/PROGRESS.md sec.6).")
 
 
 if __name__ == "__main__":
