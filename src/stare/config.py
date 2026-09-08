@@ -104,6 +104,17 @@ IMAGE_EMB_DIM = 1536
 IMPUTER = "knn"                   # {"knn","stflow","spaim"}
 IMPUTER_KNN_K = 10                # k for kNN imputer (matches BLEEP/our old kNN baseline)
 IMPUTER_KNN_METRIC = "cosine"     # distance in image-embedding space
+# Iteration-1 fix (2026-09-07): image-only kNN is a coverage interpolator that CANNOT reward the
+# closed loop (see results/sweep_prostate.json: image-only kmeans wins, loop-on == loop-off).
+# Blend image + physical-space so a measured region has LOCAL consequence -> the loop can help.
+IMPUTER_SPACE = "joint"           # {"image","spatial","joint"} feature space for kNN neighbors
+IMPUTER_JOINT_ALPHA = 0.5         # joint feats = sqrt(a)*L2norm(image) (+) sqrt(1-a)*unitbox(coords)
+
+# Greedy acquisition criterion (WS-D). "uncertainty" (v0) picks the single most-uncertain region
+# (often an outlier -> hurt coverage). "error_reduction" (v1) picks the region whose measurement
+# reduces total imputation error over its NEIGHBOURHOOD (AFA / Bayesian experimental design).
+GREEDY_CRITERION = "error_reduction"   # {"uncertainty","error_reduction"}
+GREEDY_ER_K = 15                       # neighbourhood size for the error-reduction score
 
 # ---------------------------------------------------------------------------
 # METRICS  (SOURCE_OF_TRUTH §5 WS-E)
