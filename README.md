@@ -16,18 +16,25 @@ This README is written so a fresh agent (e.g. Claude Code on the 4070 laptop) ca
 3. **`docs/CHECKLIST.md`** — the executable checklist; tick items as you go. Maps 1:1 to the source of truth.
 4. **`docs/KNOWLEDGE_BASE.md`** — in-depth notes on all 23 papers (method, math, datasets, how each transfers to us). Query this before implementing anything.
 5. **`docs/lit_review/REALITY_CHECK.md`** — why the problem is real (GeoMx ROI selection, self-driving labs) and how we differ from the nearest competitor, **SpatialFinder (2026)**.
+6. **`docs/PROGRESS.md`** — reviewer-facing regroup: current findings, the World-2 diagnosis, next iterations, and the caveats we must own. Every claim tagged [LIT]/[OURS]/[HYP]. **Read for "where are we actually."**
 
 **The one-sentence thesis to protect:** we beat one-shot region selection (SpatialFinder) by *closing the loop* — conditioning each next measurement on what's already been measured — and by optimizing *reconstruction error* rather than a diversity heuristic. If a change makes the method one-shot or heuristic, it reinvents SpatialFinder. Don't.
 
 ---
 
-## 🎯 Current status: Stage 0 (scaffold done). Next = Stage 0 data steps on the 4070.
+## 🎯 Current status: Stage 2 — closed-loop policy under diagnostic iteration (prostate). See `docs/PROGRESS.md`.
+
+Real prostate data built (2249 regions, UNI2-h); baselines + our policy + ablations run across a budget
+sweep. First finding = **World 2**: with an image-similarity kNN imputer, acquisition degenerates to
+image coverage (one-shot k-means wins; closed-loop == no-loop). Diagnosed to the *imputer*, not the
+idea (AFA-RL "NonSeq-ZI" failure mode). **Iterating** (joint image+spatial imputer + error-reduction
+acquisition; next = a real joint imputer SpaIM/STFlow if needed). Not a pass/fail — a diagnostic loop.
 
 Stages (from `docs/REPRODUCTION_PLAN.md §4`):
-- **Stage 0** — env + data + simulator skeleton + one imputer running. ← *scaffold committed; data steps below are next*
-- **Stage 1** — competitor setup: Tier-1 native sanity repro, then Tier-2 ports into our simulator → baseline Pareto on 1 tissue.
-- **Stage 2** — FEASIBILITY GO/NO-GO: greedy closed-loop vs one-shot at equal budget on 1 tissue (+ ablations). **Gate.**
-- **Stage 3** — scale to 4 tissues + HEST Visium, add RL policy, full ablations, writeup.
+- **Stage 0** — env + data + simulator + imputer running. ✅ done
+- **Stage 1** — baselines ported into the simulator (SpatialFinder one-shot, naive coverage). ✅ done
+- **Stage 2** — closed-loop policy vs baselines across a budget sweep + ablations. ◀ **HERE (iterating)**
+- **Stage 3** — scale to 4 tissues + HEST Visium, learned/RL policy, full Pareto, writeup.
 
 ---
 
