@@ -50,6 +50,40 @@ def load(imputer):
     return json.loads(p.read_text()) if p.exists() else None
 
 
+def load_ci(imputer):
+    p = RESULTS / f"ci_multislide_{imputer}.json"
+    return json.loads(p.read_text()) if p.exists() else None
+
+
+CI_CONTRASTS = [
+    ("ours_vs_best_nonadapt", "ours − best non-adaptive (the decisive test)"),
+    ("ours_vs_mi",            "ours − MI-greedy"),
+    ("adaptive_vs_var",       "adaptive − variance-greedy"),
+    ("closed_vs_ablate",      "ours − ablation (measured off)"),
+]
+
+
+def ci_table(cid):
+    """Cross-slide margin table for one imputer's ci_multislide JSON."""
+    budgets = cid["budgets"]
+    lines = [f"_slides ({len(cid['slides'])}): {', '.join(cid['slides'])}_\n",
+             "| Contrast | " + " | ".join(f"{float(b)*100:g}%" for b in budgets) + " |",
+             "|---|" + "---|" * len(budgets)]
+    for key, label in CI_CONTRASTS:
+        cells = []
+        for b in budgets:
+            m = cid["margins"].get(b, {}).get(key)
+            if not m:
+                cells.append("—"); continue
+            star = " ✔" if m["ci_excludes_zero"] and m["mean"] > 0 else ""
+            cells.append(f"{m['mean']:+.3f} [{m['ci95'][0]:+.3f},{m['ci95'][1]:+.3f}]{star}")
+        lines.append(f"| {label} | " + " | ".join(cells) + " |")
+    win = cid.get("win_budgets_ours_vs_best_nonadapt")
+    lines.append(f"\n_✔ = 95% CI excludes 0 (positive). WIN budgets (ours > best non-adaptive): "
+                 f"**{win if win else 'NONE'}**_\n")
+    return "\n".join(lines)
+
+
 def cell(v, std=None):
     if v is None:
         return "—"
@@ -167,6 +201,22 @@ def main():
         if d is None:
             md.append("> PENDING.\n"); continue
         md.append(metric_table(d, "pcc_mean") + "\n")
+
+    # Cross-slide CI tables (iteration 3) — the significance layer that decides the claim.
+    ci_loaded = {imp: load_ci(imp) for imp in IMPUTERS}
+    md.append("## Table 4 — Cross-slide margins with 95% CI (the significance test)\n")
+    md.append("Paired margin across all pooled slides (mean [CI]); the closed loop only *wins* where "
+              "`ours − best non-adaptive` is positive with a CI excluding 0 (✔). Source: "
+              "`results/ci_multislide_*.json` via `scripts/05_multislide_ci.py`.\n")
+    if not any(ci_loaded.values()):
+        md.append("> **PENDING** — no `ci_multislide_*.json` yet. Run "
+                  "`python -u scripts/05_multislide_ci.py` on the 4070 (pools "
+                  f"{', '.join(config.CI_TISSUES)}); this section auto-fills on next `git pull`.\n")
+    else:
+        for imp in IMPUTERS:
+            cid = ci_loaded[imp]
+            md.append(f"### {imp}\n")
+            md.append((ci_table(cid) if cid else "> PENDING.\n"))
 
     OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text("\n".join(md), encoding="utf-8")

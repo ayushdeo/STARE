@@ -138,3 +138,9 @@ _core-pass budgets (beat MI-greedy AND closed-loop-helps): ['0.050', '0.100', '0
 | Adaptive-uncertainty (ours, closed-loop) | 0.122 | 0.204 | 0.271 | 0.365 | 0.402 | **0.423** |
 | Error-reduction (ours, closed-loop) | 0.147 | 0.206 | 0.281 | 0.361 | 0.399 | 0.420 |
 | └ ablation: measured signal OFF | 0.048 | 0.113 | 0.213 | 0.300 | 0.371 | 0.417 |
+
+## Table 4 — Cross-slide margins with 95% CI (the significance test)
+
+Paired margin across all pooled slides (mean [CI]); the closed loop only *wins* where `ours − best non-adaptive` is positive with a CI excluding 0 (✔). Source: `results/ci_multislide_*.json` via `scripts/05_multislide_ci.py`.
+
+> **PENDING** — no `ci_multislide_*.json` yet. Run `python -u scripts/05_multislide_ci.py` on the 4070 (pools prostate, kidney, lung, colon); this section auto-fills on next `git pull`.

@@ -40,6 +40,42 @@ uncertainty DEPENDS on measured values — i.e. a **non-stationary or learned** 
 stationary by construction, so it can never show a closed-loop benefit. Continuing to hand-tune
 greedy heuristics on a kNN imputer is futile; the theory says so.
 
+## Iteration 2 — principled placement baselines + learned kriging imputer  [OURS: results/sweep_prostate_{knn,kriging}.json @ 2dcb20d]
+- Did the "fixes owed": added Krause variance-greedy + MI-greedy (the correct NON-adaptive opponents),
+  and a learned non-stationary imputer (regression-kriging: ridge image->expr refit on profiled +
+  spatial residual kriging). Gate = beat MI-greedy AND closed_loop_helps.
+- Result: **CORE-PASS = NONE under both imputers.** `closed_loop_helps=False` at every budget.
+  Under kriging, MI-greedy is the single best method (0.856 @20% vs ours 0.676 vs kmeans 0.811).
+  ours-MI @20% = -0.10 (knn), -0.18 (kriging).
+- Verdict: **closed loop still earns nothing**, now against the *principled* opponent, under a
+  stationary AND a linear-learned imputer. Caveat logged: ours (error-reduction greedy) over-clusters
+  and is a weak policy; kriging is a weak imputer at low budget. One door left open: a STRONG learned
+  imputer (STFlow-class) untested.
+
+## Iteration 3 — STFlow-class imputer + adaptive policy, single slide  [OURS: results/sweep_prostate_graphflow.json @ 513c7a2]
+- Added GraphFlowImputer (STFlow-inspired: nonlinear RFF image->expr backbone + iterative spatial
+  message passing that clamps measured regions; data-dependent uncertainty), and a clean ADAPTIVE
+  max-uncertainty policy (the adaptive twin of var_greedy). Closes the weak-imputer AND weak-policy gaps.
+- Result on prostate (n=1 slide): the literal gate **passes at 5/10/20%** (ours-MI = +0.002, +0.003,
+  +0.006) and `closed_loop_helps=True`, `adaptive_beats_nonadaptive=True` at all budgets.
+- **BUT the wins are not real yet:** (a) margins (+0.002..+0.006) are ≤ the random baseline's own
+  seed std (±0.002..±0.005); (b) they occur only at HIGH budget where the task saturates (all methods
+  0.84-0.88); (c) at LOW budget (0.5-2%, where acquisition matters) a one-shot image **k-means wins
+  outright** (0.569 vs ours 0.368 @0.5%); (d) n=1 slide, deterministic policies carry no error bars.
+- The genuinely informative signal: **the adaptivity gap closes monotonically as the imputer becomes
+  more data-dependent** — ours-MI @20% = -0.10 (kNN) -> -0.18 (kriging) -> ~0 (graphflow). This is
+  qualitatively what Krause 2008 predicts, but it approaches 0 *from below* and never becomes a robust
+  positive on one slide.
+- Verdict: **NOT a win, NOT a clean null — a statistical tie at saturation, pending significance.**
+
+## Iteration 3-CI — cross-slide significance run  [OURS: results/ci_multislide_*.json — launched 2026-09-15]
+- Change: pool all pinned slides across prostate+kidney+lung+colon (7 slides), report the paired
+  margin **ours - best-non-adaptive** per budget with a percentile bootstrap CI + exact sign test
+  (src/stare/stats.py, verified in tests/test_ci.py). Runner: scripts/05_multislide_ci.py.
+- **Pre-registered decision rule:** a closed-loop WIN requires `ours - best_non_adaptive` mean > 0
+  with 95% CI excluding 0 at ≥1 budget. If every CI straddles 0 -> negative result stands with
+  cross-slide evidence; the paper is the theory-backed characterization. Result: _pending 4070 run._
+
 ## Fixes owed / experimental-design corrections
 1. Redefine the ablations so they are meaningful under whichever criterion is active (e.g. ablate the
    spatial vs image component of the imputer's feature space, and ablate measured-vs-not at the policy).

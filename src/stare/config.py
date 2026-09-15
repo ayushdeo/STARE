@@ -82,6 +82,16 @@ RANDOM_SEEDS = [0, 1, 2, 3, 4]       # random baseline is stochastic -> average 
 # One file per imputer. If graphflow is ALSO no-gain, the negative result has no escape hatch left.
 SWEEP_IMPUTERS = ["knn", "kriging", "graphflow"]
 
+# --- Iteration 3 CI run (2026-09-15): significance across slides ----------------------------------
+# The single prostate slide cannot separate a +0.003 PCC margin from noise. scripts/05_multislide_ci.py
+# pools ALL pinned slides across these tissues and reports the paired margin (ours vs the strong
+# non-adaptive opponent) with a percentile bootstrap CI + exact sign test. A claim of a closed-loop
+# WIN requires the CI to exclude 0 across slides; otherwise the honest verdict is "tie / no gain".
+CI_TISSUES = ["prostate", "kidney", "lung", "colon"]   # prostate(1)+kidney(2)+lung(2)+colon(2) = 7 slides
+CI_BOOTSTRAP = 5000
+CI_ALPHA = 0.05
+CI_SEED = 2021
+
 # ---------------------------------------------------------------------------
 # GENE TARGETS  (HEST-Benchmark protocol)
 # ---------------------------------------------------------------------------
