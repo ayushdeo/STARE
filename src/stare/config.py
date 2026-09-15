@@ -77,8 +77,10 @@ ACQUISITION_ROUND_SIZE = 1           # regions revealed per closed-loop round (1
 SWEEP_BUDGET_FRACTIONS = [0.005, 0.01, 0.02, 0.05, 0.10, 0.20]
 RANDOM_SEEDS = [0, 1, 2, 3, 4]       # random baseline is stochastic -> average over seeds (mean +/- std)
 # The decisive contrast: run every policy under a STATIONARY imputer (kNN; theory => no closed-loop
-# gain) AND a LEARNED non-stationary one (kriging; closed loop CAN help). One file per imputer.
-SWEEP_IMPUTERS = ["knn", "kriging"]
+# gain), a LEARNED non-stationary linear one (kriging), AND a STRONG STFlow-class one (graphflow;
+# nonlinear + multi-hop spatial propagation, the imputer with the best chance of rewarding the loop).
+# One file per imputer. If graphflow is ALSO no-gain, the negative result has no escape hatch left.
+SWEEP_IMPUTERS = ["knn", "kriging", "graphflow"]
 
 # ---------------------------------------------------------------------------
 # GENE TARGETS  (HEST-Benchmark protocol)
@@ -127,6 +129,23 @@ GREEDY_ER_K = 15                       # neighbourhood size for the error-reduct
 KRIGING_PCA_DIM = 64             # PCA-reduce UNI emb before ridge so per-step refit is cheap
 KRIGING_RIDGE_ALPHA = 10.0       # ridge strength for the image->expression predictor
 KRIGING_RESID_K = 10             # spatial-kNN for residual kriging (data-dependent uncertainty)
+
+# --- Iteration 3 (2026-09-14): STFlow-class imputer — close the last gap --------------------------
+# The kriging critique was "too weak a learned imputer." graphflow steel-mans the agent with a STRONG,
+# STFlow-inspired imputer that keeps every STFlow inductive bias runnable IN-LOOP:
+#   * NONLINEAR image->expr backbone via random Fourier features (RFF), ridge-refit on the profiled
+#     regions each step (closed form => cheap => non-stationary, like kriging but nonlinear).
+#   * ITERATIVE spatial message passing on a fixed kNN graph that CLAMPS measured regions to their
+#     true values (Dirichlet boundary) — multi-hop neighbor-conditioning, STFlow's core mechanism.
+#   * DATA-DEPENDENT uncertainty = 1 - (graph "influence" reaching a region from clamped nodes); it
+#     shrinks near measured regions as they accumulate -> the fairest possible signal for the loop.
+# If the closed loop cannot beat non-adaptive MI-greedy even HERE, adaptivity earns nothing (Krause).
+FLOW_PCA_DIM = 64            # PCA-reduce UNI emb before the RFF map (cheap per-step ridge refit)
+FLOW_RFF_DIM = 512          # random Fourier feature dimension (nonlinear image->expr backbone)
+FLOW_RIDGE_ALPHA = 10.0     # ridge strength for the RFF image->expression predictor
+FLOW_GRAPH_K = 8            # kNN degree of the fixed spatial+image message-passing graph
+FLOW_STEPS = 20             # iterative refinement steps (the flow-matching analog: integrate T steps)
+FLOW_STEP_SIZE = 0.5        # per-step mixing toward the graph-smoothed neighbour mean
 
 # Principled NON-ADAPTIVE placement baselines [Krause, Guestrin & Singh, JMLR 2008]: submodular,
 # (1-1/e)-optimal; the correct references for "select locations to reconstruct a field". RBF kernel

@@ -15,7 +15,9 @@ WHY joint (2026-09-07): image-only kNN made acquisition == image coverage, so a 
 won and the closed loop added nothing (results/sweep_prostate.json). A spatial component gives a
 measured region local consequence, which is the precondition for the closed loop to help at all.
 
-STFlow/SpaIM wrappers remain a post-diagnostic upgrade. See docs/KNOWLEDGE_BASE.md #5/#6/#9.
+Iteration 3 adds GraphFlowImputer: an STFlow-INSPIRED strong imputer (nonlinear RFF image->expr
+backbone + iterative spatial message passing that clamps measured regions). It is the hardest test
+of the adaptivity hypothesis. See docs/KNOWLEDGE_BASE.md #5/#6/#9 and config.py "Iteration 3".
 """
 from __future__ import annotations
 import numpy as np
@@ -173,11 +175,147 @@ class LearnedKrigingImputer(BaseImputer):
         return self._fit_predict(state)[1]
 
 
+class GraphFlowImputer(BaseImputer):
+    """STFlow-INSPIRED imputer (iteration 3): the strong, non-stationary imputer that gives the
+    closed loop its best possible chance. Keeps STFlow's inductive biases at a scale runnable inside
+    the acquisition loop, WITHOUT a multi-week flow-matching reproduction:
+
+      1. NONLINEAR backbone: PCA(image) -> random Fourier features (RFF) approx an RBF kernel; ridge
+         image->expression refit on the PROFILED regions each step (closed form => cheap, and the
+         predictor CHANGES with what we measure => non-stationary, like kriging but nonlinear).
+      2. SPATIAL MESSAGE PASSING: a fixed row-normalized kNN graph on joint image+space features.
+         Iterate  x <- (1-s) x + s (A x)  for FLOW_STEPS, CLAMPING profiled regions to their true
+         expression every step (Dirichlet boundary). This is multi-hop neighbour-conditioning +
+         iterative refinement — STFlow's core mechanism — so measured values propagate outward.
+      3. DATA-DEPENDENT UNCERTAINTY: run the SAME diffusion on a profiled-indicator and read the
+         "influence" reaching each region; uncertainty = 1 - influence. It shrinks near measured
+         regions as they accumulate => a genuine, adaptive info signal (unlike stationary kNN).
+
+    Honesty: this is "STFlow-class" (spatial graph, neighbour conditioning, iterative refinement,
+    nonlinear backbone), NOT a 1:1 STFlow port. It is deliberately the STRONGEST imputer we can run
+    in-loop, so a no-gain result here is the hardest possible test of the adaptivity hypothesis.
+    """
+
+    def __init__(self, pca_dim: int = config.FLOW_PCA_DIM, rff_dim: int = config.FLOW_RFF_DIM,
+                 ridge_alpha: float = config.FLOW_RIDGE_ALPHA, graph_k: int = config.FLOW_GRAPH_K,
+                 steps: int = config.FLOW_STEPS, step_size: float = config.FLOW_STEP_SIZE,
+                 seed: int = config.SEED):
+        self.pca_dim = pca_dim
+        self.rff_dim = rff_dim
+        self.ridge_alpha = ridge_alpha
+        self.graph_k = graph_k
+        self.steps = steps
+        self.step_size = step_size
+        self.seed = seed
+        self._phi_cache: dict[int, np.ndarray] = {}   # RFF features per slide (frozen)
+        self._adj_cache: dict[int, np.ndarray] = {}    # row-normalized kNN adjacency per slide
+        self._feat_cache: dict[int, np.ndarray] = {}   # joint features per slide (for greedy graph)
+
+    # -- shared joint features (also used by the greedy policy) --------------
+    def features(self, slide: Slide) -> np.ndarray:
+        key = id(slide)
+        if key in self._feat_cache:
+            return self._feat_cache[key]
+        Z = self._image_pca(slide)
+        co = slide.region_coords.astype(np.float64)
+        co = (co - co.min(0)) / np.clip(co.max(0) - co.min(0), 1e-9, None)
+        feats = np.concatenate([Z, co], axis=1)
+        self._feat_cache[key] = feats
+        return feats
+
+    def _image_pca(self, slide: Slide) -> np.ndarray:
+        X = slide.image_embeddings.astype(np.float64)
+        X = X - X.mean(0, keepdims=True)
+        d = min(self.pca_dim, X.shape[1], max(1, X.shape[0] - 1))
+        _, _, Vt = np.linalg.svd(X, full_matrices=False)
+        Z = X @ Vt[:d].T
+        return Z / np.clip(Z.std(0, keepdims=True), 1e-8, None)
+
+    def _rff(self, slide: Slide) -> np.ndarray:
+        """PCA(image) -> random Fourier features approximating an RBF kernel (nonlinear backbone).
+        phi(x) = sqrt(2/D) cos(W x + b), W ~ N(0, 2*gamma), b ~ U(0, 2pi). Cached per slide."""
+        key = id(slide)
+        if key in self._phi_cache:
+            return self._phi_cache[key]
+        Z = self._image_pca(slide)
+        d = Z.shape[1]
+        # median-heuristic bandwidth -> gamma = 1/(2 * median_dist^2)
+        rng = np.random.default_rng(self.seed)
+        n = Z.shape[0]
+        idx = rng.choice(n, size=min(500, n), replace=False)
+        S = Z[idx]
+        dd = np.sqrt(np.clip(((S[:, None, :] - S[None, :, :]) ** 2).sum(2), 0, None))
+        med = float(np.median(dd[np.triu_indices(len(idx), k=1)])) or 1.0
+        gamma = 1.0 / (2.0 * med ** 2)
+        W = rng.normal(0.0, np.sqrt(2.0 * gamma), size=(self.rff_dim, d))
+        b = rng.uniform(0.0, 2.0 * np.pi, size=self.rff_dim)
+        phi = np.sqrt(2.0 / self.rff_dim) * np.cos(Z @ W.T + b)
+        self._phi_cache[key] = phi
+        return phi
+
+    def _adjacency(self, slide: Slide) -> np.ndarray:
+        """Fixed row-normalized kNN adjacency on joint features (data-INDEPENDENT graph; only the
+        clamping is data-dependent). Symmetrized then row-normalized to a diffusion operator."""
+        key = id(slide)
+        if key in self._adj_cache:
+            return self._adj_cache[key]
+        F = self.features(slide)
+        R = F.shape[0]
+        k = int(min(self.graph_k, R - 1))
+        d = ((F[:, None, :] - F[None, :, :]) ** 2).sum(2)
+        np.fill_diagonal(d, np.inf)
+        nn = np.argsort(d, axis=1)[:, :k]
+        A = np.zeros((R, R), dtype=np.float64)
+        rows = np.repeat(np.arange(R), k)
+        A[rows, nn.ravel()] = 1.0
+        A = np.maximum(A, A.T)                       # symmetrize
+        A = A / np.clip(A.sum(1, keepdims=True), 1e-12, None)   # row-normalize -> diffusion op
+        self._adj_cache[key] = A
+        return A
+
+    def _fit_predict(self, state: AcquisitionState):
+        prof, unpro = state.profiled, state.unprofiled
+        Y = state.slide.expression.astype(np.float64)
+        G = Y.shape[1]
+        if prof.size == 0:
+            return np.zeros((unpro.size, G)), np.zeros(unpro.size)
+        phi = self._rff(state.slide)
+        A = self._adjacency(state.slide)
+        # (1) nonlinear ridge image->expr on profiled (closed form): W = (P^T P + aI)^-1 P^T Y
+        Pp = phi[prof]
+        M = Pp.T @ Pp + self.ridge_alpha * np.eye(phi.shape[1])
+        Wt = np.linalg.solve(M, Pp.T @ Y[prof])
+        prior = phi @ Wt                              # (R, G) image-based prior for all regions
+        # (2) iterative graph refinement, clamping measured regions to truth (Dirichlet boundary)
+        x = prior.copy()
+        x[prof] = Y[prof]
+        s = self.step_size
+        for _ in range(self.steps):
+            x = (1.0 - s) * x + s * (A @ x)
+            x[prof] = Y[prof]                         # re-clamp measured every step
+        pred = x[unpro]
+        # (3) data-dependent uncertainty = 1 - graph influence of clamped nodes
+        infl = np.zeros(A.shape[0]); infl[prof] = 1.0
+        for _ in range(self.steps):
+            infl = (1.0 - s) * infl + s * (A @ infl)
+            infl[prof] = 1.0
+        unc = np.clip(1.0 - infl[unpro], 0.0, None)
+        return pred, unc
+
+    def impute(self, state: AcquisitionState) -> np.ndarray:
+        return self._fit_predict(state)[0]
+
+    def uncertainty(self, state: AcquisitionState) -> np.ndarray:
+        return self._fit_predict(state)[1]
+
+
 def build_imputer(name: str = config.IMPUTER) -> BaseImputer:
     if name == "knn":
         return KNNImputer()
     if name == "kriging":
         return LearnedKrigingImputer()
-    if name in ("stflow", "spaim"):
+    if name in ("graphflow", "stflow"):     # STFlow-class strong imputer (iteration 3)
+        return GraphFlowImputer()
+    if name == "spaim":
         raise NotImplementedError(f"{name} wrapper is a further upgrade (WS-B scale step)")
     raise ValueError(f"unknown imputer '{name}'")

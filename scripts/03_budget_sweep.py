@@ -82,7 +82,13 @@ POLICIES = {
     "oneshot_spatialfinder": ("oneshot",   {}, False),   # SpatialFinder-style competitor
     "var_greedy":            ("var_greedy", {}, False),   # Krause non-adaptive (variance)
     "mi_greedy":             ("mi_greedy",  {}, False),   # Krause non-adaptive (MI) — principled opponent
-    "ours_closed_loop":      ("greedy_ig", {}, False),    # ours (closed-loop, adaptive)
+    "ours_closed_loop":      ("greedy_ig", {}, False),    # ours (closed-loop, error-reduction)
+    # ADAPTIVE placement: pick argmax imputer-uncertainty, RECOMPUTED after each reveal. This is the
+    # theoretically-clean ADAPTIVE twin of var_greedy (Krause): if it cannot beat its non-adaptive
+    # counterpart even under a data-dependent imputer (graphflow), the adaptivity gap is truly ~0
+    # and the negative result cannot be blamed on our greedy being a weak policy.
+    "adaptive_uncertainty":  ("greedy_ig", {"criterion": "uncertainty",
+                                            "use_image": False, "use_spatial": False}, False),
     "ablate_no_measured":    ("greedy_ig", {"use_measured": False}, False),
 }
 
@@ -131,6 +137,7 @@ def run_one_imputer(imputer_name: str, tissue: str, slides, budgets):
         b = f"{bf:.3f}"
         def val(n): return results.get(n, {}).get(b, {}).get("pcc_top50")
         ours, mi, rand, nomeas = val("ours_closed_loop"), val("mi_greedy"), val("random"), val("ablate_no_measured")
+        adapt, varg = val("adaptive_uncertainty"), val("var_greedy")
         v = {}
         if ours is not None and mi is not None:
             v["beats_mi_greedy"] = bool(ours > mi); v["ours_minus_mi"] = round(ours - mi, 4)
@@ -138,10 +145,13 @@ def run_one_imputer(imputer_name: str, tissue: str, slides, budgets):
             v["beats_random"] = bool(ours > rand)
         if ours is not None and nomeas is not None:
             v["closed_loop_helps"] = bool(ours > nomeas); v["closed_minus_nomeasured"] = round(ours - nomeas, 4)
+        # clean adaptivity-gap probe: adaptive max-uncertainty vs its non-adaptive twin (var_greedy)
+        if adapt is not None and varg is not None:
+            v["adaptivity_gap"] = round(adapt - varg, 4); v["adaptive_beats_nonadaptive"] = bool(adapt > varg)
         verdicts[b] = v
         log(f"  budget {b}: beats_mi_greedy={v.get('beats_mi_greedy')} (d={v.get('ours_minus_mi')}) | "
             f"closed_loop_helps={v.get('closed_loop_helps')} (d={v.get('closed_minus_nomeasured')}) | "
-            f"beats_random={v.get('beats_random')}")
+            f"adaptivity_gap={v.get('adaptivity_gap')} | beats_random={v.get('beats_random')}")
     core_pass = [b for b, v in verdicts.items() if v.get("beats_mi_greedy") and v.get("closed_loop_helps")]
     log(f"\n[{imputer_name}] CORE-PASS budgets (beat MI-greedy AND closed loop helps): {core_pass or 'NONE'}")
     flush(extra={"verdicts": verdicts, "core_pass_budgets": core_pass})
