@@ -6,7 +6,7 @@ Tissue **prostate** · sample-derived regions **2249** · encoder **uni2h** · b
 
 ## Headline
 
-**Across every imputer tested (knn, kriging) and every budget, no closed-loop policy beats the non-adaptive MI-greedy placement, conditioning on measured expression never improves reconstruction (closed-loop-helps = False everywhere), and adaptive placement never beats its non-adaptive twin. Adaptivity provides no measurable gain — consistent with fixed-kernel sensor-placement theory [Krause et al., 2008].** _(pending: graphflow)_
+**Mixed result across (knn, kriging, graphflow): some budget passes the core gate (closed loop beats MI-greedy AND helps); closed-loop-helps is True in ≥1 cell; adaptive placement beats its non-adaptive twin in ≥1 cell. Inspect the tables below before claiming a negative result.**
 
 ## Table 1 — PCC-top50 by policy × budget (per imputer)
 
@@ -22,7 +22,7 @@ Best value per budget column in **bold** (ablation excluded from the bold pick).
 | One-shot (SpatialFinder-style) | 0.012 | 0.030 | -0.029 | 0.353 | 0.740 | 0.822 |
 | Variance-greedy [Krause, non-adaptive] | 0.366 | 0.648 | **0.823** | 0.856 | **0.873** | **0.886** |
 | MI-greedy [Krause, non-adaptive] ★ | 0.319 | 0.731 | 0.810 | 0.851 | 0.867 | 0.877 |
-| Adaptive-uncertainty (ours, closed-loop) | — | — | — | — | — | — |
+| Adaptive-uncertainty (ours, closed-loop) | 0.109 | 0.440 | 0.753 | 0.789 | 0.834 | 0.812 |
 | Error-reduction (ours, closed-loop) | 0.109 | 0.510 | 0.791 | 0.810 | 0.813 | 0.781 |
 | └ ablation: measured signal OFF | 0.347 | 0.601 | 0.804 | 0.852 | 0.872 | 0.885 |
 
@@ -36,13 +36,23 @@ Best value per budget column in **bold** (ablation excluded from the bold pick).
 | One-shot (SpatialFinder-style) | -0.019 | -0.007 | -0.004 | 0.143 | 0.451 | 0.680 |
 | Variance-greedy [Krause, non-adaptive] | 0.082 | 0.205 | 0.354 | 0.608 | 0.693 | 0.687 |
 | MI-greedy [Krause, non-adaptive] ★ | 0.241 | 0.409 | 0.473 | **0.649** | **0.803** | **0.856** |
-| Adaptive-uncertainty (ours, closed-loop) | — | — | — | — | — | — |
+| Adaptive-uncertainty (ours, closed-loop) | -0.025 | -0.026 | 0.002 | 0.322 | 0.525 | 0.416 |
 | Error-reduction (ours, closed-loop) | -0.026 | 0.009 | 0.007 | 0.198 | 0.358 | 0.676 |
 | └ ablation: measured signal OFF | 0.079 | 0.124 | 0.314 | 0.507 | 0.700 | 0.787 |
 
 ### graphflow — GraphFlow (STFlow-class: nonlinear + spatial message passing)
 
-> **PENDING** — `results/sweep_prostate_graphflow.json` not present yet. Run the sweep on the 4070; this section auto-fills on next `git pull`.
+| Policy | 0.5% | 1% | 2% | 5% | 10% | 20% |
+|---|---|---|---|---|---|---|
+| Random (floor) | 0.479 ±0.079 | 0.577 ±0.094 | 0.709 ±0.052 | 0.819 ±0.005 | 0.851 ±0.005 | 0.871 ±0.002 |
+| Grid | 0.450 | 0.628 | 0.735 | 0.810 | 0.851 | 0.875 |
+| k-means (image) | **0.569** | **0.688** | **0.797** | 0.841 | 0.863 | 0.878 |
+| One-shot (SpatialFinder-style) | -0.080 | -0.068 | -0.020 | 0.096 | 0.494 | 0.748 |
+| Variance-greedy [Krause, non-adaptive] | 0.254 | 0.515 | 0.667 | 0.792 | 0.825 | 0.862 |
+| MI-greedy [Krause, non-adaptive] ★ | 0.451 | 0.675 | 0.796 | 0.846 | 0.866 | 0.874 |
+| Adaptive-uncertainty (ours, closed-loop) | 0.320 | 0.560 | 0.731 | 0.841 | 0.865 | 0.877 |
+| Error-reduction (ours, closed-loop) | 0.368 | 0.568 | 0.758 | **0.849** | **0.869** | **0.879** |
+| └ ablation: measured signal OFF | 0.214 | 0.389 | 0.619 | 0.757 | 0.838 | 0.877 |
 
 ## Table 2 — Verdicts by imputer × budget
 
@@ -50,12 +60,12 @@ Best value per budget column in **bold** (ablation excluded from the bold pick).
 
 | Budget | beats MI-greedy? | closed-loop helps? | adaptivity gap (adaptive−var) |
 |---|---|---|---|
-| 0.5% | no (-0.2105) | no (-0.2378) | — |
-| 1% | no (-0.2213) | no (-0.0904) | — |
-| 2% | no (-0.0189) | no (-0.0122) | — |
-| 5% | no (-0.0412) | no (-0.0423) | — |
-| 10% | no (-0.0541) | no (-0.0593) | — |
-| 20% | no (-0.0968) | no (-0.1048) | — |
+| 0.5% | no (-0.2105) | no (-0.2378) | -0.257 |
+| 1% | no (-0.2213) | no (-0.0904) | -0.2079 |
+| 2% | no (-0.0189) | no (-0.0122) | -0.0702 |
+| 5% | no (-0.0412) | no (-0.0423) | -0.0672 |
+| 10% | no (-0.0541) | no (-0.0593) | -0.0389 |
+| 20% | no (-0.0968) | no (-0.1048) | -0.0746 |
 
 _core-pass budgets (beat MI-greedy AND closed-loop-helps): NONE_
 
@@ -63,18 +73,27 @@ _core-pass budgets (beat MI-greedy AND closed-loop-helps): NONE_
 
 | Budget | beats MI-greedy? | closed-loop helps? | adaptivity gap (adaptive−var) |
 |---|---|---|---|
-| 0.5% | no (-0.267) | no (-0.1048) | — |
-| 1% | no (-0.4003) | no (-0.1156) | — |
-| 2% | no (-0.4663) | no (-0.3068) | — |
-| 5% | no (-0.4511) | no (-0.3084) | — |
-| 10% | no (-0.445) | no (-0.3418) | — |
-| 20% | no (-0.1797) | no (-0.1106) | — |
+| 0.5% | no (-0.267) | no (-0.1048) | -0.1072 |
+| 1% | no (-0.4003) | no (-0.1156) | -0.231 |
+| 2% | no (-0.4663) | no (-0.3068) | -0.3525 |
+| 5% | no (-0.4511) | no (-0.3084) | -0.2857 |
+| 10% | no (-0.445) | no (-0.3418) | -0.1676 |
+| 20% | no (-0.1797) | no (-0.1106) | -0.2708 |
 
 _core-pass budgets (beat MI-greedy AND closed-loop-helps): NONE_
 
 ### graphflow
 
-> PENDING.
+| Budget | beats MI-greedy? | closed-loop helps? | adaptivity gap (adaptive−var) |
+|---|---|---|---|
+| 0.5% | no (-0.0825) | yes (+0.1544) | +0.0656 |
+| 1% | no (-0.1073) | yes (+0.1788) | +0.0456 |
+| 2% | no (-0.0376) | yes (+0.1385) | +0.0636 |
+| 5% | yes (+0.0022) | yes (+0.0915) | +0.0491 |
+| 10% | yes (+0.0033) | yes (+0.0308) | +0.0396 |
+| 20% | yes (+0.0056) | yes (+0.0023) | +0.0148 |
+
+_core-pass budgets (beat MI-greedy AND closed-loop-helps): ['0.050', '0.100', '0.200']_
 
 ## Table 3 — PCC-mean (full transcriptome, secondary) by policy × budget
 
@@ -88,7 +107,7 @@ _core-pass budgets (beat MI-greedy AND closed-loop-helps): NONE_
 | One-shot (SpatialFinder-style) | 0.009 | 0.005 | -0.008 | 0.038 | 0.221 | 0.350 |
 | Variance-greedy [Krause, non-adaptive] | 0.119 | 0.251 | 0.355 | 0.398 | 0.412 | **0.422** |
 | MI-greedy [Krause, non-adaptive] ★ | 0.115 | **0.337** | **0.384** | 0.401 | 0.407 | 0.416 |
-| Adaptive-uncertainty (ours, closed-loop) | — | — | — | — | — | — |
+| Adaptive-uncertainty (ours, closed-loop) | 0.047 | 0.193 | 0.304 | 0.336 | 0.375 | 0.365 |
 | Error-reduction (ours, closed-loop) | 0.047 | 0.234 | 0.347 | 0.360 | 0.372 | 0.334 |
 | └ ablation: measured signal OFF | 0.084 | 0.141 | 0.319 | 0.380 | 0.406 | 0.421 |
 
@@ -102,10 +121,20 @@ _core-pass budgets (beat MI-greedy AND closed-loop-helps): NONE_
 | One-shot (SpatialFinder-style) | 0.009 | 0.011 | 0.008 | 0.022 | 0.131 | 0.302 |
 | Variance-greedy [Krause, non-adaptive] | 0.028 | 0.082 | 0.131 | 0.246 | 0.298 | 0.332 |
 | MI-greedy [Krause, non-adaptive] ★ | 0.117 | 0.183 | **0.194** | **0.260** | **0.337** | **0.384** |
-| Adaptive-uncertainty (ours, closed-loop) | — | — | — | — | — | — |
+| Adaptive-uncertainty (ours, closed-loop) | -0.000 | -0.001 | 0.001 | 0.110 | 0.180 | 0.145 |
 | Error-reduction (ours, closed-loop) | -0.001 | -0.005 | -0.004 | 0.058 | 0.115 | 0.301 |
 | └ ablation: measured signal OFF | 0.019 | 0.031 | 0.098 | 0.179 | 0.284 | 0.341 |
 
 ### graphflow
 
-> PENDING.
+| Policy | 0.5% | 1% | 2% | 5% | 10% | 20% |
+|---|---|---|---|---|---|---|
+| Random (floor) | 0.186 ±0.026 | 0.206 ±0.049 | 0.273 ±0.039 | 0.362 ±0.006 | 0.395 ±0.004 | 0.418 ±0.002 |
+| Grid | 0.142 | 0.234 | 0.287 | 0.355 | 0.396 | 0.420 |
+| k-means (image) | **0.198** | 0.270 | 0.322 | 0.368 | **0.402** | 0.420 |
+| One-shot (SpatialFinder-style) | -0.011 | -0.011 | 0.008 | 0.018 | 0.162 | 0.315 |
+| Variance-greedy [Krause, non-adaptive] | 0.089 | 0.186 | 0.240 | 0.331 | 0.374 | 0.414 |
+| MI-greedy [Krause, non-adaptive] ★ | 0.181 | **0.278** | **0.340** | **0.375** | 0.401 | 0.418 |
+| Adaptive-uncertainty (ours, closed-loop) | 0.122 | 0.204 | 0.271 | 0.365 | 0.402 | **0.423** |
+| Error-reduction (ours, closed-loop) | 0.147 | 0.206 | 0.281 | 0.361 | 0.399 | 0.420 |
+| └ ablation: measured signal OFF | 0.048 | 0.113 | 0.213 | 0.300 | 0.371 | 0.417 |
