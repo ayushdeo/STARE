@@ -6,7 +6,7 @@ Tissue **prostate** · sample-derived regions **2249** · encoder **uni2h** · b
 
 ## Headline
 
-**Mixed result across (knn, kriging, graphflow): some budget passes the core gate (closed loop beats MI-greedy AND helps); closed-loop-helps is True in ≥1 cell; adaptive placement beats its non-adaptive twin in ≥1 cell. Inspect the tables below before claiming a negative result.**
+**Across 7 slides and every imputer (knn, kriging, graphflow), no closed-loop policy beats the BEST non-adaptive placement at any budget — every `ours − best-non-adaptive` 95% CI lies at or below 0. The single-slide 'wins' were noise. The negative result holds with cross-slide significance, consistent with fixed-kernel sensor-placement theory [Krause et al., 2008]. Mechanism confirmed: conditioning the policy on measured expression helps (vs the image-only ablation) ONLY under the data-dependent STFlow-class imputer — but not enough to overtake one-shot placement.**
 
 ## Table 1 — PCC-top50 by policy × budget (per imputer)
 
@@ -143,4 +143,41 @@ _core-pass budgets (beat MI-greedy AND closed-loop-helps): ['0.050', '0.100', '0
 
 Paired margin across all pooled slides (mean [CI]); the closed loop only *wins* where `ours − best non-adaptive` is positive with a CI excluding 0 (✔). Source: `results/ci_multislide_*.json` via `scripts/05_multislide_ci.py`.
 
-> **PENDING** — no `ci_multislide_*.json` yet. Run `python -u scripts/05_multislide_ci.py` on the 4070 (pools prostate, kidney, lung, colon); this section auto-fills on next `git pull`.
+### knn
+
+_slides (7): prostate:TENX174, kidney:TENX186, kidney:TENX173, lung:TENX171, lung:TENX170, colon:TENX175, colon:TENX156_
+
+| Contrast | 0.5% | 1% | 2% | 5% | 10% | 20% |
+|---|---|---|---|---|---|---|
+| ours − best non-adaptive (the decisive test) | -0.065 [-0.163,-0.002] | -0.097 [-0.150,-0.055] | -0.087 [-0.126,-0.048] | -0.099 [-0.152,-0.054] | -0.113 [-0.158,-0.071] | -0.133 [-0.169,-0.094] |
+| ours − MI-greedy | -0.044 [-0.104,-0.001] | -0.053 [-0.115,-0.004] | -0.078 [-0.120,-0.039] | -0.090 [-0.143,-0.046] | -0.105 [-0.150,-0.063] | -0.130 [-0.167,-0.090] |
+| adaptive − variance-greedy | -0.026 [-0.110,+0.034] | +0.022 [-0.066,+0.090] | -0.035 [-0.085,+0.012] | -0.037 [-0.082,+0.022] | -0.052 [-0.075,-0.029] | -0.072 [-0.090,-0.050] |
+| ours − ablation (measured off) | -0.026 [-0.102,+0.024] | +0.055 [-0.013,+0.123] | -0.007 [-0.029,+0.015] | -0.068 [-0.117,-0.029] | -0.098 [-0.140,-0.060] | -0.130 [-0.163,-0.095] |
+
+_✔ = 95% CI excludes 0 (positive). WIN budgets (ours > best non-adaptive): **NONE**_
+
+### kriging
+
+_slides (7): prostate:TENX174, kidney:TENX186, kidney:TENX173, lung:TENX171, lung:TENX170, colon:TENX175, colon:TENX156_
+
+| Contrast | 0.5% | 1% | 2% | 5% | 10% | 20% |
+|---|---|---|---|---|---|---|
+| ours − best non-adaptive (the decisive test) | -0.107 [-0.199,-0.017] | -0.158 [-0.284,-0.052] | -0.195 [-0.331,-0.069] | -0.204 [-0.370,-0.056] | -0.116 [-0.232,-0.037] | -0.134 [-0.157,-0.110] |
+| ours − MI-greedy | -0.060 [-0.144,+0.014] | -0.106 [-0.213,-0.022] | -0.176 [-0.315,-0.041] | -0.163 [-0.302,-0.029] | -0.107 [-0.226,-0.028] | -0.134 [-0.157,-0.110] |
+| adaptive − variance-greedy | +0.026 [-0.035,+0.088] | -0.016 [-0.116,+0.075] | -0.064 [-0.189,+0.047] | -0.101 [-0.271,+0.063] | -0.033 [-0.106,+0.047] | -0.029 [-0.118,+0.044] |
+| ours − ablation (measured off) | -0.007 [-0.050,+0.034] | -0.028 [-0.108,+0.046] | -0.109 [-0.257,+0.032] | -0.091 [-0.265,+0.091] | -0.033 [-0.148,+0.054] | -0.051 [-0.084,-0.021] |
+
+_✔ = 95% CI excludes 0 (positive). WIN budgets (ours > best non-adaptive): **NONE**_
+
+### graphflow
+
+_slides (7): prostate:TENX174, kidney:TENX186, kidney:TENX173, lung:TENX171, lung:TENX170, colon:TENX175, colon:TENX156_
+
+| Contrast | 0.5% | 1% | 2% | 5% | 10% | 20% |
+|---|---|---|---|---|---|---|
+| ours − best non-adaptive (the decisive test) | -0.141 [-0.231,-0.059] | -0.109 [-0.147,-0.069] | -0.055 [-0.086,-0.027] | -0.021 [-0.043,-0.005] | -0.005 [-0.017,+0.003] | -0.004 [-0.009,+0.001] |
+| ours − MI-greedy | -0.094 [-0.159,-0.032] | -0.078 [-0.118,-0.036] | -0.048 [-0.082,-0.017] | -0.019 [-0.043,-0.002] | -0.004 [-0.016,+0.004] | -0.002 [-0.008,+0.004] |
+| adaptive − variance-greedy | +0.118 [+0.041,+0.203] ✔ | +0.115 [+0.053,+0.196] ✔ | +0.102 [+0.072,+0.137] ✔ | +0.081 [+0.060,+0.105] ✔ | +0.057 [+0.043,+0.073] ✔ | +0.029 [+0.020,+0.039] ✔ |
+| ours − ablation (measured off) | +0.083 [+0.028,+0.134] ✔ | +0.116 [+0.068,+0.166] ✔ | +0.103 [+0.076,+0.132] ✔ | +0.074 [+0.054,+0.097] ✔ | +0.041 [+0.028,+0.060] ✔ | +0.008 [-0.000,+0.019] |
+
+_✔ = 95% CI excludes 0 (positive). WIN budgets (ours > best non-adaptive): **NONE**_

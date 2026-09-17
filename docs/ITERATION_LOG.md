@@ -74,7 +74,26 @@ greedy heuristics on a kNN imputer is futile; the theory says so.
   (src/stare/stats.py, verified in tests/test_ci.py). Runner: scripts/05_multislide_ci.py.
 - **Pre-registered decision rule:** a closed-loop WIN requires `ours - best_non_adaptive` mean > 0
   with 95% CI excluding 0 at ≥1 budget. If every CI straddles 0 -> negative result stands with
-  cross-slide evidence; the paper is the theory-backed characterization. Result: _pending 4070 run._
+  cross-slide evidence; the paper is the theory-backed characterization.
+- **RESULT [OURS: results/ci_multislide_*.json @ 8f26d06, 7 slides prostate+kidney+lung+colon]:**
+  **WIN budgets = NONE, for all three imputers.** `ours - best_non_adaptive` is negative at EVERY
+  budget under every imputer; the CI excludes 0 (on the negative side) in most cells and merely
+  straddles 0 (mean still negative) at graphflow's high budgets (10%: -0.005 [-0.017,+0.003];
+  20%: -0.004 [-0.009,+0.001]). The single-slide graphflow "wins" at 5/10/20% were NOISE — they
+  vanish and go slightly negative across 7 slides. **The negative result holds with cross-slide
+  significance.**
+- **Mechanism confirmed (the interesting part):** `closed_vs_ablate` (ours vs its image-only greedy
+  twin) is significantly POSITIVE only under graphflow (+0.08..+0.12, CI excl 0, up to 7/7 slides at
+  1-5%) and null/negative under kNN & kriging. So conditioning the POLICY on measured expression
+  extracts real, robust signal — but ONLY when the imputer is data-dependent (exactly Krause's
+  precondition), and even then only enough to TIE one-shot placement at high budget, never to beat it,
+  while still LOSING at the low budgets where acquisition matters. The adaptivity gap closes toward 0
+  from below as the imputer strengthens (kNN -0.13 -> kriging -0.13 -> graphflow -0.004 @20%) but
+  never crosses 0.
+- **Verdict: the closed-loop / agentic framing does not earn its complexity.** One-shot placement
+  (k-means / MI-greedy) is near-optimal for reconstruction; adaptivity provides no significant gain
+  at any budget under any imputer we tested, up to the STFlow-class limit. -> Paper = the theory-backed
+  negative characterization (docs/PAPER_OUTLINE.md), now with cross-slide CIs as the key evidence.
 
 ## Fixes owed / experimental-design corrections
 1. Redefine the ablations so they are meaningful under whichever criterion is active (e.g. ablate the
