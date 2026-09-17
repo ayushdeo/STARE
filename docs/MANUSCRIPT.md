@@ -138,10 +138,14 @@ strong graphflow imputer, mutual-information-greedy and k-means placement reach 
 0.587 at 2% budget and 0.682 and 0.679 at 20%, essentially matching the per-slide best non-adaptive
 value (0.595 and 0.684); the closed-loop policy reaches 0.540 and 0.681. The one-shot diversity ranker
 [SF] is the lone weak non-adaptive method (near-zero PCC at low budget), consistent with it optimizing
-for outlier coverage rather than reconstruction; it is never the "best non-adaptive" opponent and does
-not affect the verdict. This matches the theoretical expectation: for reconstructing a spatial field,
-mutual-information placement is submodular and near-optimal, and — for a fixed-kernel posterior — is
-computable offline [Krause08].
+for outlier coverage rather than reconstruction. We stress that our SpatialFinder-style policy is a
+*reimplementation* of the published diversity-ranking idea, not the authors' system, and its near-zero
+low-budget PCC likely reflects an imperfect port rather than the method's intrinsic ceiling; crucially,
+because we take the opponent per slide as the *best* non-adaptive method, this policy is never the
+"best non-adaptive" baseline at any budget, so the verdict does not depend on the fidelity of our port.
+The result matches the theoretical expectation: for reconstructing a spatial field, mutual-information
+placement is submodular and near-optimal, and — for a fixed-kernel posterior — is computable offline
+[Krause08].
 
 **3.3 Mechanism: measured expression helps the policy only when the imputer is data-dependent — and
 not enough.** The negative result is not because measured values are uninformative; it is because
