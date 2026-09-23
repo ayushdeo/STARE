@@ -21,8 +21,7 @@ from stare import config
 RESULTS = Path(config.RESULTS_ROOT)
 OUTDIR = Path("docs/figures"); OUTDIR.mkdir(parents=True, exist_ok=True)
 IMPUTERS = config.SWEEP_IMPUTERS
-LABEL = {"knn": "kNN (stationary)", "kriging": "kriging (learned, linear)",
-         "graphflow": "graphflow (STFlow-class)"}
+LABEL = {"knn": "kNN", "kriging": "kriging", "graphflow": "graphflow"}
 COLOR = {"knn": "#4C72B0", "kriging": "#DD8452", "graphflow": "#55A868"}
 
 
@@ -63,13 +62,13 @@ def main():
     n_sl = len(next(load_ci(i) for i in IMPUTERS if load_ci(i))["slides"])
     fig, axes = plt.subplots(1, 2, figsize=(9.2, 3.8))
     panel(axes[0], "ours_vs_best_nonadapt",
-          "(a) Adaptivity gap: closed-loop − best non-adaptive",
-          r"$\Delta$ PCC-top50  (ours − best non-adaptive)")
+          "(a) Adaptive acquisition − best non-adaptive baseline",
+          r"$\Delta$ PCC  (adaptive − best non-adaptive)")
     panel(axes[1], "closed_vs_ablate",
-          "(b) Mechanism: measured signal's value",
-          r"$\Delta$ PCC-top50  (ours − image-only ablation)")
+          "(b) Error-reduction policy − image-only ablation",
+          r"$\Delta$ PCC  (adaptive − image-only)")
     axes[0].legend(fontsize=8, loc="lower right", framealpha=0.9)
-    fig.suptitle(f"Adaptivity provides no reconstruction gain ({n_sl} slides, mean ± 95% CI)",
+    fig.suptitle(f"Adaptive acquisition vs. non-adaptive placement ({n_sl} slides, mean $\\pm$ 95% CI)",
                  fontsize=11, y=1.02)
     fig.tight_layout()
     png = OUTDIR / "figure1_adaptivity_gap.png"

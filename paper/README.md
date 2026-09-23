@@ -1,8 +1,8 @@
 # paper/ — arXiv-ready manuscript (NeurIPS style)
 
-Source for *Adaptivity Without Reward: A Negative Result for Closed-Loop Region Acquisition in Spatial
-Transcriptomics*, formatted with the NeurIPS style in **preprint** mode (author names shown, no line
-numbers, no "Submitted to…" banner) — ready for arXiv.
+Source for *Evaluating Adaptive Region Acquisition for Spatial Transcriptomics Reconstruction*,
+formatted with the NeurIPS style in **preprint** mode (author name shown, no line numbers, no
+"Submitted to…" banner), ready for arXiv.
 
 ## Files (all four go in the arXiv tarball)
 - `manuscript.tex` — the paper (§1–§8 + Appendix A).
