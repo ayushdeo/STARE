@@ -1,26 +1,35 @@
-\documentclass[11pt]{article}
+\documentclass{article}
 
-% --- packages (all standard; compiles on arXiv / Overleaf) ------------------
-\usepackage[margin=1in]{geometry}
+% NeurIPS style, preprint (arXiv) mode. nonatbib lets us load natbib with numeric citations.
+\usepackage[preprint,nonatbib]{neurips_2023}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[numbers,sort&compress]{natbib}
 \usepackage{amsmath,amssymb}
 \usepackage{graphicx}
 \usepackage{booktabs}
 \usepackage{microtype}
-\usepackage[numbers,sort&compress]{natbib}
-\usepackage[colorlinks=true,allcolors=blue]{hyperref}
-\usepackage{authblk}
+\usepackage{xcolor}
+\definecolor{linkblue}{rgb}{0.0,0.0,0.6}
+\usepackage{hyperref}
+\hypersetup{colorlinks=true,allcolors=linkblue}
 
 \graphicspath{{./}}
-\newcommand{\dpcc}{\ensuremath{\Delta\text{PCC-top50}}}
 
-\title{\textbf{Adaptivity Without Reward: A Negative Result for\\
-Closed-Loop Region Acquisition in Spatial Transcriptomics}}
+\title{Adaptivity Without Reward: A Negative Result for\\
+Closed-Loop Region Acquisition in Spatial Transcriptomics}
 
-\author[]{Ayush Deo}
-\author[]{Vrundan Sojitra}
-\author[]{Sanjana Pathi}
-\affil[]{University of Southern California}
-\date{}
+\author{%
+  Ayush Deo \\
+  University of Southern California \\
+  \And
+  Vrundan Sojitra \\
+  University of Southern California \\
+  \And
+  Sanjana Pathi \\
+  University of Southern California \\
+}
 
 \begin{document}
 \maketitle
@@ -132,6 +141,8 @@ seed-to-seed standard deviation, and the seven-slide bootstrap confirms they wer
 \caption{Paired margin $\mathrm{ours}-\mathrm{best\text{-}non\text{-}adaptive}$ (PCC-top50, mean [95\% CI],
 7 slides). Negative favors non-adaptive placement. No cell is positive with a CI excluding zero.}
 \label{tab:margins}
+\small
+\setlength{\tabcolsep}{4pt}
 \begin{tabular}{lccc}
 \toprule
 Budget & kNN & kriging & graphflow (STFlow-class) \\
