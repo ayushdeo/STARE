@@ -371,7 +371,7 @@ $\{0,1,2,3,4\}$; the other policies are deterministic. The global seed is 2021. 
 intervals use a percentile bootstrap with 5000 resamples ($\alpha=0.05$, seed 2021) and an exact
 two-sided sign test.
 
-\begin{table}[h]
+\begin{table}[htbp]
 \centering
 \caption{Data, evaluation, and encoder settings.}
 \label{tab:cfg-data}
@@ -393,7 +393,7 @@ Primary metric & PCC (top-50) & per-gene Pearson over unprofiled regions, top-50
 \end{tabular}
 \end{table}
 
-\begin{table}[h]
+\begin{table}[htbp]
 \centering
 \caption{Imputer hyperparameters (fixed, shared across policies).}
 \label{tab:cfg-imputer}
@@ -418,7 +418,7 @@ graphflow & image PCA dim            & 64 \\
 \end{tabular}
 \end{table}
 
-\begin{table}[h]
+\begin{table}[htbp]
 \centering
 \caption{Policy hyperparameters. Placement baselines use an RBF kernel on joint image-and-coordinate
 features with a median-heuristic lengthscale.}
@@ -436,7 +436,7 @@ random                 & seeds             & $\{0,1,2,3,4\}$ \\
 \end{tabular}
 \end{table}
 
-\begin{table}[h]
+\begin{table}[htbp]
 \centering
 \caption{Slides used (HEST-1k Visium HD sample IDs), 7 slides across 4 tissues.}
 \label{tab:cfg-slides}
@@ -452,6 +452,7 @@ colon    & TENX175, TENX156 \\
 \end{tabular}
 \end{table}
 
+\clearpage
 \bibliographystyle{plainnat}
 \bibliography{references}
 
