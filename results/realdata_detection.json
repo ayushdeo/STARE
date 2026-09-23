@@ -1,0 +1,261 @@
+{
+  "imputer": "graphflow",
+  "slides": [
+    "prostate:TENX174",
+    "kidney:TENX186",
+    "kidney:TENX173",
+    "lung:TENX171",
+    "lung:TENX170",
+    "colon:TENX175",
+    "colon:TENX156"
+  ],
+  "budgets": [
+    0.02,
+    0.05,
+    0.1,
+    0.2
+  ],
+  "roi_quantile": 0.8,
+  "rows": {
+    "0.02": {
+      "reconstruction_pcc_means": {
+        "kmeans": 0.5868805739816302,
+        "grid": 0.5076579052534703,
+        "mi_greedy": 0.58830334941795,
+        "value_greedy": 0.5147942458789663,
+        "oracle": 0.4244818979297748
+      },
+      "detection_recall_means": {
+        "kmeans": 0.01284810243769174,
+        "grid": 0.018363901303957673,
+        "mi_greedy": 0.014710386095591181,
+        "value_greedy": 0.025225777433162865,
+        "oracle": 0.10021629787828866
+      },
+      "value_greedy_recon_vs_bestcover": {
+        "n_slides": 7,
+        "per_slide": [
+          -0.0866,
+          -0.116,
+          -0.0639,
+          -0.0797,
+          -0.0828,
+          -0.0547,
+          -0.08
+        ],
+        "mean": -0.0805,
+        "median": -0.08,
+        "ci95": [
+          -0.094,
+          -0.0681
+        ],
+        "ci_excludes_zero": true,
+        "n_pos": 0,
+        "n_neg": 7,
+        "sign_p": 0.0156
+      },
+      "value_greedy_detect_vs_bestcover": {
+        "n_slides": 7,
+        "per_slide": [
+          0.0022,
+          0.0059,
+          0.0019,
+          0.006,
+          -0.003,
+          0.01,
+          0.0172
+        ],
+        "mean": 0.0057,
+        "median": 0.0059,
+        "ci95": [
+          0.0016,
+          0.0106
+        ],
+        "ci_excludes_zero": true,
+        "n_pos": 6,
+        "n_neg": 1,
+        "sign_p": 0.125
+      }
+    },
+    "0.05": {
+      "reconstruction_pcc_means": {
+        "kmeans": 0.6370044421658221,
+        "grid": 0.6055437728374454,
+        "mi_greedy": 0.6428794610437256,
+        "value_greedy": 0.5780734544507834,
+        "oracle": 0.5242265067919332
+      },
+      "detection_recall_means": {
+        "kmeans": 0.0438707926136746,
+        "grid": 0.04867696313732055,
+        "mi_greedy": 0.040324208570275445,
+        "value_greedy": 0.06571443294753956,
+        "oracle": 0.24949186333689705
+      },
+      "value_greedy_recon_vs_bestcover": {
+        "n_slides": 7,
+        "per_slide": [
+          -0.082,
+          -0.0697,
+          -0.062,
+          -0.1019,
+          -0.0902,
+          -0.0253,
+          -0.0365
+        ],
+        "mean": -0.0668,
+        "median": -0.0697,
+        "ci95": [
+          -0.0853,
+          -0.0471
+        ],
+        "ci_excludes_zero": true,
+        "n_pos": 0,
+        "n_neg": 7,
+        "sign_p": 0.0156
+      },
+      "value_greedy_detect_vs_bestcover": {
+        "n_slides": 7,
+        "per_slide": [
+          0.0222,
+          -0.0059,
+          0.0206,
+          0.009,
+          -0.0296,
+          0.0348,
+          0.049
+        ],
+        "mean": 0.0143,
+        "median": 0.0206,
+        "ci95": [
+          -0.0043,
+          0.0313
+        ],
+        "ci_excludes_zero": false,
+        "n_pos": 5,
+        "n_neg": 2,
+        "sign_p": 0.4531
+      }
+    },
+    "0.10": {
+      "reconstruction_pcc_means": {
+        "kmeans": 0.655679807500967,
+        "grid": 0.6505356844390876,
+        "mi_greedy": 0.6639765003482447,
+        "value_greedy": 0.6002972208005746,
+        "oracle": 0.575524946614891
+      },
+      "detection_recall_means": {
+        "kmeans": 0.10062553074138729,
+        "grid": 0.10009834328589302,
+        "mi_greedy": 0.08898744599033026,
+        "value_greedy": 0.15360879391954838,
+        "oracle": 0.5000792072870703
+      },
+      "value_greedy_recon_vs_bestcover": {
+        "n_slides": 7,
+        "per_slide": [
+          -0.077,
+          -0.0581,
+          -0.0294,
+          -0.1123,
+          -0.0893,
+          -0.0275,
+          -0.0608
+        ],
+        "mean": -0.0649,
+        "median": -0.0608,
+        "ci95": [
+          -0.0862,
+          -0.0445
+        ],
+        "ci_excludes_zero": true,
+        "n_pos": 0,
+        "n_neg": 7,
+        "sign_p": 0.0156
+      },
+      "value_greedy_detect_vs_bestcover": {
+        "n_slides": 7,
+        "per_slide": [
+          0.06,
+          0.0176,
+          0.0432,
+          0.0507,
+          -0.0355,
+          0.0697,
+          0.1201
+        ],
+        "mean": 0.0465,
+        "median": 0.0507,
+        "ci95": [
+          0.0131,
+          0.0786
+        ],
+        "ci_excludes_zero": true,
+        "n_pos": 6,
+        "n_neg": 1,
+        "sign_p": 0.125
+      }
+    },
+    "0.20": {
+      "reconstruction_pcc_means": {
+        "kmeans": 0.6786256889833998,
+        "grid": 0.6767890410497699,
+        "mi_greedy": 0.6822668985644459,
+        "value_greedy": 0.6099747246629494,
+        "oracle": 0.6238407083373662
+      },
+      "detection_recall_means": {
+        "kmeans": 0.22802474148385854,
+        "grid": 0.19625302056698216,
+        "mi_greedy": 0.19154050638219297,
+        "value_greedy": 0.32386469735205586,
+        "oracle": 0.9992944939169698
+      },
+      "value_greedy_recon_vs_bestcover": {
+        "n_slides": 7,
+        "per_slide": [
+          -0.113,
+          -0.0808,
+          -0.0333,
+          -0.1095,
+          -0.0498,
+          -0.0384,
+          -0.0965
+        ],
+        "mean": -0.0745,
+        "median": -0.0808,
+        "ci95": [
+          -0.0978,
+          -0.0507
+        ],
+        "ci_excludes_zero": true,
+        "n_pos": 0,
+        "n_neg": 7,
+        "sign_p": 0.0156
+      },
+      "value_greedy_detect_vs_bestcover": {
+        "n_slides": 7,
+        "per_slide": [
+          0.0489,
+          0.0206,
+          0.0394,
+          0.1731,
+          -0.0503,
+          0.1517,
+          0.2304
+        ],
+        "mean": 0.0877,
+        "median": 0.0489,
+        "ci95": [
+          0.0201,
+          0.1575
+        ],
+        "ci_excludes_zero": true,
+        "n_pos": 6,
+        "n_neg": 1,
+        "sign_p": 0.125
+      }
+    }
+  }
+}
