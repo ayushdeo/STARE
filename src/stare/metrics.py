@@ -32,6 +32,28 @@ def evaluate(y_true: np.ndarray, y_pred: np.ndarray, hvg_idx: np.ndarray,
     return out
 
 
+def local_heterogeneity(expr: np.ndarray, coords: np.ndarray, hvg_idx: np.ndarray, k: int = 8) -> np.ndarray:
+    """(R,) per-region molecular heterogeneity = variance of top-HVG expression among a region's k
+    spatial nearest neighbours, averaged over genes. Used (from ground truth, for EVALUATION only) to
+    define regions of interest for the detection objective (cf. S2-omics 'molecular heterogeneity')."""
+    Y = np.asarray(expr, dtype=float)[:, hvg_idx]
+    n = coords.shape[0]
+    d = ((coords[:, None, :] - coords[None, :, :]) ** 2).sum(2)
+    np.fill_diagonal(d, np.inf)
+    nn = np.argsort(d, axis=1)[:, :min(k, n - 1)]
+    return Y[nn].var(axis=1).mean(axis=1)
+
+
+def detection_recall(profiled_idx: np.ndarray, roi_mask: np.ndarray) -> float:
+    """Fraction of ROI regions captured by the profiled set (recall @ budget)."""
+    roi_mask = np.asarray(roi_mask, dtype=bool)
+    if roi_mask.sum() == 0:
+        return float("nan")
+    hit = np.zeros(roi_mask.shape[0], dtype=bool)
+    hit[np.asarray(profiled_idx, dtype=int)] = True
+    return float((hit & roi_mask).sum() / roi_mask.sum())
+
+
 def morans_i(values: np.ndarray, coords: np.ndarray, k: int = 6) -> float:
     """Mean Moran's I across genes (spatial-pattern preservation; cf. ReconST).
 
