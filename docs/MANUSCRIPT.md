@@ -86,10 +86,13 @@ the highest-scoring non-adaptive policy on that slide.
 ## 3. Results
 
 ### 3.1 Comparison with non-adaptive placement
-Table 1 reports the paired margin between adaptive acquisition and the best non-adaptive baseline, in PCC
-over the top-50 genes, as the mean and 95% bootstrap confidence interval over the seven slides. Under the
-kNN and kriging imputers, the margin was negative and its confidence interval excluded zero at every
-budget. Under the graphflow imputer, the margin was smaller and its confidence interval included zero at
+Table 1 reports absolute reconstruction accuracy. Both the best non-adaptive baseline and the adaptive
+error-reduction policy reach positive PCC at every budget; at 20% budget, for example, the best
+non-adaptive baseline reaches 0.707 (kNN), 0.667 (kriging), and 0.684 (graphflow), and the adaptive policy
+reaches 0.574, 0.533, and 0.681. Table 2 reports the paired margin between the two, in PCC over the top-50
+genes, as the mean and 95% bootstrap confidence interval over the seven slides. The margin is the
+difference between two positive scores, not a score itself. Under the kNN and kriging imputers, the margin
+was negative and its confidence interval excluded zero at every budget. Under the graphflow imputer, the margin was smaller and its confidence interval included zero at
 the higher budgets: at 10% budget the margin was -0.005 (95% CI -0.017 to +0.003), and at 20% it was
 -0.004 (95% CI -0.009 to +0.001). In no configuration did the margin meet the pre-specified criterion for
 a positive result.
@@ -100,7 +103,21 @@ and 20% budgets. These differences were within the seed-to-seed standard deviati
 (about 0.002 to 0.005 PCC at those budgets), and they did not persist when the analysis was repeated
 across the seven slides.
 
-**Table 1.** Paired margin between adaptive acquisition and the best non-adaptive baseline (PCC over
+**Table 1.** Absolute reconstruction accuracy (PCC over top-50 genes), cross-slide mean over 7 slides,
+for the best non-adaptive baseline (highest-scoring non-adaptive policy per slide) and the adaptive
+error-reduction policy. All values are positive; the differences between the two columns of each imputer
+are the margins in Table 2.
+
+| Budget | kNN non-adapt. | kNN adaptive | kriging non-adapt. | kriging adaptive | graphflow non-adapt. | graphflow adaptive |
+|---|---|---|---|---|---|---|
+| 0.5% | 0.091 | 0.026 | 0.169 | 0.063 | 0.423 | 0.282 |
+| 1%   | 0.503 | 0.406 | 0.247 | 0.089 | 0.521 | 0.412 |
+| 2%   | 0.607 | 0.520 | 0.301 | 0.106 | 0.595 | 0.540 |
+| 5%   | 0.671 | 0.573 | 0.461 | 0.256 | 0.645 | 0.624 |
+| 10%  | 0.693 | 0.579 | 0.562 | 0.445 | 0.665 | 0.660 |
+| 20%  | 0.707 | 0.574 | 0.667 | 0.533 | 0.684 | 0.681 |
+
+**Table 2.** Paired margin between adaptive acquisition and the best non-adaptive baseline (PCC over
 top-50 genes), mean [95% CI] over 7 slides. Negative values indicate lower performance than the best
 non-adaptive baseline.
 
@@ -142,11 +159,11 @@ CI 0.076 to 0.132) at 2%, positive on all seven slides, decreasing to 0.008 (95%
 regions during message passing, whereas the kNN imputer's predictive uncertainty depends only on which
 regions are profiled. The measured values therefore carried information for the acquisition decision only
 under the imputer whose predictions depend on them. This improvement over the image-only ablation was not,
-however, large enough to exceed the non-adaptive baselines (Table 1).
+however, large enough to exceed the non-adaptive baselines (Table 2).
 
 ### 3.4 Effect of imputer choice
 The margin between adaptive acquisition and the best non-adaptive baseline at 20% budget was -0.133 with
-kNN, -0.134 with kriging, and -0.004 with graphflow (Table 1). The margin was closer to zero for the
+kNN, -0.134 with kriging, and -0.004 with graphflow (Table 2). The margin was closer to zero for the
 imputer whose predictions depend most strongly on the measured values. At the budgets and slide count
 studied here, the margin did not reach a statistically significant positive value for any imputer.
 
@@ -167,7 +184,7 @@ which locations have been observed, not on the observed values [Krause08]. Under
 variance-minimizing set of measurement locations can be chosen in advance, and observing the values does
 not change the optimal choice: adaptive and non-adaptive placement have the same optimum. The kNN imputer
 approximates this condition. Its predictive uncertainty is a function of the profiled region locations and
-does not use the measured values. This is consistent with the kNN result in Table 1, where the margin is
+does not use the measured values. This is consistent with the kNN result in Table 2, where the margin is
 negative at every budget and becomes more negative as the budget grows.
 
 When the imputer's predictions depend on the measured values, the adaptive and non-adaptive optima can
