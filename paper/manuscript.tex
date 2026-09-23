@@ -61,7 +61,7 @@ transcriptome one recovers per dollar.
 Because each measurement reveals real expression, it is natural to expect that a \emph{sequential,
 closed-loop} policy---one that conditions the next region on the values measured so far---should
 outperform a \emph{one-shot} rule that commits to all regions up front. This is the ``active feature
-acquisition'' intuition~\citep{afa2020}, and it is the implicit promise of recent ``agentic'' framings
+acquisition'' intuition~\citep{yin2020afa}, and it is the implicit promise of recent ``agentic'' framings
 of experimental design. The deployed incumbents in ST, however, are all non-adaptive: static gene-panel
 selectors~\citep{covert2023persist,reconst2026} and one-shot, diversity-based ROI
 rankers~\citep{spatialfinder2026}. If adaptivity helps, there is an obvious gap to fill; if it does not,
@@ -289,7 +289,7 @@ coverage-optimal placement in our experiments (Section~3.2). Our closed-loop pol
 adaptive extension of this line, and our finding is that the extension does not pay.
 
 \paragraph{Active acquisition and sensor placement.}
-Active feature acquisition frames sequential measurement as a policy-learning problem~\citep{afa2020},
+Active feature acquisition frames sequential measurement as a policy-learning problem~\citep{yin2020afa},
 the adaptive pole of our study. The non-adaptive pole is the Gaussian-process sensor-placement
 literature~\citep{krause2008near}, which gives both the near-optimal baselines (submodular MI placement)
 and the theory (fixed-kernel posteriors make adaptivity worthless) that our results instantiate. Our
@@ -362,6 +362,98 @@ placement, where the accuracy in budget-constrained ST actually lives.
 \paragraph{Reproducibility.}
 Code, pinned configuration, and the scripts that regenerate every table and figure from the result files
 are available at \url{https://github.com/ayushdeo/STARE}.
+
+\appendix
+
+\section{Reproducibility: pinned configuration}
+\label{app:repro}
+
+Every value below is fixed in the released \texttt{config.py}; all scripts import from it so runs are
+deterministic and comparable. Random seeds: the stochastic \emph{random} policy is averaged over seeds
+$\{0,1,2,3,4\}$; all other policies are deterministic. The global seed is 2021. Cross-slide CIs use a
+percentile bootstrap with $B=5000$ resamples ($\alpha=0.05$, seed 2021) and an exact two-sided sign test.
+
+\begin{table}[h]
+\centering
+\caption{Data, evaluation, and encoder settings.}
+\label{tab:cfg-data}
+\begin{tabular}{lll}
+\toprule
+Group & Parameter & Value \\
+\midrule
+Region grid   & side length & 112\,$\mu$m ($=224$\,px @ 20$\times$) \\
+              & Visium HD binning & 8\,$\mu$m bins pooled into regions \\
+Genes         & targets & top-50 HVG per slide (log1p) \\
+              & gene filter & drop genes in $<10\%$ of spots \\
+Encoder       & model & UNI2-h (ViT-H, frozen) \\
+              & embedding dim & 1536 \\
+              & region embedding & mean of patch embeddings, $L_2$-normalized \\
+Budgets       & fractions of regions & $\{0.5, 1, 2, 5, 10, 20\}\%$ \\
+Split         & scheme & patient-stratified (no slide leakage) \\
+Primary metric & PCC-top50 & per-gene Pearson over unprofiled regions, top-50 HVG \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[h]
+\centering
+\caption{Imputer hyperparameters (frozen, shared across all policies).}
+\label{tab:cfg-imputer}
+\begin{tabular}{lll}
+\toprule
+Imputer & Parameter & Value \\
+\midrule
+kNN (stationary)      & neighbours $k$          & 10 \\
+                      & feature space           & joint image+space, $\alpha=0.5$ \\
+                      & distance                & cosine (image) / Euclidean (joint) \\
+\midrule
+kriging (linear)      & image PCA dim           & 64 \\
+                      & ridge $\alpha$          & 10.0 \\
+                      & residual kriging $k$    & 10 \\
+\midrule
+graphflow (STFlow-class) & image PCA dim        & 64 \\
+                      & random Fourier features & 512 (median-heuristic bandwidth) \\
+                      & ridge $\alpha$          & 10.0 \\
+                      & message-passing graph $k$ & 8 \\
+                      & refinement steps        & 20 \\
+                      & step size               & 0.5 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[h]
+\centering
+\caption{Policy hyperparameters. Placement baselines use an RBF kernel on joint PCA-image$+$coordinate
+features with a median-heuristic lengthscale.}
+\label{tab:cfg-policy}
+\begin{tabular}{lll}
+\toprule
+Policy & Parameter & Value \\
+\midrule
+variance-/MI-greedy   & feature PCA dim   & 64 \\
+                      & lengthscale       & median-heuristic (scale 1.0) \\
+                      & kernel noise      & $10^{-2}$ \\
+ours (error-reduction)& neighbourhood $k$ & 15 \\
+random                & seeds             & $\{0,1,2,3,4\}$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[h]
+\centering
+\caption{Slides used (HEST-1k Visium HD sample IDs), 7 slides across 4 tissues.}
+\label{tab:cfg-slides}
+\begin{tabular}{ll}
+\toprule
+Tissue & HEST sample IDs \\
+\midrule
+prostate & TENX174 \\
+kidney   & TENX186, TENX173 \\
+lung     & TENX171, TENX170 \\
+colon    & TENX175, TENX156 \\
+\bottomrule
+\end{tabular}
+\end{table}
 
 \bibliographystyle{plainnat}
 \bibliography{references}
