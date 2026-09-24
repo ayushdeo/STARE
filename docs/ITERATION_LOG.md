@@ -95,6 +95,29 @@ greedy heuristics on a kNN imputer is futile; the theory says so.
   at any budget under any imputer we tested, up to the STFlow-class limit. -> Paper = the theory-backed
   negative characterization (docs/PAPER_OUTLINE.md), now with cross-slide CIs as the key evidence.
 
+## Iteration 4 — reviewer response: reconstruction-vs-detection split  [OURS, 2026-09-24]
+Reviewer (weak reject) correctly flagged: (a) missing adaptive prior work (SOFisher Nat Commun 2026,
+SCR2-ST MIDL 2026, S2-omics Nat Cell Biol 2025 — all verified real); (b) our "closed-loop" selection
+was not actually value-conditioned (graphflow uncertainty = 1-influence is location-only) and the
+ablation swapped the whole rule; (c) no positive control; (d) oracle comparator; (e) n=7; (f) one metric.
+- Fix (b): added `value_greedy` — selection score s(i|A_t,y_{A_t},X) = local measured VARIANCE + coverage,
+  explicitly using measured values.
+- Positive control (07): synthetic reconstructability sweep with an ORACLE upper bound. **Even the oracle
+  never beats coverage on reconstruction (PCC or MSE), at any structure length.** Whole-slide
+  reconstruction is intrinsically near-insensitive to acquisition adaptivity.
+- Detection control (08): same slides, ROI-recall objective. **value_greedy and oracle DO beat coverage**
+  once ROI signal is strong (value_greedy +0.10 recall @alpha=8, oracle 0.449 vs cover 0.121). Proves the
+  simulator is not degenerate — it expresses adaptivity for DETECTION.
+- **Real HEST data (09, graphflow, 7 slides, ROI = top-20% molecular heterogeneity):** the split HOLDS.
+  * RECONSTRUCTION: value_greedy - best coverage = **-0.081/-0.067/-0.065/-0.074** at 2/5/10/20% (all CI
+    excl 0). Adaptivity significantly WORSE (value_greedy 0.61 vs coverage 0.68 @20%).
+  * DETECTION: value_greedy - best coverage = **+0.006/+0.014/+0.046/+0.088** at 2/5/10/20% (CI excl 0 at
+    2,10,20%). Oracle recall 0.100->0.999 vs coverage 0.018->0.228. Adaptivity significantly BETTER.
+- **New claim (replaces the flat negative):** adaptive spatial-omics acquisition helps ROI DETECTION
+  (SOFisher/S2-omics objective) but not whole-slide RECONSTRUCTION; the two objectives were conflated,
+  and prior positive results and our negative result are both correct under their own objective. Evidence:
+  results/{positive_control,detection_control,realdata_detection}.json + figures 2/3.
+
 ## Fixes owed / experimental-design corrections
 1. Redefine the ablations so they are meaningful under whichever criterion is active (e.g. ablate the
    spatial vs image component of the imputer's feature space, and ablate measured-vs-not at the policy).
