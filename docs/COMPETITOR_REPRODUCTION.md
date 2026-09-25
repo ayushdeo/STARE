@@ -33,42 +33,62 @@ numbers.
 
 ---
 
-## Level 2 — native reproduction (heavier; the authors' own code + data)
+## Level 2 — native reproduction (the authors' own code + data)
 
-Reproduces each paper's reported metric to confirm the objective they optimize. Run in separate conda
-envs so their deps do not collide with STARE.
+Run each repo AS THE AUTHORS RUN IT — their scripts, their data, their metric, their default
+hyperparameters. Do not adapt their code except to point at data or fix an install error; log any change.
+Use two separate conda envs so their deps do not collide with STARE or each other. Verified entry points
+and arguments below (from the repos, 2026-09).
 
-### SOFisher
+### SOFisher (self-contained; run this one first)
+Faithful metric = **episode reward = regions-of-interest captured** (a DETECTION objective), saved to
+`data/{agent}/seed_{seed}/eval/evaluate_episode_rewards.npy`. Data: 48 bundled mouse-brain slices via
+`pysodb`; pretrained models in `/model`. This is a DQN, so a full retrain is optional — the pretrained
+models + eval reproduce their curves.
 ```bash
 git clone https://github.com/Heathcliff-Ng/SOFisher && cd SOFisher
 conda env create -f environment.yml -n sofisher-env && conda activate sofisher-env
-pip install pysodb                      # downloads processed spatial-omics h5ad
-python main_cortex.py                   # (also main_aging.py / main_disease.py / main_CRC.py)
-# validate with visualize_cortex.ipynb ; record their ROI-capture metric
+pip install pysodb
+ls -R data model src                     # INSPECT: confirm bundled data + pretrained checkpoints exist
+python main_cortex.py                    # then main_aging.py / main_disease.py / main_CRC.py
+jupyter nbconvert --to notebook --execute visualize_cortex.ipynb   # reproduce their figures
 ```
-What to record: their reported **ROI-capture / information-gain** curve vs #FOVs. Note that the metric is
-detection (regions of interest captured), not whole-slide expression reconstruction. If feasible, add a
-reconstruction-PCC readout on the unprofiled FOVs and a strong non-adaptive placement (MI-greedy) as a
-matched baseline, to show the objective split in their own setting.
+Hardcoded in main_cortex.py: `args.rs=100`, `args.cell_num=21`; obs = grid_x*grid_y*cell_num+2+17,
+24 discrete actions. RECORD: the eval episode-reward curve (ROI capture) vs the paper; confirm the
+optimized quantity is ROI capture, not whole-slide expression reconstruction.
 
 ### SCR2-ST
+Faithful args (defaults): `--dataset {HER2,BC,Kidney}` (default HER2), `--total_ratio {0.15,0.3,0.5,0.75,1.0}`
+(default 0.5), reward weights `--w_sc 20 --w_type 5 --w_spatial 0.05` (single-cell manifold >> cell-type >>
+spatial), `--max_epochs 100 --batch_size 128 --base_lr 5e-5 --seed 42`. Metric = **MSE / PCC / MAE per
+sampling ratio**, written to `slidewise_metrics/epoch_{N}.csv` and `merged_metrics/epoch_{N}.xlsx`.
 ```bash
 git clone https://github.com/hrlblab/SCR2ST && cd SCR2ST
+conda create -n scr2st-env python=3.10 -y && conda activate scr2st-env
 pip install -r requirements.txt
-python main.py --dataset HER2 --root_path <st> --patch_root <patches> --sc_root <sc_embeddings> \
-               --total_ratio 0.5 --max_epochs 100 --batch_size 128 --gpu 0
+cat README* ; ls -R ; grep -rn "download\|gdown\|zenodo\|figshare\|drive.google" .   # INSPECT: find how to get data
+# DATA CAVEAT: default paths are the authors' cluster (/data/zhuj28/...). You must obtain their processed
+# HER2/BC/Kidney data in "our_format_final" NPY (position, expression, cell type, embeddings) + patches +
+# sc embeddings. If the repo has no download, HER2 == HER2ST (public) but their preprocessing must be
+# reproduced, OR request the processed data from the authors. Do NOT fake it.
+python main.py --dataset HER2 --total_ratio 0.15 --gpu 0   # then 0.3, 0.5; sweep the ratio
 ```
-Needs three inputs: ST data (`--root_path`), histology patches (`--patch_root`), single-cell embeddings
-(`--sc_root`). What to record: their reported **prediction accuracy vs sampling ratio** on HER2 (and the
-other two datasets), and the baselines they compare against (check whether they compare vs random/grid or
-vs strong MI-greedy placement — our claim is the former).
+RECORD: their PCC-vs-sampling-ratio curve, AND — critically — which baselines they compare against
+(inspect the repo/paper: random / uniform / grid vs a strong MI-greedy placement). Our claim is that
+their gains are vs weak baselines and/or on their manifold-coverage objective, not vs strong placement.
+
+### If SCR2-ST data is unavailable
+Report that honestly. The reconciliation still stands on: (a) SOFisher native (detection objective,
+self-contained, reproduced); (b) the harmonized Level-1 head-to-head; (c) SCR2-ST's stated reward weights
+(w_sc=20 dominant); (d) our oracle result. Do not claim a native SCR2-ST reproduction we did not run.
 
 ### Reconciliation to write up
-- Both methods optimize a **detection/diversity** objective, not whole-slide reconstruction against
-  strong placement (their stated rewards; Level-1 confirms in our simulator; Level-2 confirms in theirs).
-- Our oracle result (`07_positive_control.py`) shows reconstruction has ~no adaptivity headroom, so their
-  gains cannot be reconstruction gains.
-- The `09`/`10` real-data results show the same split on HEST.
+- SOFisher optimizes ROI capture (detection) — confirmed natively via its eval reward.
+- SCR2-ST's reward is manifold-coverage-dominant (w_sc=20) and reports PCC vs a sampling ratio; record its
+  baselines to show the comparison is not against strong placement.
+- Our oracle result (`07`) shows reconstruction has ~no adaptivity headroom; `09`/`10` show the split on
+  HEST. Together: prior positive results live on detection/diversity or vs weak baselines; our negative
+  result is vs strong placement on reconstruction. Both correct under their own objective.
 
 ---
 
