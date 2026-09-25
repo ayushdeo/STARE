@@ -5,6 +5,7 @@ from .oneshot import OneShotSpatialFinderPolicy
 from .greedy_ig import GreedyInfoGainPolicy
 from .placement import VarianceGreedyPolicy, MIGreedyPolicy
 from .value_greedy import ValueGreedyPolicy
+from .competitors import SCR2STDiversityPolicy, SOFisherROIPolicy
 
 REGISTRY = {
     "random": RandomPolicy,
@@ -16,6 +17,8 @@ REGISTRY = {
     "mi_greedy": MIGreedyPolicy,                 # Krause non-adaptive placement (mutual information)
     "greedy_ig": GreedyInfoGainPolicy,           # ours (closed-loop, uncertainty/error-reduction)
     "value_greedy": ValueGreedyPolicy,           # value-conditioned adaptive (selection uses measured y)
+    "scr2st": SCR2STDiversityPolicy,             # harmonized SCR2-ST (diversity+coverage, non-adaptive)
+    "sofisher": SOFisherROIPolicy,               # harmonized SOFisher (ROI-seeking, adaptive)
 }
 
 
