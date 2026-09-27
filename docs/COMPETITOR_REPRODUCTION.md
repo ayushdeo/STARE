@@ -78,9 +78,13 @@ RECORD: their PCC-vs-sampling-ratio curve, AND — critically — which baseline
 their gains are vs weak baselines and/or on their manifold-coverage objective, not vs strong placement.
 
 ### STATUS (2026-09-26)
-- **SOFisher native: IN PROGRESS.** Runs on the 4070 (bundled data + pretrained models); long run
-  (max_steps=5e6) made resumable via `sofisher_resume/apply_resume.py`. Record the ROI-capture eval curve
-  when the run reaches a comparable step count.
+- **SOFisher native: DONE (5M steps, seed 222, cortex).** Ran to completion on the 4070 (resumable via
+  `sofisher_resume/apply_resume.py`). The ROI-capture eval reward rises from a median of -238 (untrained)
+  to a +147 median late-training plateau (best 514.2), crossing zero by ~0.3M steps. This natively
+  confirms SOFisher optimizes and succeeds at a DETECTION objective (regions of interest captured), not
+  whole-slide reconstruction. Evidence: `results/sofisher_native.json`, `docs/figures/figure4_sofisher_native.png`
+  (from `scripts/11_sofisher_curve.py` over the committed TB logs in `artifacts/sofish_seed222_5m/`).
+  Reward is noisy with rare catastrophic episodes (~-1.7e5); medians are the robust trend.
 - **SCR2-ST native: NOT REPRODUCED (data unavailable).** The repo's default paths are the authors'
   cluster (`/data/zhuj28/...`); no public download of their processed HER2/BC/Kidney data
   (`our_format_final` NPY + single-cell embeddings) was found, and reproducing their exact preprocessing

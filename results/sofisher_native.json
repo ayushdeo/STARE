@@ -1,0 +1,14 @@
+{
+  "run": "SOFisher native, cortex, seed 222, max_steps=5e6",
+  "metric": "evaluate_rewards (ROI-capture episode reward)",
+  "n_eval_points": 5790,
+  "step_max": 5000000,
+  "early_median_<5pct": -237.6,
+  "late_median_>90pct": 146.6,
+  "early_mean_<5pct": -1304.9,
+  "late_mean_>90pct": 128.9,
+  "best": 514.2,
+  "final": 30.7,
+  "note": "Reward is noisy with rare catastrophic episodes (down to ~-1.7e5); we report medians as the robust trend and clip the figure y-axis accordingly.",
+  "interpretation": "Eval ROI-capture reward rises from strongly negative (untrained) to positive; SOFisher learns to capture regions of interest (a detection objective), not whole-slide reconstruction."
+}
