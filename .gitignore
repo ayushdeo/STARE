@@ -29,3 +29,10 @@ env/
 Thumbs.db
 .vscode/
 .idea/
+
+# Competitor (SOFisher) native-run artifacts — keep out of the repo (runbook: commit only recorded numbers)
+runs/
+model/
+*.tfevents*
+SOFisher/
+SCR2ST/
