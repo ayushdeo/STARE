@@ -77,10 +77,27 @@ RECORD: their PCC-vs-sampling-ratio curve, AND — critically — which baseline
 (inspect the repo/paper: random / uniform / grid vs a strong MI-greedy placement). Our claim is that
 their gains are vs weak baselines and/or on their manifold-coverage objective, not vs strong placement.
 
-### If SCR2-ST data is unavailable
-Report that honestly. The reconciliation still stands on: (a) SOFisher native (detection objective,
-self-contained, reproduced); (b) the harmonized Level-1 head-to-head; (c) SCR2-ST's stated reward weights
-(w_sc=20 dominant); (d) our oracle result. Do not claim a native SCR2-ST reproduction we did not run.
+### STATUS (2026-09-26)
+- **SOFisher native: IN PROGRESS.** Runs on the 4070 (bundled data + pretrained models); long run
+  (max_steps=5e6) made resumable via `sofisher_resume/apply_resume.py`. Record the ROI-capture eval curve
+  when the run reaches a comparable step count.
+- **SCR2-ST native: NOT REPRODUCED (data unavailable).** The repo's default paths are the authors'
+  cluster (`/data/zhuj28/...`); no public download of their processed HER2/BC/Kidney data
+  (`our_format_final` NPY + single-cell embeddings) was found, and reproducing their exact preprocessing
+  faithfully is not feasible without it. We do NOT claim a native reproduction. State this plainly in the
+  paper's limitations.
+
+### How we position SCR2-ST without a native run (honest)
+The reconciliation for SCR2-ST rests on evidence we DO have, none of it requiring their data:
+1. Their sampler's stated reward is diversity/coverage with `w_sc=20 >> w_type=5 >> w_spatial=0.05`
+   (verified from `main.py` defaults): single-cell-manifold coverage dominates. Not reconstruction error.
+2. Level-1 harmonized port (`10_competitors.py`, real HEST): the diversity objective does not beat strong
+   placement on reconstruction and is coverage-like on detection.
+3. Our oracle result (`07`): reconstruction has ~no adaptivity headroom, so any reported gain cannot be a
+   reconstruction-vs-strong-placement gain.
+4. Note (from their code) that SCR2-ST reports PCC vs a *sampling ratio*; the open question a reader will
+   have is their BASELINE — check the paper text for whether they compare vs random/uniform/grid rather
+   than vs MI-greedy placement. Cite that comparison honestly; do not assert beyond what their paper shows.
 
 ### Reconciliation to write up
 - SOFisher optimizes ROI capture (detection) — confirmed natively via its eval reward.
