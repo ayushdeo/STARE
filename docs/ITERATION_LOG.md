@@ -127,3 +127,11 @@ ablation swapped the whole rule; (c) no positive control; (d) oracle comparator;
 3. Faithful **Tier-1 SpatialFinder reproduction** is still owed: our current one-shot port produces
    near-zero / negative PCC, which means it is an unfaithful port (SpatialFinder reports high rho on
    its own task) — do not trust the head-to-head until the native repro matches.
+
+## Iteration 5 — HVG-leakage sensitivity (reviewer point 8)  [OURS: results/hvg_sensitivity.json, 7 slides]
+Reviewer: top-50 HVG selected from the full slide leaks eval-target info. Re-scored value_greedy vs best
+coverage under three gene sets. The reconstruction margin stays negative with CI excluding 0 under ALL:
+slide_hvg (leaky) -0.081/-0.067/-0.065/-0.074; ref_hvg (prospective pilot, no leak) -0.080/-0.067/-0.066/
+-0.075 (~identical to slide_hvg); all_genes (no selection, zero leak) -0.027/-0.025/-0.029/-0.043 @2/5/10/20%.
+Conclusion: full-slide HVG selection does NOT drive the result; the leak is immaterial. Imputer fits on
+profiled regions and the policy conditions on measured values, so the HVG target was the only leak -> closed.
