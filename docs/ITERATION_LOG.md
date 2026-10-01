@@ -135,3 +135,15 @@ slide_hvg (leaky) -0.081/-0.067/-0.065/-0.074; ref_hvg (prospective pilot, no le
 -0.075 (~identical to slide_hvg); all_genes (no selection, zero leak) -0.027/-0.025/-0.029/-0.043 @2/5/10/20%.
 Conclusion: full-slide HVG selection does NOT drive the result; the leak is immaterial. Imputer fits on
 profiled regions and the policy conditions on measured values, so the HVG target was the only leak -> closed.
+
+## Iteration 6 — batched/contiguous acquisition (reviewer point 7)  [OURS: results/batched_contiguous.json, 7 slides]
+Physical-realism constraints. value_greedy vs best coverage, reconstruction PCC + detection recall, CIs.
+- RECONSTRUCTION null is ROBUST: margin significantly negative at every round_size (-0.065/-0.062/-0.058
+  @ rs=1/5/25; -0.119 one-shot) and under contiguous ROIs (-0.017*). Adaptivity never helps reconstruction.
+- DETECTION advantage is FRAGILE to realism: significant ONLY in the idealized fully-sequential scattered
+  setting (rs=1: +0.046*, CI excl 0). Under batched rounds (rs>=5) it drops to +0.013/+0.014 (CI includes
+  0, NOT significant); one-shot +0.033 (n.s.); contiguous ROIs +0.021 (CI [-0.002,+0.047], n.s.).
+- Honest reading: the detection benefit depends on the idealized one-region-at-a-time, scattered-selection
+  model; under physically realistic batched and/or contiguous acquisition it is not statistically
+  distinguishable from strong coverage at n=7 (point estimates remain small-positive; low power possible).
+  This tempers the "adaptivity helps detection" half and reinforces the overall limited practical value.
