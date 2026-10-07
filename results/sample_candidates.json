@@ -1,0 +1,1394 @@
+{
+  "ranking_col": null,
+  "per_tissue_cap": 8,
+  "candidates": {
+    "prostate": [
+      {
+        "id": "TENX174",
+        "st_technology": "Visium HD",
+        "organ": "Prostate",
+        "tissue": "Prostate"
+      },
+      {
+        "id": "TENX46",
+        "st_technology": "Visium",
+        "organ": "Prostate",
+        "tissue": "Prostate"
+      },
+      {
+        "id": "TENX41",
+        "st_technology": "Visium",
+        "organ": "Prostate",
+        "tissue": "Prostate"
+      },
+      {
+        "id": "TENX40",
+        "st_technology": "Visium",
+        "organ": "Prostate",
+        "tissue": "Prostate"
+      },
+      {
+        "id": "INT35",
+        "st_technology": "Visium",
+        "organ": "Prostate",
+        "tissue": "Prostate"
+      },
+      {
+        "id": "INT28",
+        "st_technology": "Visium",
+        "organ": "Prostate",
+        "tissue": "Prostate"
+      },
+      {
+        "id": "INT27",
+        "st_technology": "Visium",
+        "organ": "Prostate",
+        "tissue": "Prostate"
+      },
+      {
+        "id": "INT26",
+        "st_technology": "Visium",
+        "organ": "Prostate",
+        "tissue": "Prostate"
+      },
+      {
+        "id": "INT25",
+        "st_technology": "Visium",
+        "organ": "Prostate",
+        "tissue": "Prostate"
+      },
+      {
+        "id": "MEND162",
+        "st_technology": "Visium",
+        "organ": "Prostate",
+        "tissue": "Prostate"
+      },
+      {
+        "id": "MEND161",
+        "st_technology": "Visium",
+        "organ": "Prostate",
+        "tissue": "Prostate"
+      },
+      {
+        "id": "MEND160",
+        "st_technology": "Visium",
+        "organ": "Prostate",
+        "tissue": "Prostate"
+      },
+      {
+        "id": "MEND159",
+        "st_technology": "Visium",
+        "organ": "Prostate",
+        "tissue": "Prostate"
+      },
+      {
+        "id": "MEND158",
+        "st_technology": "Visium",
+        "organ": "Prostate",
+        "tissue": "Prostate"
+      },
+      {
+        "id": "MEND157",
+        "st_technology": "Visium",
+        "organ": "Prostate",
+        "tissue": "Prostate"
+      },
+      {
+        "id": "MEND156",
+        "st_technology": "Visium",
+        "organ": "Prostate",
+        "tissue": "Prostate"
+      },
+      {
+        "id": "MEND154",
+        "st_technology": "Visium",
+        "organ": "Prostate",
+        "tissue": "Prostate"
+      },
+      {
+        "id": "MEND153",
+        "st_technology": "Visium",
+        "organ": "Prostate",
+        "tissue": "Prostate"
+      },
+      {
+        "id": "MEND152",
+        "st_technology": "Visium",
+        "organ": "Prostate",
+        "tissue": "Prostate"
+      },
+      {
+        "id": "MEND151",
+        "st_technology": "Visium",
+        "organ": "Prostate",
+        "tissue": "Prostate"
+      },
+      {
+        "id": "MEND150",
+        "st_technology": "Visium",
+        "organ": "Prostate",
+        "tissue": "Prostate"
+      },
+      {
+        "id": "MEND149",
+        "st_technology": "Visium",
+        "organ": "Prostate",
+        "tissue": "Prostate"
+      },
+      {
+        "id": "MEND148",
+        "st_technology": "Visium",
+        "organ": "Prostate",
+        "tissue": "Prostate"
+      },
+      {
+        "id": "MEND147",
+        "st_technology": "Visium",
+        "organ": "Prostate",
+        "tissue": "Prostate"
+      },
+      {
+        "id": "MEND146",
+        "st_technology": "Visium",
+        "organ": "Prostate",
+        "tissue": "Prostate"
+      },
+      {
+        "id": "MEND145",
+        "st_technology": "Visium",
+        "organ": "Prostate",
+        "tissue": "Prostate"
+      },
+      {
+        "id": "MEND144",
+        "st_technology": "Visium",
+        "organ": "Prostate",
+        "tissue": "Prostate"
+      },
+      {
+        "id": "MEND143",
+        "st_technology": "Visium",
+        "organ": "Prostate",
+        "tissue": "Prostate"
+      },
+      {
+        "id": "MEND142",
+        "st_technology": "Visium",
+        "organ": "Prostate",
+        "tissue": "Prostate"
+      },
+      {
+        "id": "MEND141",
+        "st_technology": "Visium",
+        "organ": "Prostate",
+        "tissue": "Prostate"
+      },
+      {
+        "id": "MEND140",
+        "st_technology": "Visium",
+        "organ": "Prostate",
+        "tissue": "Prostate"
+      },
+      {
+        "id": "MEND139",
+        "st_technology": "Visium",
+        "organ": "Prostate",
+        "tissue": "Prostate"
+      },
+      {
+        "id": "MEND62",
+        "st_technology": "Visium",
+        "organ": "Prostate",
+        "tissue": "prostate"
+      },
+      {
+        "id": "MEND61",
+        "st_technology": "Visium",
+        "organ": "Prostate",
+        "tissue": "prostate"
+      },
+      {
+        "id": "MEND60",
+        "st_technology": "Visium",
+        "organ": "Prostate",
+        "tissue": "prostate"
+      },
+      {
+        "id": "MEND59",
+        "st_technology": "Visium",
+        "organ": "Prostate",
+        "tissue": "prostate"
+      },
+      {
+        "id": "NCBI793",
+        "st_technology": "Visium",
+        "organ": "Prostate",
+        "tissue": "Prostate"
+      },
+      {
+        "id": "NCBI792",
+        "st_technology": "Visium",
+        "organ": "Prostate",
+        "tissue": "Prostate"
+      }
+    ],
+    "kidney": [
+      {
+        "id": "TENX186",
+        "st_technology": "Visium HD 3'",
+        "organ": "Kidney",
+        "tissue": "Kidney"
+      },
+      {
+        "id": "TENX173",
+        "st_technology": "Visium HD",
+        "organ": "Kidney",
+        "tissue": "Kidney"
+      },
+      {
+        "id": "TENX146",
+        "st_technology": "Visium HD",
+        "organ": "Kidney",
+        "tissue": "Kidney"
+      },
+      {
+        "id": "TENX75",
+        "st_technology": "Visium",
+        "organ": "Kidney/Brain",
+        "tissue": "Kidney/Brain"
+      },
+      {
+        "id": "TENX71",
+        "st_technology": "Visium",
+        "organ": "Kidney",
+        "tissue": "Kidney"
+      },
+      {
+        "id": "TENX45",
+        "st_technology": "Visium",
+        "organ": "Kidney",
+        "tissue": "Kidney"
+      },
+      {
+        "id": "TENX22",
+        "st_technology": "Visium",
+        "organ": "Kidney",
+        "tissue": "Kidney"
+      },
+      {
+        "id": "INT24",
+        "st_technology": "Visium",
+        "organ": "Kidney",
+        "tissue": "Kidney"
+      },
+      {
+        "id": "INT23",
+        "st_technology": "Visium",
+        "organ": "Kidney",
+        "tissue": "Kidney"
+      },
+      {
+        "id": "INT22",
+        "st_technology": "Visium",
+        "organ": "Kidney",
+        "tissue": "Kidney"
+      },
+      {
+        "id": "INT21",
+        "st_technology": "Visium",
+        "organ": "Kidney",
+        "tissue": "Kidney"
+      },
+      {
+        "id": "INT20",
+        "st_technology": "Visium",
+        "organ": "Kidney",
+        "tissue": "Kidney"
+      },
+      {
+        "id": "INT19",
+        "st_technology": "Visium",
+        "organ": "Kidney",
+        "tissue": "Kidney"
+      },
+      {
+        "id": "INT18",
+        "st_technology": "Visium",
+        "organ": "Kidney",
+        "tissue": "Kidney"
+      },
+      {
+        "id": "INT17",
+        "st_technology": "Visium",
+        "organ": "Kidney",
+        "tissue": "Kidney"
+      },
+      {
+        "id": "INT16",
+        "st_technology": "Visium",
+        "organ": "Kidney",
+        "tissue": "Kidney"
+      },
+      {
+        "id": "INT15",
+        "st_technology": "Visium",
+        "organ": "Kidney",
+        "tissue": "Kidney"
+      },
+      {
+        "id": "INT14",
+        "st_technology": "Visium",
+        "organ": "Kidney",
+        "tissue": "Kidney"
+      },
+      {
+        "id": "INT13",
+        "st_technology": "Visium",
+        "organ": "Kidney",
+        "tissue": "Kidney"
+      },
+      {
+        "id": "INT12",
+        "st_technology": "Visium",
+        "organ": "Kidney",
+        "tissue": "Kidney"
+      },
+      {
+        "id": "INT11",
+        "st_technology": "Visium",
+        "organ": "Kidney",
+        "tissue": "Kidney"
+      },
+      {
+        "id": "INT10",
+        "st_technology": "Visium",
+        "organ": "Kidney",
+        "tissue": "Kidney"
+      },
+      {
+        "id": "INT9",
+        "st_technology": "Visium",
+        "organ": "Kidney",
+        "tissue": "Kidney"
+      },
+      {
+        "id": "INT8",
+        "st_technology": "Visium",
+        "organ": "Kidney",
+        "tissue": "Kidney"
+      },
+      {
+        "id": "INT7",
+        "st_technology": "Visium",
+        "organ": "Kidney",
+        "tissue": "Kidney"
+      },
+      {
+        "id": "INT6",
+        "st_technology": "Visium",
+        "organ": "Kidney",
+        "tissue": "Kidney"
+      },
+      {
+        "id": "INT5",
+        "st_technology": "Visium",
+        "organ": "Kidney",
+        "tissue": "Kidney"
+      },
+      {
+        "id": "INT4",
+        "st_technology": "Visium",
+        "organ": "Kidney",
+        "tissue": "Kidney"
+      },
+      {
+        "id": "INT3",
+        "st_technology": "Visium",
+        "organ": "Kidney",
+        "tissue": "Kidney"
+      },
+      {
+        "id": "INT2",
+        "st_technology": "Visium",
+        "organ": "Kidney",
+        "tissue": "Kidney"
+      },
+      {
+        "id": "INT1",
+        "st_technology": "Visium",
+        "organ": "Kidney",
+        "tissue": "Kidney"
+      },
+      {
+        "id": "MEND54",
+        "st_technology": "Visium",
+        "organ": "Kidney",
+        "tissue": "kidney"
+      },
+      {
+        "id": "MEND49",
+        "st_technology": "Visium",
+        "organ": "Kidney",
+        "tissue": "kidney"
+      },
+      {
+        "id": "MEND48",
+        "st_technology": "Visium",
+        "organ": "Kidney",
+        "tissue": "kidney"
+      },
+      {
+        "id": "NCBI714",
+        "st_technology": "Visium",
+        "organ": "Kidney",
+        "tissue": "Kidney"
+      },
+      {
+        "id": "NCBI713",
+        "st_technology": "Visium",
+        "organ": "Kidney",
+        "tissue": "Kidney"
+      },
+      {
+        "id": "NCBI712",
+        "st_technology": "Visium",
+        "organ": "Kidney",
+        "tissue": "Kidney"
+      },
+      {
+        "id": "NCBI711",
+        "st_technology": "Visium",
+        "organ": "Kidney",
+        "tissue": "Kidney"
+      },
+      {
+        "id": "NCBI710",
+        "st_technology": "Visium",
+        "organ": "Kidney",
+        "tissue": "Kidney"
+      },
+      {
+        "id": "NCBI709",
+        "st_technology": "Visium",
+        "organ": "Kidney",
+        "tissue": "Kidney"
+      },
+      {
+        "id": "NCBI708",
+        "st_technology": "Visium",
+        "organ": "Kidney",
+        "tissue": "Kidney"
+      },
+      {
+        "id": "NCBI707",
+        "st_technology": "Visium",
+        "organ": "Kidney",
+        "tissue": "Kidney"
+      },
+      {
+        "id": "NCBI706",
+        "st_technology": "Visium",
+        "organ": "Kidney",
+        "tissue": "Kidney"
+      },
+      {
+        "id": "NCBI705",
+        "st_technology": "Visium",
+        "organ": "Kidney",
+        "tissue": "Kidney"
+      },
+      {
+        "id": "NCBI704",
+        "st_technology": "Visium",
+        "organ": "Kidney",
+        "tissue": "Kidney"
+      },
+      {
+        "id": "NCBI703",
+        "st_technology": "Visium",
+        "organ": "Kidney",
+        "tissue": "Kidney"
+      },
+      {
+        "id": "NCBI702",
+        "st_technology": "Visium",
+        "organ": "Kidney",
+        "tissue": "Kidney"
+      },
+      {
+        "id": "NCBI701",
+        "st_technology": "Visium",
+        "organ": "Kidney",
+        "tissue": "Kidney"
+      },
+      {
+        "id": "NCBI700",
+        "st_technology": "Visium",
+        "organ": "Kidney",
+        "tissue": "Kidney"
+      },
+      {
+        "id": "NCBI699",
+        "st_technology": "Visium",
+        "organ": "Kidney",
+        "tissue": "Kidney"
+      },
+      {
+        "id": "NCBI698",
+        "st_technology": "Visium",
+        "organ": "Kidney",
+        "tissue": "Kidney"
+      },
+      {
+        "id": "NCBI697",
+        "st_technology": "Visium",
+        "organ": "Kidney",
+        "tissue": "Kidney"
+      },
+      {
+        "id": "NCBI696",
+        "st_technology": "Visium",
+        "organ": "Kidney",
+        "tissue": "Kidney"
+      },
+      {
+        "id": "NCBI695",
+        "st_technology": "Visium",
+        "organ": "Kidney",
+        "tissue": "Kidney"
+      },
+      {
+        "id": "NCBI694",
+        "st_technology": "Visium",
+        "organ": "Kidney",
+        "tissue": "Kidney"
+      },
+      {
+        "id": "NCBI693",
+        "st_technology": "Visium",
+        "organ": "Kidney",
+        "tissue": "Kidney"
+      },
+      {
+        "id": "NCBI692",
+        "st_technology": "Visium",
+        "organ": "Kidney",
+        "tissue": "Kidney"
+      },
+      {
+        "id": "NCBI599",
+        "st_technology": "Visium",
+        "organ": "Kidney",
+        "tissue": "Kidney"
+      },
+      {
+        "id": "NCBI598",
+        "st_technology": "Visium",
+        "organ": "Kidney",
+        "tissue": "Kidney"
+      },
+      {
+        "id": "NCBI597",
+        "st_technology": "Visium",
+        "organ": "Kidney",
+        "tissue": "Kidney"
+      },
+      {
+        "id": "NCBI596",
+        "st_technology": "Visium",
+        "organ": "Kidney",
+        "tissue": "Kidney"
+      },
+      {
+        "id": "NCBI568",
+        "st_technology": "Visium",
+        "organ": "Kidney",
+        "tissue": "Kidney"
+      },
+      {
+        "id": "NCBI567",
+        "st_technology": "Visium",
+        "organ": "Kidney",
+        "tissue": "Kidney"
+      },
+      {
+        "id": "NCBI566",
+        "st_technology": "Visium",
+        "organ": "Kidney",
+        "tissue": "Kidney"
+      },
+      {
+        "id": "NCBI565",
+        "st_technology": "Visium",
+        "organ": "Kidney",
+        "tissue": "Kidney"
+      },
+      {
+        "id": "NCBI564",
+        "st_technology": "Visium",
+        "organ": "Kidney",
+        "tissue": "Kidney"
+      },
+      {
+        "id": "NCBI563",
+        "st_technology": "Visium",
+        "organ": "Kidney",
+        "tissue": "Kidney"
+      },
+      {
+        "id": "NCBI562",
+        "st_technology": "Visium",
+        "organ": "Kidney",
+        "tissue": "Kidney"
+      },
+      {
+        "id": "NCBI540",
+        "st_technology": "Visium",
+        "organ": "Kidney",
+        "tissue": "Kidney"
+      },
+      {
+        "id": "NCBI539",
+        "st_technology": "Visium",
+        "organ": "Kidney",
+        "tissue": "Kidney"
+      },
+      {
+        "id": "NCBI538",
+        "st_technology": "Visium",
+        "organ": "Kidney",
+        "tissue": "Kidney"
+      }
+    ],
+    "lung": [
+      {
+        "id": "TENX171",
+        "st_technology": "Visium HD",
+        "organ": "Lung",
+        "tissue": "Lung"
+      },
+      {
+        "id": "TENX170",
+        "st_technology": "Visium HD",
+        "organ": "Lung",
+        "tissue": "Lung"
+      },
+      {
+        "id": "TENX169",
+        "st_technology": "Visium HD",
+        "organ": "Lung",
+        "tissue": "Lung"
+      },
+      {
+        "id": "TENX168",
+        "st_technology": "Visium HD",
+        "organ": "Lung",
+        "tissue": "Lung"
+      },
+      {
+        "id": "TENX167",
+        "st_technology": "Visium HD",
+        "organ": "Lung",
+        "tissue": "Lung"
+      },
+      {
+        "id": "TENX163",
+        "st_technology": "Visium HD",
+        "organ": "Lung",
+        "tissue": "Lung"
+      },
+      {
+        "id": "TENX76",
+        "st_technology": "Visium",
+        "organ": "Lung/Brain",
+        "tissue": "Lung/Brain"
+      },
+      {
+        "id": "TENX74",
+        "st_technology": "Visium",
+        "organ": "Lung/Brain",
+        "tissue": "Lung/Brain"
+      },
+      {
+        "id": "TENX72",
+        "st_technology": "Visium",
+        "organ": "Lung",
+        "tissue": "Lung"
+      },
+      {
+        "id": "TENX62",
+        "st_technology": "Visium",
+        "organ": "Lung",
+        "tissue": "Lung"
+      },
+      {
+        "id": "MEND90",
+        "st_technology": "Visium",
+        "organ": "Lung",
+        "tissue": "lung"
+      },
+      {
+        "id": "MEND89",
+        "st_technology": "Visium",
+        "organ": "Lung",
+        "tissue": "lung"
+      },
+      {
+        "id": "MEND88",
+        "st_technology": "Visium",
+        "organ": "Lung",
+        "tissue": "lung"
+      },
+      {
+        "id": "MEND87",
+        "st_technology": "Visium",
+        "organ": "Lung",
+        "tissue": "lung"
+      },
+      {
+        "id": "MEND86",
+        "st_technology": "Visium",
+        "organ": "Lung",
+        "tissue": "lung"
+      },
+      {
+        "id": "MEND85",
+        "st_technology": "Visium",
+        "organ": "Lung",
+        "tissue": "lung"
+      },
+      {
+        "id": "MEND52",
+        "st_technology": "Visium",
+        "organ": "Lung",
+        "tissue": "lung"
+      },
+      {
+        "id": "MEND51",
+        "st_technology": "Visium",
+        "organ": "Lung",
+        "tissue": "lung"
+      },
+      {
+        "id": "MEND47",
+        "st_technology": "Visium",
+        "organ": "Lung",
+        "tissue": "lung"
+      },
+      {
+        "id": "MEND45",
+        "st_technology": "Visium",
+        "organ": "Lung",
+        "tissue": "lung"
+      },
+      {
+        "id": "MEND41",
+        "st_technology": "Visium",
+        "organ": "Lung",
+        "tissue": "lung"
+      },
+      {
+        "id": "NCBI727",
+        "st_technology": "Visium",
+        "organ": "Lung",
+        "tissue": "Lung"
+      },
+      {
+        "id": "NCBI537",
+        "st_technology": "Visium",
+        "organ": "Lung",
+        "tissue": "Lung"
+      },
+      {
+        "id": "NCBI536",
+        "st_technology": "Visium",
+        "organ": "Lung",
+        "tissue": "Lung"
+      },
+      {
+        "id": "NCBI535",
+        "st_technology": "Visium",
+        "organ": "Lung",
+        "tissue": "Lung"
+      },
+      {
+        "id": "NCBI534",
+        "st_technology": "Visium",
+        "organ": "Lung",
+        "tissue": "Lung"
+      },
+      {
+        "id": "MISC32",
+        "st_technology": "Visium",
+        "organ": "Lung",
+        "tissue": "Trachea"
+      },
+      {
+        "id": "MISC31",
+        "st_technology": "Visium",
+        "organ": "Lung",
+        "tissue": "Bronchi"
+      },
+      {
+        "id": "MISC30",
+        "st_technology": "Visium",
+        "organ": "Lung",
+        "tissue": "Bronchi"
+      },
+      {
+        "id": "MISC29",
+        "st_technology": "Visium",
+        "organ": "Lung",
+        "tissue": "Bronchi"
+      },
+      {
+        "id": "MISC28",
+        "st_technology": "Visium",
+        "organ": "Lung",
+        "tissue": "Parenchyma"
+      },
+      {
+        "id": "MISC27",
+        "st_technology": "Visium",
+        "organ": "Lung",
+        "tissue": "Bronchi"
+      },
+      {
+        "id": "MISC26",
+        "st_technology": "Visium",
+        "organ": "Lung",
+        "tissue": "Bronchi"
+      },
+      {
+        "id": "MISC25",
+        "st_technology": "Visium",
+        "organ": "Lung",
+        "tissue": "Parenchyma"
+      },
+      {
+        "id": "MISC24",
+        "st_technology": "Visium",
+        "organ": "Lung",
+        "tissue": "Parenchyma"
+      },
+      {
+        "id": "MISC23",
+        "st_technology": "Visium",
+        "organ": "Lung",
+        "tissue": "Bronchi"
+      },
+      {
+        "id": "MISC22",
+        "st_technology": "Visium",
+        "organ": "Lung",
+        "tissue": "Bronchi"
+      },
+      {
+        "id": "MISC21",
+        "st_technology": "Visium",
+        "organ": "Lung",
+        "tissue": "Parenchyma"
+      },
+      {
+        "id": "MISC20",
+        "st_technology": "Visium",
+        "organ": "Lung",
+        "tissue": "Parenchyma"
+      },
+      {
+        "id": "MISC19",
+        "st_technology": "Visium",
+        "organ": "Lung",
+        "tissue": "Parenchyma"
+      },
+      {
+        "id": "MISC18",
+        "st_technology": "Visium",
+        "organ": "Lung",
+        "tissue": "Parenchyma"
+      },
+      {
+        "id": "MISC17",
+        "st_technology": "Visium",
+        "organ": "Lung",
+        "tissue": "Bronchi"
+      },
+      {
+        "id": "MISC16",
+        "st_technology": "Visium",
+        "organ": "Lung",
+        "tissue": "Bronchi"
+      },
+      {
+        "id": "MISC15",
+        "st_technology": "Visium",
+        "organ": "Lung",
+        "tissue": "Bronchi"
+      },
+      {
+        "id": "MISC14",
+        "st_technology": "Visium",
+        "organ": "Lung",
+        "tissue": "Trachea"
+      },
+      {
+        "id": "MISC13",
+        "st_technology": "Visium",
+        "organ": "Lung",
+        "tissue": "Trachea"
+      }
+    ],
+    "colon": [
+      {
+        "id": "TENX175",
+        "st_technology": "Visium HD 3'",
+        "organ": "Bowel",
+        "tissue": "Colon"
+      },
+      {
+        "id": "TENX156",
+        "st_technology": "Visium HD",
+        "organ": "Bowel",
+        "tissue": "Colon"
+      },
+      {
+        "id": "TENX155",
+        "st_technology": "Visium HD",
+        "organ": "Bowel",
+        "tissue": "Colon"
+      },
+      {
+        "id": "TENX154",
+        "st_technology": "Visium HD",
+        "organ": "Bowel",
+        "tissue": "Colon"
+      },
+      {
+        "id": "TENX153",
+        "st_technology": "Visium HD",
+        "organ": "Bowel",
+        "tissue": "Colon"
+      },
+      {
+        "id": "TENX152",
+        "st_technology": "Visium",
+        "organ": "Bowel",
+        "tissue": "Colon"
+      },
+      {
+        "id": "MISC73",
+        "st_technology": "Visium",
+        "organ": "Bowel",
+        "tissue": "Colon"
+      },
+      {
+        "id": "MISC72",
+        "st_technology": "Visium",
+        "organ": "Bowel",
+        "tissue": "Colon"
+      },
+      {
+        "id": "MISC71",
+        "st_technology": "Visium",
+        "organ": "Bowel",
+        "tissue": "Colon"
+      },
+      {
+        "id": "MISC70",
+        "st_technology": "Visium",
+        "organ": "Bowel",
+        "tissue": "Colon"
+      },
+      {
+        "id": "MISC69",
+        "st_technology": "Visium",
+        "organ": "Bowel",
+        "tissue": "Colon"
+      },
+      {
+        "id": "MISC68",
+        "st_technology": "Visium",
+        "organ": "Bowel",
+        "tissue": "Colon"
+      },
+      {
+        "id": "MISC67",
+        "st_technology": "Visium",
+        "organ": "Bowel",
+        "tissue": "Colon"
+      },
+      {
+        "id": "MISC66",
+        "st_technology": "Visium",
+        "organ": "Bowel",
+        "tissue": "Colon"
+      },
+      {
+        "id": "MISC65",
+        "st_technology": "Visium",
+        "organ": "Bowel",
+        "tissue": "Colon"
+      },
+      {
+        "id": "MISC64",
+        "st_technology": "Visium",
+        "organ": "Bowel",
+        "tissue": "Colon"
+      },
+      {
+        "id": "MISC63",
+        "st_technology": "Visium",
+        "organ": "Bowel",
+        "tissue": "Colon"
+      },
+      {
+        "id": "MISC62",
+        "st_technology": "Visium",
+        "organ": "Bowel",
+        "tissue": "Colon"
+      },
+      {
+        "id": "MISC61",
+        "st_technology": "Visium",
+        "organ": "Bowel",
+        "tissue": "Colon"
+      },
+      {
+        "id": "MISC60",
+        "st_technology": "Visium",
+        "organ": "Bowel",
+        "tissue": "Colon"
+      },
+      {
+        "id": "MISC59",
+        "st_technology": "Visium",
+        "organ": "Bowel",
+        "tissue": "Colon"
+      },
+      {
+        "id": "MISC58",
+        "st_technology": "Visium",
+        "organ": "Bowel",
+        "tissue": "Colon"
+      },
+      {
+        "id": "MISC57",
+        "st_technology": "Visium",
+        "organ": "Bowel",
+        "tissue": "Colon"
+      },
+      {
+        "id": "MISC56",
+        "st_technology": "Visium",
+        "organ": "Bowel",
+        "tissue": "Colon"
+      },
+      {
+        "id": "MISC55",
+        "st_technology": "Visium",
+        "organ": "Bowel",
+        "tissue": "Colon"
+      },
+      {
+        "id": "MISC54",
+        "st_technology": "Visium",
+        "organ": "Bowel",
+        "tissue": "Colon"
+      },
+      {
+        "id": "MISC53",
+        "st_technology": "Visium",
+        "organ": "Bowel",
+        "tissue": "Colon"
+      },
+      {
+        "id": "MISC52",
+        "st_technology": "Visium",
+        "organ": "Bowel",
+        "tissue": "Colon"
+      },
+      {
+        "id": "MISC51",
+        "st_technology": "Visium",
+        "organ": "Bowel",
+        "tissue": "Colon"
+      },
+      {
+        "id": "MISC50",
+        "st_technology": "Visium",
+        "organ": "Bowel",
+        "tissue": "Colon"
+      },
+      {
+        "id": "MISC49",
+        "st_technology": "Visium",
+        "organ": "Bowel",
+        "tissue": "Colon"
+      },
+      {
+        "id": "MISC48",
+        "st_technology": "Visium",
+        "organ": "Bowel",
+        "tissue": "Colon"
+      },
+      {
+        "id": "MISC47",
+        "st_technology": "Visium",
+        "organ": "Bowel",
+        "tissue": "Colon"
+      },
+      {
+        "id": "MISC46",
+        "st_technology": "Visium",
+        "organ": "Bowel",
+        "tissue": "Colon"
+      },
+      {
+        "id": "MISC45",
+        "st_technology": "Visium",
+        "organ": "Bowel",
+        "tissue": "Colon"
+      },
+      {
+        "id": "MISC44",
+        "st_technology": "Visium",
+        "organ": "Bowel",
+        "tissue": "Colon"
+      },
+      {
+        "id": "MISC43",
+        "st_technology": "Visium",
+        "organ": "Bowel",
+        "tissue": "Colon"
+      },
+      {
+        "id": "MISC42",
+        "st_technology": "Visium",
+        "organ": "Bowel",
+        "tissue": "Colon"
+      },
+      {
+        "id": "MISC41",
+        "st_technology": "Visium",
+        "organ": "Bowel",
+        "tissue": "Colon"
+      },
+      {
+        "id": "MISC40",
+        "st_technology": "Visium",
+        "organ": "Bowel",
+        "tissue": "Colon"
+      },
+      {
+        "id": "MISC39",
+        "st_technology": "Visium",
+        "organ": "Bowel",
+        "tissue": "Colon"
+      },
+      {
+        "id": "MISC38",
+        "st_technology": "Visium",
+        "organ": "Bowel",
+        "tissue": "Colon"
+      },
+      {
+        "id": "MISC37",
+        "st_technology": "Visium",
+        "organ": "Bowel",
+        "tissue": "Colon"
+      },
+      {
+        "id": "MISC36",
+        "st_technology": "Visium",
+        "organ": "Bowel",
+        "tissue": "Colon"
+      },
+      {
+        "id": "MISC35",
+        "st_technology": "Visium",
+        "organ": "Bowel",
+        "tissue": "Colon"
+      },
+      {
+        "id": "MISC34",
+        "st_technology": "Visium",
+        "organ": "Bowel",
+        "tissue": "Colon"
+      },
+      {
+        "id": "MISC33",
+        "st_technology": "Visium",
+        "organ": "Bowel",
+        "tissue": "Colon"
+      },
+      {
+        "id": "TENX128",
+        "st_technology": "Visium HD",
+        "organ": "Bowel",
+        "tissue": "Colon"
+      },
+      {
+        "id": "TENX92",
+        "st_technology": "Visium",
+        "organ": "Bowel",
+        "tissue": "Colon"
+      },
+      {
+        "id": "TENX91",
+        "st_technology": "Visium",
+        "organ": "Bowel",
+        "tissue": "Colon"
+      },
+      {
+        "id": "TENX90",
+        "st_technology": "Visium",
+        "organ": "Bowel",
+        "tissue": "Colon"
+      },
+      {
+        "id": "TENX89",
+        "st_technology": "Visium",
+        "organ": "Bowel",
+        "tissue": "Colon"
+      },
+      {
+        "id": "TENX28",
+        "st_technology": "Visium",
+        "organ": "Bowel",
+        "tissue": "Colon"
+      },
+      {
+        "id": "ZEN47",
+        "st_technology": "Visium",
+        "organ": "Bowel",
+        "tissue": "Colon (right)"
+      },
+      {
+        "id": "ZEN46",
+        "st_technology": "Visium",
+        "organ": "Bowel",
+        "tissue": "Colon (right)"
+      },
+      {
+        "id": "ZEN45",
+        "st_technology": "Visium",
+        "organ": "Bowel",
+        "tissue": "Colon (Sigma)"
+      },
+      {
+        "id": "ZEN44",
+        "st_technology": "Visium",
+        "organ": "Bowel",
+        "tissue": "Colon (Sigma)"
+      },
+      {
+        "id": "ZEN42",
+        "st_technology": "Visium",
+        "organ": "Bowel",
+        "tissue": "Colon (right)"
+      },
+      {
+        "id": "ZEN38",
+        "st_technology": "Visium",
+        "organ": "Bowel",
+        "tissue": "Colon (right)"
+      },
+      {
+        "id": "MEND96",
+        "st_technology": "Visium",
+        "organ": "Bowel",
+        "tissue": "colon"
+      },
+      {
+        "id": "MEND95",
+        "st_technology": "Visium",
+        "organ": "Bowel",
+        "tissue": "colon"
+      },
+      {
+        "id": "MEND93",
+        "st_technology": "Visium",
+        "organ": "Bowel",
+        "tissue": "colon"
+      },
+      {
+        "id": "MEND92",
+        "st_technology": "Visium",
+        "organ": "Bowel",
+        "tissue": "colon"
+      },
+      {
+        "id": "MEND91",
+        "st_technology": "Visium",
+        "organ": "Bowel",
+        "tissue": "colon"
+      },
+      {
+        "id": "NCBI729",
+        "st_technology": "Visium",
+        "organ": "Bowel",
+        "tissue": "Colon"
+      },
+      {
+        "id": "NCBI728",
+        "st_technology": "Visium",
+        "organ": "Bowel",
+        "tissue": "Colon"
+      },
+      {
+        "id": "NCBI686",
+        "st_technology": "Visium",
+        "organ": "Bowel",
+        "tissue": "Colon"
+      },
+      {
+        "id": "NCBI685",
+        "st_technology": "Visium",
+        "organ": "Bowel",
+        "tissue": "Colon"
+      }
+    ]
+  },
+  "suggested_HEST_SAMPLE_IDS": {
+    "prostate": [
+      "TENX174",
+      "TENX46",
+      "TENX41",
+      "TENX40",
+      "INT35",
+      "INT28",
+      "INT27",
+      "INT26"
+    ],
+    "kidney": [
+      "TENX186",
+      "TENX173",
+      "TENX146",
+      "TENX75",
+      "TENX71",
+      "TENX45",
+      "TENX22",
+      "INT24"
+    ],
+    "lung": [
+      "TENX171",
+      "TENX170",
+      "TENX169",
+      "TENX168",
+      "TENX167",
+      "TENX163",
+      "TENX76",
+      "TENX74"
+    ],
+    "colon": [
+      "TENX175",
+      "TENX156",
+      "TENX155",
+      "TENX154",
+      "TENX153",
+      "TENX128",
+      "TENX152",
+      "MISC73"
+    ]
+  }
+}
