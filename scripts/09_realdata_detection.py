@@ -27,9 +27,10 @@ except Exception:
 from pathlib import Path
 import numpy as np
 
-from stare import config, data, metrics, stats
+from stare import config, metrics, stats
 from stare.simulator import AcquisitionSimulator
 from stare.imputer import build_imputer
+from stare.slides import load_ci_slides
 from stare.policies import build_policy
 
 IMPUTER = "graphflow"                      # strongest imputer (matches the headline reconstruction result)
@@ -42,16 +43,10 @@ BOOT = 5000
 def log(m): print(m, flush=True)
 
 
-def load_or_cache_slides(tissue):
-    p = Path(config.CACHE_ROOT) / f"slides_{tissue}_{int(config.REGION_UM)}um_{config.IMAGE_ENCODER}.pkl"
-    if p.exists():
-        log(f"[cache] {p}")
-        return pickle.load(open(p, "rb"))
-    log(f"[build] {tissue} (minutes)...")
-    Path(config.CACHE_ROOT).mkdir(parents=True, exist_ok=True)
-    slides = data.load_tissue(tissue)
-    pickle.dump(slides, open(p, "wb"))
-    return slides
+# study clusters + tissue strata of the loaded slides (set in main; used by every margin summary)
+GROUPING = {}
+
+
 
 
 def roi_mask(slide):
@@ -76,10 +71,8 @@ def profiled_and_score(slide, imputer, policy_or_order, bf):
 
 def main():
     imputer = build_imputer(IMPUTER)
-    slides, labels = [], []
-    for tissue in config.CI_TISSUES:
-        for s in load_or_cache_slides(tissue):
-            slides.append(s); labels.append(f"{tissue}:{getattr(s,'patient_id','?')}")
+    slides, labels, group = load_ci_slides(log=log)
+    GROUPING.update(clusters=group["clusters"], strata=group["strata"])
     log(f"=== real-data detection | slides={labels} imputer={IMPUTER} budgets={BUDGETS} ===")
 
     POLICIES = COVERAGE + ["value_greedy"]
@@ -99,8 +92,8 @@ def main():
             log(f"  [{bf:.2f}] slide {si+1}/{len(slides)} {labels[si]} done")
         best_cov_pcc = np.maximum.reduce([rec_pcc[p] for p in COVERAGE])
         best_cov_det = np.maximum.reduce([rec_det[p] for p in COVERAGE])
-        m_recon = stats.paired_margin_summary(np.array(rec_pcc["value_greedy"]), best_cov_pcc, BOOT, config.CI_ALPHA, config.CI_SEED)
-        m_detect = stats.paired_margin_summary(np.array(rec_det["value_greedy"]), best_cov_det, BOOT, config.CI_ALPHA, config.CI_SEED)
+        m_recon = stats.paired_margin_summary(np.array(rec_pcc["value_greedy"]), best_cov_pcc, BOOT, config.CI_ALPHA, config.CI_SEED, **GROUPING)
+        m_detect = stats.paired_margin_summary(np.array(rec_det["value_greedy"]), best_cov_det, BOOT, config.CI_ALPHA, config.CI_SEED, **GROUPING)
         rows[f"{bf:.2f}"] = {
             "reconstruction_pcc_means": {p: float(np.mean(v)) for p, v in rec_pcc.items()},
             "detection_recall_means": {p: float(np.mean(v)) for p, v in rec_det.items()},
@@ -113,7 +106,7 @@ def main():
             f"(oracle_recall={np.mean(rec_det['oracle']):.3f} cover_recall={best_cov_det.mean():.3f})")
 
     out = Path(config.RESULTS_ROOT) / "realdata_detection.json"
-    out.write_text(json.dumps({"imputer": IMPUTER, "slides": labels, "budgets": BUDGETS,
+    out.write_text(json.dumps({"imputer": IMPUTER, "slides": labels, "grouping": GROUPING, "region_mode": config.REGION_MODE, "budgets": BUDGETS,
                                "roi_quantile": ROI_QUANTILE, "rows": rows}, indent=2), encoding="utf-8")
     log(f"[write] {out}")
     log("\nExpected: reconstruction margin <= 0 (adaptivity no help) AND detection margin > 0 at useful "

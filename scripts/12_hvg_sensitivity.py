@@ -30,6 +30,7 @@ import numpy as np
 from stare import config, metrics, stats
 from stare.simulator import AcquisitionSimulator
 from stare.imputer import build_imputer
+from stare.slides import load_ci_slides
 from stare.policies import build_policy
 
 IMPUTER = "graphflow"
@@ -43,13 +44,10 @@ BOOT = 5000
 def log(m): print(m, flush=True)
 
 
-def load_or_cache_slides(tissue):
-    p = Path(config.CACHE_ROOT) / f"slides_{tissue}_{int(config.REGION_UM)}um_{config.IMAGE_ENCODER}.pkl"
-    if p.exists():
-        log(f"[cache] {p}"); return pickle.load(open(p, "rb"))
-    from stare import data  # lazy import (needs h5py; only on the 4070 when cache is missing)
-    log(f"[build] {tissue} (minutes)..."); Path(config.CACHE_ROOT).mkdir(parents=True, exist_ok=True)
-    s = data.load_tissue(tissue); pickle.dump(s, open(p, "wb")); return s
+# study clusters + tissue strata of the loaded slides (set in main; used by every margin summary)
+GROUPING = {}
+
+
 
 
 def gene_sets(slide, n=config.N_HVG, seed=0):
@@ -86,10 +84,8 @@ def pcc_over(y_true, y_pred, idx):
 
 def main():
     imputer = build_imputer(IMPUTER)
-    slides, labels = [], []
-    for tissue in config.CI_TISSUES:
-        for s in load_or_cache_slides(tissue):
-            slides.append(s); labels.append(f"{tissue}:{getattr(s,'patient_id','?')}")
+    slides, labels, group = load_ci_slides(log=log)
+    GROUPING.update(clusters=group["clusters"], strata=group["strata"])
     log(f"=== HVG sensitivity | slides={labels} imputer={IMPUTER} budgets={BUDGETS} ===")
     GS = ["slide_hvg", "ref_hvg", "all_genes"]
     rows = {}
@@ -106,14 +102,14 @@ def main():
         rows[f"{bf:.2f}"] = {}
         for gs in GS:
             best_cov = np.maximum.reduce([acc[gs][p] for p in COVERAGE])
-            m = stats.paired_margin_summary(np.array(acc[gs][ADAPTIVE]), best_cov, BOOT, config.CI_ALPHA, config.CI_SEED)
+            m = stats.paired_margin_summary(np.array(acc[gs][ADAPTIVE]), best_cov, BOOT, config.CI_ALPHA, config.CI_SEED, **GROUPING)
             rows[f"{bf:.2f}"][gs] = {"adaptive_mean": float(np.mean(acc[gs][ADAPTIVE])),
                                      "best_cover_mean": float(np.mean(best_cov)),
                                      "margin_vs_bestcover": m}
             log(f"    {gs:10s} adaptive-bestcover = {m['mean']:+.3f} CI={m['ci95']} excl0={m['ci_excludes_zero']}")
 
     out = Path(config.RESULTS_ROOT) / "hvg_sensitivity.json"
-    out.write_text(json.dumps({"imputer": IMPUTER, "slides": labels, "budgets": BUDGETS,
+    out.write_text(json.dumps({"imputer": IMPUTER, "slides": labels, "grouping": GROUPING, "region_mode": config.REGION_MODE, "budgets": BUDGETS,
                                "ref_frac": REF_FRAC, "gene_sets": GS, "rows": rows}, indent=2), encoding="utf-8")
     log(f"[write] {out}")
     log("\nExpected: the reconstruction margin stays <= 0 under slide_hvg, ref_hvg, AND all_genes -> the "

@@ -147,3 +147,48 @@ Physical-realism constraints. value_greedy vs best coverage, reconstruction PCC 
   model; under physically realistic batched and/or contiguous acquisition it is not statistically
   distinguishable from strong coverage at n=7 (point estimates remain small-positive; low power possible).
   This tempers the "adaptivity helps detection" half and reinforces the overall limited practical value.
+
+## Iteration 7 — expanded slide set: PRE-REGISTERED plan (reviewer point 5)  [written 2026-10-06, BEFORE any expanded result]
+Audit of the HEST metadata (public v1.1 CSV; gated v1.3 on the 4070) found problems that had to be fixed
+before expanding:
+- **Unit scale.** The loader assumed 0.5 um/px; HEST WSIs are 0.17-3.2 um/px (HD slides ~0.274). The legacy
+  "112 um" grid was therefore ~61 um on the HD slides (expected: one pseudo-spot per region) and would
+  have varied 59-224 um across standard Visium slides. Fix: `config.REGION_MODE = "spot"` — one region =
+  one native (pseudo-)spot, coordinates in true microns from HEST's spot-spacing pixel-size estimate
+  (`pixel_size_um_embedded` is missing for ~half the samples and off by 30-2000x for some). Policies and
+  imputers use relative scales (unit-box coords, extent fractions, median-heuristic / kNN), so only the
+  pooling unit changes. `00b_scale_audit.py` checks legacy == spot on the original 7; the paper's "112 um
+  region" wording must be corrected whatever the audit shows.
+- **Cache.** Per-tissue pickles ignored sample IDs (an expanded config would have silently re-run n=7).
+  Replaced by per-slide caches in `stare/slides.py`.
+- **Selection.** v1 suggestions included a mouse kidney (TENX146), a duplicate specimen (TENX128 ==
+  TENX155, identical WSI dims), a targeted panel, degraded-RNA studies, and serial sections; HEST's
+  `patient` field is unreliable (four CRC patients all "Patient 1"). v2 curates: human, whole
+  transcriptome, exact organ, >=1000 spots, WSI <= 0.6 um/px, one slide per specimen, <= 2 per study.
+- **Statistics.** At n=7 the smallest attainable exact two-sided p is 2/2^7 = 0.0156; with 24 primary
+  margins Holm needs p < 0.0021. So NO n=7 margin survives multiplicity correction (reconstruction
+  headline: raw p 0.0156 -> Holm 0.37), although the percentile-bootstrap CIs excluded 0. The n=7 "*"
+  claims are therefore not robust to an exact, corrected test; this is a power limit, not evidence
+  of an effect in either direction.
+
+**Pre-specified analysis for the expanded set (fixed now):**
+1. Unit = native spot (`REGION_MODE="spot"`), all slides including the original 7 rebuilt in this mode.
+2. Independence unit = HEST study (cluster). Primary test = two-sided cluster-level sign-flip
+   randomization test of the mean margin; CI = cluster bootstrap (whole studies resampled). Tissue-
+   stratified (equal-weight) estimate reported alongside. Slide-level fields kept for comparison.
+3. Primary family (Holm, alpha = 0.05), 24 margins: 05 graphflow `ours_vs_best_nonadapt` (6 budgets);
+   09 `value_greedy_{recon,detect}_vs_bestcover` (4 budgets x 2); 13 all batched/contiguous margins (10).
+   Everything else (10, 12, other 05/09 margins) is secondary, Holm within experiment.
+4. Decision rules. Reconstruction null confirmed if the primary reconstruction margins are <= 0 and none
+   is significantly > 0 after Holm (a significantly negative margin strengthens it). Detection advantage
+   claimed only where the detect margin is > 0 with Holm p < 0.05; if it holds at rs=1 but not at rs>=5 /
+   contiguous, the claim stays "fragile to physical realism"; if rs>=5 becomes significant, we report the
+   n=7 non-significance as a power artifact and revise that claim upward.
+5. No slide is dropped after results are seen; any build failure is reported with the reason.
+- **Compute (added before the expanded run).** At 4-9k spots the old code was infeasible (graphflow built an
+  R x R x d distance tensor, ~42 GB at 9k; greedy_ig refit a kNN index every step; value_greedy recomputed a
+  U x t kernel times all genes every step; Moran's I used a dense R x R product in every score()). Replaced
+  by sparse kNN diffusion, an uncertainty-only path, cached neighbour lists, running kernel sums, memoized
+  placements (k-means persisted to cache/placements), and a sparse Moran's I. Verified on a 132-run
+  equivalence harness (11 policies x 3 imputers x 2 slide sizes x 2 budgets): identical selections and
+  scores to the old code. Timing at R=6000, 20% budget: greedy_ig 8.6 s (was 319 s at R=2200).

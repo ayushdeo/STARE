@@ -1,8 +1,8 @@
 """
-HEST-1k Visium HD loading + region-grid construction (WS-A).
+HEST-1k (Visium HD / Visium) loading + acquisition-unit construction (WS-A).
 
-Turns a raw HEST sample (WSI + AnnData) into a `Slide` on the pinned region grid:
-pool spots into REGION_UM tiles, extract one UNI patch embedding per region, compute
+Turns a raw HEST sample (WSI + AnnData) into a `Slide`: define acquisition units per
+config.REGION_MODE (native spots by default; see config), embed each spot's UNI patch, compute
 top-50 HVG, log1p-normalize. Runs on the 4070 machine (needs the HEST download + UNI weights).
 """
 from __future__ import annotations
@@ -15,7 +15,7 @@ import pandas as pd
 from anndata import read_h5ad
 from huggingface_hub import hf_hub_download
 
-from . import config
+from . import config, hest_meta
 from .encoders import embed_patches
 from .simulator import Slide
 
@@ -58,9 +58,10 @@ def _sample_hf_path(sample_id: str, filename: str) -> str:
     )
 
 
-def _normalize_spatial_coords(coords_px: np.ndarray) -> np.ndarray:
-    scales = config.MICRONS_PER_PATCH / config.PATCH_PX
-    return coords_px.astype(np.float32) * scales
+def _normalize_spatial_coords(coords_px: np.ndarray, px_um: float | None = None) -> np.ndarray:
+    """Full-res pixel coords -> microns. px_um=None reproduces the legacy fixed 0.5 um/px assumption."""
+    scale = (config.MICRONS_PER_PATCH / config.PATCH_PX) if px_um is None else float(px_um)
+    return coords_px.astype(np.float32) * scale
 
 
 def _pooled_expression_by_region(expr: np.ndarray, region_id: np.ndarray, n_regions: int | None = None) -> np.ndarray:
@@ -82,8 +83,17 @@ def _pooled_expression_by_region(expr: np.ndarray, region_id: np.ndarray, n_regi
 
 def load_slide(sample_id: str, tissue: str,
                data_root: Path = config.DATA_ROOT,
-               image_encoder: str = config.IMAGE_ENCODER) -> Slide:
-    """Load one live HEST sample into the common Slide region-grid interface."""
+               image_encoder: str = config.IMAGE_ENCODER,
+               mode: str | None = None) -> Slide:
+    """Load one live HEST sample into the common Slide region interface.
+
+    mode (default config.REGION_MODE): "spot" = one region per native spot, true-um coords;
+    "grid" = pool spots on a true REGION_UM grid; "legacy" = the original fixed-0.5-um/px grid.
+    """
+    mode = mode or config.REGION_MODE
+    if mode not in ("spot", "grid", "legacy"):
+        raise ValueError(f"unknown region mode {mode!r}")
+    px_um, px_src = (None, "legacy_assumption_0.5") if mode == "legacy" else hest_meta.pixel_size_um(sample_id)
     adata_path = _sample_hf_path(sample_id, 'st/{sample_id}.h5ad')
     adata = read_h5ad(adata_path)
 
@@ -110,7 +120,7 @@ def load_slide(sample_id: str, tissue: str,
         coords_px = np.asarray(adata.obsm['spatial'], dtype=np.float32)
     else:
         coords_px = np.asarray(adata.obs[['pxl_col_in_fullres', 'pxl_row_in_fullres']].to_numpy(), dtype=np.float32)
-    coords_um = _normalize_spatial_coords(coords_px)
+    coords_um = _normalize_spatial_coords(coords_px, px_um)
 
     expr = expr[patch_match]
     coords_um = coords_um[patch_match]
@@ -121,8 +131,13 @@ def load_slide(sample_id: str, tissue: str,
         coords_um = coords_um[keep]
         patches = patches[keep]
 
-    region_id, region_centroids = build_region_grid(coords_um, region_um=config.REGION_UM)
-    expr_region = _pooled_expression_by_region(expr, region_id, n_regions=region_centroids.shape[0])
+    if mode == "spot":                       # one region = one native (pseudo-)spot
+        region_id = np.arange(coords_um.shape[0])
+        region_centroids = coords_um.astype(np.float64)
+    else:                                    # "grid" (true um) or "legacy" (0.5 um/px assumption)
+        region_id, region_centroids = build_region_grid(coords_um, region_um=config.REGION_UM)
+    n_regions = region_centroids.shape[0]
+    expr_region = expr if mode == "spot" else _pooled_expression_by_region(expr, region_id, n_regions=n_regions)
 
     expr_region = expr_region.astype(np.float32)
     gene_mask = np.mean(expr_region > 0, axis=0) >= config.MIN_SPOT_FRACTION
@@ -139,24 +154,32 @@ def load_slide(sample_id: str, tissue: str,
     else:
         hvg_idx = np.arange(expr_filtered.shape[1], dtype=int)
 
-    # HEST patch tiles are per-spot images; average their UNI embeddings by region.
-    region_patches = []
-    for region_idx in range(region_centroids.shape[0]):
-        mask = region_id == region_idx
-        if not np.any(mask):
-            continue
-        region_patches.append(patches[mask])
-
-    region_embeddings = []
-    for group in region_patches:
-        if group.size == 0:
-            region_embeddings.append(np.zeros((config.IMAGE_EMB_DIM,), dtype=np.float32))
-            continue
-        emb = embed_patches(group, batch_size=config.BATCH_SIZE_EMB)
-        region_embeddings.append(emb.mean(axis=0))
-
-    image_embeddings = np.stack(region_embeddings, axis=0).astype(np.float32)
+    # HEST patch tiles are per-spot images: embed every patch once (batched), then average by region.
+    # (Same quantity as the legacy per-region loop -- mean of per-patch UNI embeddings -- just batched.)
+    spot_emb = embed_patches(patches, batch_size=config.BATCH_SIZE_EMB).astype(np.float32)
+    if mode == "spot":
+        image_embeddings = spot_emb
+    else:
+        image_embeddings = np.zeros((n_regions, spot_emb.shape[1]), dtype=np.float32)
+        np.add.at(image_embeddings, region_id, spot_emb)
+        image_embeddings /= np.bincount(region_id, minlength=n_regions).clip(min=1)[:, None]
     image_embeddings = image_embeddings / np.linalg.norm(image_embeddings, axis=1, keepdims=True).clip(min=1e-8)
+
+    spots_per_region = np.bincount(region_id, minlength=n_regions)
+    # independent scale check: median nearest-neighbour spot spacing (Visium pitch is 100 um)
+    sub = coords_um[np.random.default_rng(0).choice(len(coords_um), size=min(2000, len(coords_um)), replace=False)]
+    dd = np.linalg.norm(sub[:, None, :] - sub[None, :, :], axis=2); np.fill_diagonal(dd, np.inf)
+    nn_pitch_um = float(np.median(dd.min(1)))
+    row = hest_meta.sample_row(sample_id) or {}
+    meta = {
+        "sample_id": sample_id, "region_mode": mode, "px_um": px_um, "px_source": px_src,
+        "n_spots": int(coords_um.shape[0]), "n_regions": int(n_regions), "nn_pitch_um": nn_pitch_um,
+        "spots_per_region_mean": float(spots_per_region.mean()), "spots_per_region_max": int(spots_per_region.max()),
+        "st_technology": row.get("st_technology"), "species": row.get("species"),
+        "organ": row.get("organ"), "study": str(row.get("dataset_title") or "")[:80],
+        "patient": None if pd.isna(row.get("patient")) else row.get("patient"),
+        "meta_source": hest_meta.load_metadata().attrs.get("source"),
+    }
 
     return Slide(
         tissue=tissue,
@@ -166,6 +189,7 @@ def load_slide(sample_id: str, tissue: str,
         hvg_idx=hvg_idx,
         gene_names=list(adata.var_names[gene_mask]),
         patient_id=sample_id,
+        meta=meta,
     )
 
 

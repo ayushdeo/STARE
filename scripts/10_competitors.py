@@ -25,9 +25,10 @@ except Exception:
 from pathlib import Path
 import numpy as np
 
-from stare import config, data, metrics, stats
+from stare import config, metrics, stats
 from stare.simulator import AcquisitionSimulator
 from stare.imputer import build_imputer
+from stare.slides import load_ci_slides
 from stare.policies import build_policy
 
 IMPUTER = "graphflow"
@@ -41,12 +42,10 @@ BOOT = 5000
 def log(m): print(m, flush=True)
 
 
-def load_or_cache_slides(tissue):
-    p = Path(config.CACHE_ROOT) / f"slides_{tissue}_{int(config.REGION_UM)}um_{config.IMAGE_ENCODER}.pkl"
-    if p.exists():
-        log(f"[cache] {p}"); return pickle.load(open(p, "rb"))
-    log(f"[build] {tissue} (minutes)..."); Path(config.CACHE_ROOT).mkdir(parents=True, exist_ok=True)
-    s = data.load_tissue(tissue); pickle.dump(s, open(p, "wb")); return s
+# study clusters + tissue strata of the loaded slides (set in main; used by every margin summary)
+GROUPING = {}
+
+
 
 
 def roi_mask(slide):
@@ -67,10 +66,8 @@ def profiled_and_pcc(slide, imputer, pol_or_order, bf):
 
 def main():
     imputer = build_imputer(IMPUTER)
-    slides, labels = [], []
-    for tissue in config.CI_TISSUES:
-        for s in load_or_cache_slides(tissue):
-            slides.append(s); labels.append(f"{tissue}:{getattr(s,'patient_id','?')}")
+    slides, labels, group = load_ci_slides(log=log)
+    GROUPING.update(clusters=group["clusters"], strata=group["strata"])
     log(f"=== competitors | slides={labels} imputer={IMPUTER} budgets={BUDGETS} ===")
     ALL = COVERAGE + ADAPTIVE
     rows = {}
@@ -90,8 +87,8 @@ def main():
         rows[f"{bf:.2f}"] = {
             "reconstruction_pcc_means": {p: float(np.mean(v)) for p, v in pcc.items()},
             "detection_recall_means": {p: float(np.mean(v)) for p, v in det.items()},
-            "recon_margin_vs_bestcover": {p: stats.paired_margin_summary(np.array(pcc[p]), bc_pcc, BOOT, config.CI_ALPHA, config.CI_SEED) for p in ADAPTIVE},
-            "detect_margin_vs_bestcover": {p: stats.paired_margin_summary(np.array(det[p]), bc_det, BOOT, config.CI_ALPHA, config.CI_SEED) for p in ADAPTIVE},
+            "recon_margin_vs_bestcover": {p: stats.paired_margin_summary(np.array(pcc[p]), bc_pcc, BOOT, config.CI_ALPHA, config.CI_SEED, **GROUPING) for p in ADAPTIVE},
+            "detect_margin_vs_bestcover": {p: stats.paired_margin_summary(np.array(det[p]), bc_det, BOOT, config.CI_ALPHA, config.CI_SEED, **GROUPING) for p in ADAPTIVE},
         }
         log(f"  == budget {bf:.2f} ==")
         for p in ADAPTIVE:
@@ -100,7 +97,7 @@ def main():
                 f"DETECT {dm['mean']:+.3f}{'*' if dm['ci_excludes_zero'] else ' '}")
 
     out = Path(config.RESULTS_ROOT) / "competitors.json"
-    out.write_text(json.dumps({"imputer": IMPUTER, "slides": labels, "budgets": BUDGETS,
+    out.write_text(json.dumps({"imputer": IMPUTER, "slides": labels, "grouping": GROUPING, "region_mode": config.REGION_MODE, "budgets": BUDGETS,
                                "roi_quantile": ROI_QUANTILE, "rows": rows}, indent=2), encoding="utf-8")
     log(f"[write] {out}")
 

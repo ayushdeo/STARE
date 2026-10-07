@@ -208,7 +208,7 @@ class GraphFlowImputer(BaseImputer):
         self.step_size = step_size
         self.seed = seed
         self._phi_cache: dict[int, np.ndarray] = {}   # RFF features per slide (frozen)
-        self._adj_cache: dict[int, np.ndarray] = {}    # row-normalized kNN adjacency per slide
+        self._adj_cache: dict = {}                      # row-normalized sparse kNN adjacency per slide
         self._feat_cache: dict[int, np.ndarray] = {}   # joint features per slide (for greedy graph)
 
     # -- shared joint features (also used by the greedy policy) --------------
@@ -253,25 +253,44 @@ class GraphFlowImputer(BaseImputer):
         self._phi_cache[key] = phi
         return phi
 
-    def _adjacency(self, slide: Slide) -> np.ndarray:
+    def _adjacency(self, slide: Slide):
         """Fixed row-normalized kNN adjacency on joint features (data-INDEPENDENT graph; only the
-        clamping is data-dependent). Symmetrized then row-normalized to a diffusion operator."""
+        clamping is data-dependent). Symmetrized then row-normalized to a diffusion operator.
+        Sparse (CSR) with a tree-based kNN: the same operator as the original dense build, which
+        materialized an R x R x d distance tensor (~42 GB at 9k regions) and a dense R x R matrix."""
         key = id(slide)
         if key in self._adj_cache:
             return self._adj_cache[key]
+        from scipy import sparse
+        from sklearn.neighbors import NearestNeighbors
         F = self.features(slide)
         R = F.shape[0]
         k = int(min(self.graph_k, R - 1))
-        d = ((F[:, None, :] - F[None, :, :]) ** 2).sum(2)
-        np.fill_diagonal(d, np.inf)
-        nn = np.argsort(d, axis=1)[:, :k]
-        A = np.zeros((R, R), dtype=np.float64)
-        rows = np.repeat(np.arange(R), k)
-        A[rows, nn.ravel()] = 1.0
-        A = np.maximum(A, A.T)                       # symmetrize
-        A = A / np.clip(A.sum(1, keepdims=True), 1e-12, None)   # row-normalize -> diffusion op
+        _, idx = NearestNeighbors(n_neighbors=min(k + 1, R)).fit(F).kneighbors(F)
+        notself = idx != np.arange(R)[:, None]               # drop self (first k non-self neighbours)
+        keep = notself & (np.cumsum(notself, axis=1) <= k)
+        nn = idx[keep].reshape(R, k)
+        A = sparse.csr_matrix((np.ones(R * k), (np.repeat(np.arange(R), k), nn.ravel())), shape=(R, R))
+        A = A.maximum(A.T).tocsr()                           # symmetrize
+        A = sparse.diags(1.0 / np.clip(np.asarray(A.sum(1)).ravel(), 1e-12, None)) @ A   # row-normalize
+        A = A.tocsr()
         self._adj_cache[key] = A
         return A
+
+    def _influence_uncertainty(self, state: AcquisitionState) -> np.ndarray:
+        """Data-dependent uncertainty = 1 - graph influence of clamped (profiled) nodes. Needs only the
+        graph, not the expression fit, so the policies' per-step uncertainty calls skip the ridge solve
+        and the (R x G) diffusion."""
+        prof, unpro = state.profiled, state.unprofiled
+        if prof.size == 0:
+            return np.zeros(unpro.size)
+        A = self._adjacency(state.slide)
+        s = self.step_size
+        infl = np.zeros(A.shape[0]); infl[prof] = 1.0
+        for _ in range(self.steps):
+            infl = (1.0 - s) * infl + s * (A @ infl)
+            infl[prof] = 1.0
+        return np.clip(1.0 - infl[unpro], 0.0, None)
 
     def _fit_predict(self, state: AcquisitionState):
         prof, unpro = state.profiled, state.unprofiled
@@ -295,18 +314,13 @@ class GraphFlowImputer(BaseImputer):
             x[prof] = Y[prof]                         # re-clamp measured every step
         pred = x[unpro]
         # (3) data-dependent uncertainty = 1 - graph influence of clamped nodes
-        infl = np.zeros(A.shape[0]); infl[prof] = 1.0
-        for _ in range(self.steps):
-            infl = (1.0 - s) * infl + s * (A @ infl)
-            infl[prof] = 1.0
-        unc = np.clip(1.0 - infl[unpro], 0.0, None)
-        return pred, unc
+        return pred, self._influence_uncertainty(state)
 
     def impute(self, state: AcquisitionState) -> np.ndarray:
         return self._fit_predict(state)[0]
 
     def uncertainty(self, state: AcquisitionState) -> np.ndarray:
-        return self._fit_predict(state)[1]
+        return self._influence_uncertainty(state)
 
 
 def build_imputer(name: str = config.IMPUTER) -> BaseImputer:

@@ -36,11 +36,14 @@ def local_heterogeneity(expr: np.ndarray, coords: np.ndarray, hvg_idx: np.ndarra
     """(R,) per-region molecular heterogeneity = variance of top-HVG expression among a region's k
     spatial nearest neighbours, averaged over genes. Used (from ground truth, for EVALUATION only) to
     define regions of interest for the detection objective (cf. S2-omics 'molecular heterogeneity')."""
+    from scipy.spatial import cKDTree
     Y = np.asarray(expr, dtype=float)[:, hvg_idx]
     n = coords.shape[0]
-    d = ((coords[:, None, :] - coords[None, :, :]) ** 2).sum(2)
-    np.fill_diagonal(d, np.inf)
-    nn = np.argsort(d, axis=1)[:, :min(k, n - 1)]
+    kk = min(k, n - 1)
+    _, idx = cKDTree(np.asarray(coords, dtype=float)).query(coords, k=kk + 1)   # tree: no R x R matrix
+    idx = idx.reshape(n, kk + 1)
+    notself = idx != np.arange(n)[:, None]
+    nn = idx[notself & (np.cumsum(notself, axis=1) <= kk)].reshape(n, kk)
     return Y[nn].var(axis=1).mean(axis=1)
 
 
@@ -67,21 +70,21 @@ def morans_i(values: np.ndarray, coords: np.ndarray, k: int = 6) -> float:
     if n < k + 1 or values.shape[0] != n:
         return float("nan")
 
-    # k-NN adjacency (exclude self), symmetrized to binary weights
-    d = np.linalg.norm(coords[:, None, :] - coords[None, :, :], axis=2)
-    np.fill_diagonal(d, np.inf)
-    nn = np.argsort(d, axis=1)[:, :k]
-    W = np.zeros((n, n), dtype=float)
-    rows = np.repeat(np.arange(n), k)
-    W[rows, nn.ravel()] = 1.0
-    W = np.maximum(W, W.T)
+    # k-NN adjacency (exclude self), symmetrized to binary weights -- sparse (tree kNN), same W as dense
+    from scipy import sparse
+    from scipy.spatial import cKDTree
+    _, idx = cKDTree(np.asarray(coords, dtype=float)).query(coords, k=k + 1)
+    notself = idx != np.arange(n)[:, None]
+    nn = idx[notself & (np.cumsum(notself, axis=1) <= k)].reshape(n, k)
+    W = sparse.csr_matrix((np.ones(n * k), (np.repeat(np.arange(n), k), nn.ravel())), shape=(n, n))
+    W = W.maximum(W.T).tocsr()
     w_sum = W.sum()
     if w_sum == 0:
         return float("nan")
 
     xs = values - values.mean(axis=0, keepdims=True)      # (N, G)
     denom = (xs ** 2).sum(axis=0)                          # (G,)
-    num = np.einsum("ij,ig,jg->g", W, xs, xs)              # (G,)
+    num = (xs * (W @ xs)).sum(axis=0)                      # (G,)  = sum_ij w_ij xs_ig xs_jg
     with np.errstate(invalid="ignore", divide="ignore"):
         gene_I = np.where(denom > 0, (n / w_sum) * (num / denom), np.nan)
     return float(np.nanmean(gene_I))

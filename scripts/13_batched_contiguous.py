@@ -29,6 +29,7 @@ import numpy as np
 from stare import config, metrics, stats
 from stare.simulator import AcquisitionSimulator, AcquisitionState
 from stare.imputer import build_imputer
+from stare.slides import load_ci_slides
 from stare.policies import build_policy
 
 IMPUTER = "graphflow"
@@ -43,13 +44,10 @@ BOOT = 5000
 def log(m): print(m, flush=True)
 
 
-def load_or_cache_slides(tissue):
-    p = Path(config.CACHE_ROOT) / f"slides_{tissue}_{int(config.REGION_UM)}um_{config.IMAGE_ENCODER}.pkl"
-    if p.exists():
-        log(f"[cache] {p}"); return pickle.load(open(p, "rb"))
-    from stare import data
-    log(f"[build] {tissue}..."); Path(config.CACHE_ROOT).mkdir(parents=True, exist_ok=True)
-    s = data.load_tissue(tissue); pickle.dump(s, open(p, "wb")); return s
+# study clusters + tissue strata of the loaded slides (set in main; used by every margin summary)
+GROUPING = {}
+
+
 
 
 def roi_mask(slide):
@@ -98,19 +96,17 @@ def play_contiguous(slide, imputer, name, bf, block_k):
 
 def summarize(adaptive_vals, cover_matrix):
     best = np.maximum.reduce(cover_matrix)
-    return stats.paired_margin_summary(np.array(adaptive_vals), best, BOOT, config.CI_ALPHA, config.CI_SEED)
+    return stats.paired_margin_summary(np.array(adaptive_vals), best, BOOT, config.CI_ALPHA, config.CI_SEED, **GROUPING)
 
 
 def main():
     imputer = build_imputer(IMPUTER)
-    slides, labels = [], []
-    for tissue in config.CI_TISSUES:
-        for s in load_or_cache_slides(tissue):
-            slides.append(s); labels.append(f"{tissue}:{getattr(s,'patient_id','?')}")
+    slides, labels, group = load_ci_slides(log=log)
+    GROUPING.update(clusters=group["clusters"], strata=group["strata"])
     rois = [roi_mask(s) for s in slides]
     log(f"=== batched/contiguous | slides={labels} imputer={IMPUTER} budget={BUDGET} ===")
 
-    out = {"imputer": IMPUTER, "budget": BUDGET, "slides": labels, "block_k": BLOCK_K,
+    out = {"imputer": IMPUTER, "budget": BUDGET, "slides": labels, "grouping": GROUPING, "region_mode": config.REGION_MODE, "block_k": BLOCK_K,
            "round_sizes": [("oneshot" if r > 10 ** 8 else r) for r in ROUND_SIZES], "partA_batched": {}, "partB_contiguous": {}}
 
     # Part A: coverage is order-invariant to batching -> compute once (round_size=1)

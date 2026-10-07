@@ -62,6 +62,13 @@ PATCH_PX = 224                    # image patch pixels per region (at 20x)
 TARGET_MAG = 20                   # magnification for patch extraction
 MICRONS_PER_PATCH = 112.0         # 224 px @ 20x ~= 112 um (HEST convention)
 
+# ACQUISITION UNIT MODE (revision). HEST WSIs are 0.26-1.0 um/px, not the 0.5 um/px the legacy loader
+# assumed, so "legacy" pooled on a 112*px/0.5 um grid (~59 um on the HD slides -> one pseudo-spot per
+# region). "spot" makes the unit explicit and platform-consistent: one region = one native (pseudo-)spot,
+# coordinates in true microns from HEST's per-slide pixel size. "grid" pools on a true REGION_UM grid.
+# scripts/00b_scale_audit.py checks that legacy == spot (one spot per region) on the original 7 slides.
+REGION_MODE = "spot"              # {"spot", "grid", "legacy"}
+
 # ---------------------------------------------------------------------------
 # BUDGET GRID  (SOURCE_OF_TRUTH §4/§6) — fraction of regions we may profile
 # ---------------------------------------------------------------------------

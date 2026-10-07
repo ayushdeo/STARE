@@ -14,7 +14,8 @@ DECISION RULE (honest): a closed-loop WIN requires ours_vs_best_nonadapt CI to E
 at some budget. If every CI straddles 0, the verdict is "tie / no gain" and the negative result
 stands with cross-slide evidence. Writes results/ci_multislide_<imputer>.json (committed).
 
-Run unbuffered:  python -u scripts/05_multislide_ci.py
+Run unbuffered:  python -u scripts/05_multislide_ci.py                      # graphflow (primary)
+                 python -u scripts/05_multislide_ci.py --imputers knn kriging graphflow
 """
 import os
 os.environ.setdefault("LOKY_MAX_CPU_COUNT", "4")
@@ -26,9 +27,10 @@ except Exception:
 import json, pickle, time
 from pathlib import Path
 
-from stare import config, data, stats
+from stare import config, stats
 from stare.simulator import AcquisitionSimulator
 from stare.imputer import build_imputer
+from stare.slides import load_ci_slides
 from stare.policies import build_policy
 
 NEEDS_IMPUTER = {"greedy_ig"}
@@ -51,16 +53,10 @@ NON_ADAPTIVE = ["grid", "kmeans", "oneshot_spatialfinder", "var_greedy", "mi_gre
 def log(m): print(m, flush=True)
 
 
-def load_or_cache_slides(tissue):
-    cache_dir = Path(config.CACHE_ROOT); cache_dir.mkdir(parents=True, exist_ok=True)
-    p = cache_dir / f"slides_{tissue}_{int(config.REGION_UM)}um_{config.IMAGE_ENCODER}.pkl"
-    if p.exists():
-        log(f"[cache] {p}")
-        return pickle.load(open(p, "rb"))
-    log(f"[build] {tissue}: no cache; building (minutes)...")
-    slides = data.load_tissue(tissue)
-    pickle.dump(slides, open(p, "wb"))
-    return slides
+# study clusters + tissue strata of the loaded slides (set in main; used by every margin summary)
+GROUPING = {}
+
+
 
 
 def play_slide(slide, imputer, pn, bf, pkw, seed=None):
@@ -108,10 +104,10 @@ def run_imputer(imputer_name, slides, slide_labels, budgets):
         ablate = np.array(per_slide["ablate_no_measured"][bkey])
         best_na = np.max(np.vstack([per_slide[n][bkey] for n in NON_ADAPTIVE]), axis=0)
         margins[bkey] = {
-            "ours_vs_mi": stats.paired_margin_summary(ours, mi, config.CI_BOOTSTRAP, config.CI_ALPHA, config.CI_SEED),
-            "ours_vs_best_nonadapt": stats.paired_margin_summary(ours, best_na, config.CI_BOOTSTRAP, config.CI_ALPHA, config.CI_SEED),
-            "adaptive_vs_var": stats.paired_margin_summary(adapt, varg, config.CI_BOOTSTRAP, config.CI_ALPHA, config.CI_SEED),
-            "closed_vs_ablate": stats.paired_margin_summary(ours, ablate, config.CI_BOOTSTRAP, config.CI_ALPHA, config.CI_SEED),
+            "ours_vs_mi": stats.paired_margin_summary(ours, mi, config.CI_BOOTSTRAP, config.CI_ALPHA, config.CI_SEED, **GROUPING),
+            "ours_vs_best_nonadapt": stats.paired_margin_summary(ours, best_na, config.CI_BOOTSTRAP, config.CI_ALPHA, config.CI_SEED, **GROUPING),
+            "adaptive_vs_var": stats.paired_margin_summary(adapt, varg, config.CI_BOOTSTRAP, config.CI_ALPHA, config.CI_SEED, **GROUPING),
+            "closed_vs_ablate": stats.paired_margin_summary(ours, ablate, config.CI_BOOTSTRAP, config.CI_ALPHA, config.CI_SEED, **GROUPING),
         }
         m = margins[bkey]["ours_vs_best_nonadapt"]
         log(f"  [{imputer_name}] budget {bkey}: ours-best_nonadapt mean={m['mean']} "
@@ -123,7 +119,7 @@ def run_imputer(imputer_name, slides, slide_labels, budgets):
     out = Path(config.RESULTS_ROOT) / f"ci_multislide_{imputer_name}.json"
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps({
-        "imputer": imputer_name, "tissues": config.CI_TISSUES, "slides": slide_labels,
+        "imputer": imputer_name, "tissues": config.CI_TISSUES, "slides": slide_labels, "grouping": GROUPING, "region_mode": config.REGION_MODE,
         "budgets": [f"{b:.3f}" for b in budgets], "metric": "pcc_top50",
         "per_slide": per_slide, "margins": margins,
         "win_budgets_ours_vs_best_nonadapt": win_budgets,
@@ -133,15 +129,18 @@ def run_imputer(imputer_name, slides, slide_labels, budgets):
 
 
 def main():
+    import argparse
+    ap = argparse.ArgumentParser()
+    # graphflow = the pre-registered primary imputer (docs/ITERATION_LOG.md, iteration 7). knn/kriging
+    # keep dense U x P distance blocks and are only practical at the original ~2k-region slide size.
+    ap.add_argument("--imputers", nargs="+", default=["graphflow"], choices=config.SWEEP_IMPUTERS)
+    args = ap.parse_args()
     budgets = config.SWEEP_BUDGET_FRACTIONS
-    slides, labels = [], []
-    for tissue in config.CI_TISSUES:
-        ts = load_or_cache_slides(tissue)
-        for s in ts:
-            slides.append(s); labels.append(f"{tissue}:{getattr(s, 'patient_id', '?')}")
+    slides, labels, group = load_ci_slides(log=log)
+    GROUPING.update(clusters=group["clusters"], strata=group["strata"])
     log(f"=== multislide CI | tissues={config.CI_TISSUES} slides={labels} "
-        f"imputers={config.SWEEP_IMPUTERS} budgets={budgets} ===")
-    summary = [run_imputer(name, slides, labels, budgets) for name in config.SWEEP_IMPUTERS]
+        f"imputers={args.imputers} budgets={budgets} ===")
+    summary = [run_imputer(name, slides, labels, budgets) for name in args.imputers]
     log("\n===== CI HEADLINE (ours vs BEST non-adaptive, CI excludes 0) =====")
     for name, wins in summary:
         log(f"  imputer={name:9s} closed-loop WIN budgets: {wins or 'NONE'}")

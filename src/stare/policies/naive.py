@@ -6,6 +6,7 @@ from __future__ import annotations
 import numpy as np
 from .base import Policy
 from ..simulator import AcquisitionState
+from .. import config
 
 
 class RandomPolicy(Policy):
@@ -30,8 +31,14 @@ class GridPolicy(Policy):
             centroid = coords.mean(axis=0)
             d = np.linalg.norm(coords[unprofiled] - centroid, axis=1)
             return int(unprofiled[np.argmin(d)])
-        d = np.linalg.norm(coords[unprofiled][:, None, :] - coords[state.profiled][None, :, :], axis=2)
-        return int(unprofiled[np.argmax(d.min(axis=1))])
+        # min distance to the profiled set, updated once per newly revealed region (no U x t matrix)
+        prof = [int(i) for i in state.profiled]
+        if getattr(self, "_mind", None) is None or prof[:len(self._done)] != self._done:
+            self._mind, self._done = np.full(coords.shape[0], np.inf), []
+        for j in prof[len(self._done):]:
+            np.minimum(self._mind, np.linalg.norm(coords - coords[j], axis=1), out=self._mind)
+            self._done.append(j)
+        return int(unprofiled[np.argmax(self._mind[unprofiled])])
 
 
 class VariancePolicy(Policy):
@@ -50,6 +57,27 @@ class VariancePolicy(Policy):
             if not state.mask[i]:
                 return int(i)
         raise RuntimeError("no unprofiled region left")
+
+
+_KMEANS_ORDERS: dict = {}     # (id(slide), budget, seed) -> (slide, order)
+
+
+def _disk_memo(state, seed, build):
+    """Persist k-means orders under cache/placements so separate scripts share them. Keyed by sample
+    id, unit mode, region count, budget and seed; synthetic slides (no sample id) are not persisted."""
+    import json
+    from pathlib import Path
+    sl = state.slide
+    if not sl.patient_id:
+        return build(state)
+    mode = (sl.meta or {}).get("region_mode", "legacy")
+    p = Path(config.CACHE_ROOT) / "placements" / f"{sl.patient_id}_{mode}_R{sl.n_regions}_kmeans_b{int(state.budget)}_s{seed}.json"
+    if p.exists():
+        return [int(i) for i in json.loads(p.read_text())]
+    order = build(state)
+    p.parent.mkdir(parents=True, exist_ok=True)
+    p.write_text(json.dumps([int(i) for i in order]))
+    return order
 
 
 class KMeansImagePolicy(Policy):
@@ -82,7 +110,13 @@ class KMeansImagePolicy(Policy):
 
     def select(self, state: AcquisitionState):
         if self._order is None:
-            self._order = self._build_order(state)
+            # memoized per (slide, budget, seed): the order is measurement-blind, so it is identical
+            # across imputers and repeated runs (k-means with n_init=10 dominates the sweep's cost)
+            key = (id(state.slide), int(state.budget), self.seed)
+            hit = _KMEANS_ORDERS.get(key)
+            if hit is None or hit[0] is not state.slide:
+                hit = _KMEANS_ORDERS[key] = (state.slide, _disk_memo(state, self.seed, self._build_order))
+            self._order = hit[1]
         for i in self._order:
             if not state.mask[i]:
                 return int(i)

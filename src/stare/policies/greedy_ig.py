@@ -46,19 +46,34 @@ class GreedyInfoGainPolicy(Policy):
         self.criterion = criterion
         self.er_k = er_k
         self.closed_loop = bool(use_measured)
+        self._nbr = None          # (slide, extended all-region neighbour lists) for error reduction
+        self._acc = None          # running max-similarity / min-distance to the profiled set
 
     # -- image-only fallback terms (uncertainty criterion / measured off) ----
+    def _running(self, state):
+        """Max cosine similarity and min spatial distance of every region to the profiled set, updated
+        once per newly revealed region (profiled only grows in an episode). Same values as the per-step
+        U x t recomputation (whose image term is U x t x 1536)."""
+        prof = [int(i) for i in state.profiled]
+        acc = self._acc
+        if acc is None or acc["slide"] is not state.slide or prof[:len(acc["done"])] != acc["done"]:
+            emb = state.slide.image_embeddings          # original dtype, as before
+            R = emb.shape[0]
+            acc = self._acc = {"slide": state.slide, "done": [],
+                               "en": emb / np.clip(np.linalg.norm(emb, axis=1, keepdims=True), 1e-12, None),
+                               "co": state.slide.region_coords,
+                               "maxsim": np.full(R, -np.inf), "mind": np.full(R, np.inf)}
+        for j in prof[len(acc["done"]):]:
+            np.maximum(acc["maxsim"], acc["en"] @ acc["en"][j], out=acc["maxsim"])
+            np.minimum(acc["mind"], np.linalg.norm(acc["co"] - acc["co"][j], axis=1), out=acc["mind"])
+            acc["done"].append(j)
+        return acc
+
     def _image_novelty(self, state, unpro):
-        emb = state.slide.image_embeddings
-        q, p = emb[unpro], emb[state.profiled]
-        qn = q / np.clip(np.linalg.norm(q, axis=1, keepdims=True), 1e-12, None)
-        pn = p / np.clip(np.linalg.norm(p, axis=1, keepdims=True), 1e-12, None)
-        return 1.0 - (qn @ pn.T).max(axis=1)
+        return 1.0 - self._running(state)["maxsim"][unpro]
 
     def _spatial_coverage(self, state, unpro):
-        co = state.slide.region_coords
-        d = np.linalg.norm(co[unpro][:, None, :] - co[state.profiled][None, :, :], axis=2)
-        return d.min(axis=1)
+        return self._running(state)["mind"][unpro]
 
     def _cold_start(self, state, unpro):
         """No profiled region yet: seed at the image medoid (most representative region)."""
@@ -90,15 +105,36 @@ class GreedyInfoGainPolicy(Policy):
             score += _zscore(self._spatial_coverage(state, unpro))
         return int(unpro[score.argmax()])
 
+    def _neighbour_lists(self, slide, width):
+        """All-region kNN lists in the imputer's feature space (self first), `width` long. Cached."""
+        if self._nbr is not None and self._nbr[0] is slide and self._nbr[1].shape[1] >= width:
+            return self._nbr[1]
+        from sklearn.neighbors import NearestNeighbors
+        F = self.imputer.features(slide)
+        width = int(min(width, F.shape[0]))
+        _, idx = NearestNeighbors(n_neighbors=width).fit(F).kneighbors(F)
+        self._nbr = (slide, idx)
+        return idx
+
     def _error_reduction_scores(self, state, unpro):
         """score(r) = sum over unprofiled neighbours j of r (in the imputer's feature space) of
         uncertainty(j). Measuring r anchors those neighbours -> expected total error reduction.
-        O(U * k) via a kNN graph on the unprofiled set."""
-        from sklearn.neighbors import NearestNeighbors
+        Neighbours of r = its k nearest among the UNPROFILED set (r itself included, as before).
+        Computed by filtering cached all-region kNN lists rather than refitting a kNN index on the
+        unprofiled set every step; the lists are widened and recomputed whenever a row runs short,
+        so the neighbour sets are the same as a fresh fit."""
         unc = self.imputer.uncertainty(state)               # (U,) aligned with unpro
-        F = self.imputer.features(state.slide)[unpro]       # unprofiled features (same space as imputer)
+        R = state.slide.n_regions
         k = int(min(self.er_k, len(unpro)))
-        nn = NearestNeighbors(n_neighbors=k).fit(F)
-        _, idx = nn.kneighbors(F)                           # (U, k) neighbours among unprofiled
-        # r's benefit = total uncertainty of the neighbours it would help impute
+        width = k + 64
+        while True:
+            L = self._neighbour_lists(state.slide, width)[unpro]          # (U, width) region ids
+            ok = ~state.mask[L]
+            c = np.cumsum(ok, axis=1)
+            if c[:, -1].min() >= k or L.shape[1] >= R:
+                break
+            width *= 2
+        take = ok & (c <= k)
+        pos = np.full(R, -1); pos[unpro] = np.arange(unpro.size)
+        idx = pos[L[take]].reshape(unpro.size, k)          # positions in unpro, nearest first
         return unc[idx].sum(axis=1)

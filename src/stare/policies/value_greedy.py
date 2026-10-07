@@ -48,6 +48,34 @@ class ValueGreedyPolicy(Policy):
         self.beta = beta                       # weight on the coverage (explore) term
         self.lengthscale_frac = lengthscale_frac  # spatial kernel width as a fraction of slide extent
         self.rng = np.random.default_rng(seed)
+        self._acc = None                       # incremental kernel sums (see _accumulate)
+
+    def _accumulate(self, state):
+        """Running kernel sums over the profiled set, updated by one rank-1 term per newly revealed
+        region (the profiled list only grows within an episode):
+            S0_i = sum_j K_ij,  S1_i = sum_j K_ij y_j,  S2_i = sum_j K_ij y_j^2,  mind2_i = min_j d_ij^2.
+        Same quantities as recomputing K (U x t) @ y (t x G) every step, at O(R G) per step instead of
+        O(R t G) -- the difference between minutes and days on 6-9k-spot Visium slides."""
+        prof = [int(i) for i in state.profiled]
+        acc = self._acc
+        if acc is None or acc["slide"] is not state.slide or prof[:len(acc["done"])] != acc["done"]:
+            co = state.slide.region_coords.astype(np.float64)
+            R, G = state.slide.expression.shape
+            acc = self._acc = {"slide": state.slide, "done": [], "co": co,
+                               "ell": max(float(np.linalg.norm(co.max(0) - co.min(0))) * self.lengthscale_frac, 1e-6),
+                               "S0": np.zeros(R), "S1": np.zeros((R, G)), "S2": np.zeros((R, G)),
+                               "mind2": np.full(R, np.inf)}
+        co, ell = acc["co"], acc["ell"]
+        for j in prof[len(acc["done"]):]:
+            d2 = ((co - co[j]) ** 2).sum(1)                   # (R,)
+            k = np.exp(-d2 / (2.0 * ell ** 2))
+            y = state.slide.expression[j].astype(np.float64)  # measured y_j  <- y_{A_t}
+            acc["S0"] += k
+            acc["S1"] += k[:, None] * y[None, :]
+            acc["S2"] += k[:, None] * (y ** 2)[None, :]
+            np.minimum(acc["mind2"], d2, out=acc["mind2"])
+            acc["done"].append(j)
+        return acc
 
     def _cold_start(self, state, unpro):
         co = state.slide.region_coords
@@ -62,21 +90,12 @@ class ValueGreedyPolicy(Policy):
         if state.profiled.size == 0:
             return self._cold_start(state, unpro)
 
-        co = state.slide.region_coords.astype(np.float64)
-        extent = float(np.linalg.norm(co.max(0) - co.min(0)))
-        ell = max(extent * self.lengthscale_frac, 1e-6)
-
-        prof = state.profiled
-        y = state.measured_expression().astype(np.float64)      # (t, G) measured values  <- y_{A_t}
-
-        # spatial kernel between every unprofiled candidate and every profiled region
-        d2 = ((co[unpro][:, None, :] - co[prof][None, :, :]) ** 2).sum(2)   # (U, t)
-        K = np.exp(-d2 / (2.0 * ell ** 2))
-        K1 = np.clip(K.sum(1, keepdims=True), 1e-12, None)      # (U,1)
-        Ey = (K @ y) / K1                                       # (U,G) local weighted mean of measured
-        Ey2 = (K @ (y ** 2)) / K1                               # (U,G) local weighted 2nd moment
+        acc = self._accumulate(state)
+        S0 = np.clip(acc["S0"][unpro], 1e-12, None)[:, None]   # (U,1)  K1
+        Ey = acc["S1"][unpro] / S0                              # (U,G) local weighted mean of measured
+        Ey2 = acc["S2"][unpro] / S0                             # (U,G) local weighted 2nd moment
         exploit = np.clip(Ey2 - Ey ** 2, 0.0, None).mean(1)     # (U,) local measured VARIANCE (uses y)
-        explore = np.sqrt(d2).min(axis=1)                       # (U,) coverage term
+        explore = np.sqrt(acc["mind2"][unpro])                  # (U,) coverage term
 
         score = _zscore(exploit) + self.beta * _zscore(explore)
         return int(unpro[int(np.argmax(score))])

@@ -26,6 +26,7 @@ class Slide:
     hvg_idx: np.ndarray                # (N_HVG,) indices into G of top-50 HVG
     gene_names: Optional[list[str]] = None
     patient_id: Optional[str] = None
+    meta: Optional[dict] = None         # provenance: px size, unit mode, study/specimen, technology
 
     @property
     def n_regions(self) -> int:
