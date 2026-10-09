@@ -42,10 +42,10 @@ SCALE_TISSUES = ["prostate", "kidney", "lung", "colon"]  # SpatialFinder's four
 HEST_DATASET_REPO = "MahmoodLab/hest"
 HEST_METADATA_FILE = "HEST_v1_3_0.csv"
 HEST_SAMPLE_IDS: dict[str, list[str]] = {
-    "prostate": ["TENX174"],
-    "kidney": ["TENX186", "TENX173"],
-    "lung": ["TENX171", "TENX170"],
-    "colon": ["TENX175", "TENX156"],
+    "prostate": ["TENX174", "TENX40", "MEND160", "TENX46", "TENX41", "MEND144"],
+    "kidney": ["TENX173", "TENX71", "INT21", "INT19"],
+    "lung": ["TENX171", "TENX170", "TENX163", "TENX72", "TENX62", "MISC20"],
+    "colon": ["TENX156", "TENX155", "TENX70", "TENX92", "MISC47", "ZEN48"],
 }
 
 # ---------------------------------------------------------------------------

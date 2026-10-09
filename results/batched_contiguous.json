@@ -3,13 +3,79 @@
   "budget": 0.1,
   "slides": [
     "prostate:TENX174",
-    "kidney:TENX186",
+    "prostate:TENX40",
+    "prostate:MEND160",
+    "prostate:TENX46",
+    "prostate:TENX41",
+    "prostate:MEND144",
     "kidney:TENX173",
+    "kidney:TENX71",
+    "kidney:INT21",
+    "kidney:INT19",
     "lung:TENX171",
     "lung:TENX170",
-    "colon:TENX175",
-    "colon:TENX156"
+    "lung:TENX163",
+    "lung:TENX72",
+    "lung:TENX62",
+    "lung:MISC20",
+    "colon:TENX156",
+    "colon:TENX155",
+    "colon:TENX70",
+    "colon:TENX92",
+    "colon:MISC47",
+    "colon:ZEN48"
   ],
+  "grouping": {
+    "clusters": [
+      "Visium HD Spatial Gene Expression Library, Human Prostate Cancer (FFPE)",
+      "Human Prostate Cancer, Adenocarcinoma with Invasive Carcinoma (FFPE)",
+      "Spatially resolved clonal copy number alterations in benign and malignant tissue",
+      "Human Prostate Cancer, Acinar Cell Carcinoma (FFPE)",
+      "Normal Human Prostate (FFPE)",
+      "Spatially resolved clonal copy number alterations in benign and malignant tissue",
+      "Visium HD Spatial Gene Expression Library, Human Kidney (FFPE)",
+      "Human Kidney, 11 mm Capture Area (FFPE)",
+      "Tertiary lymphoid structures generate and propagate anti-tumor antibody-producin",
+      "Tertiary lymphoid structures generate and propagate anti-tumor antibody-producin",
+      "Visium HD Spatial Gene Expression Libraries, Post-Xenium, Human Lung Cancer (FFP",
+      "Visium HD Spatial Gene Expression Libraries, Post-Xenium, Human Lung Cancer (FFP",
+      "Visium HD Spatial Gene Expression Library, Human Lung Cancer (Fixed Frozen)",
+      "Human Lung Cancer, 11 mm Capture Area (FFPE)",
+      "Human Lung Cancer (FFPE)",
+      "A spatially resolved atlas of the human lung characterizes a gland-associated im",
+      "Characterization of immune cell populations in the tumor microenvironment of col",
+      "Characterization of immune cell populations in the tumor microenvironment of col",
+      "Human Colorectal Cancer, 11 mm Capture Area (FFPE)",
+      "Visium CytAssist Gene Expression Libraries of Post-Xenium Human Colon Cancer (FF",
+      "COLON MAP: Colon Molecular Atlas Project",
+      "Charting the Heterogeneity of Colorectal Cancer Consensus Molecular Subtypes usi"
+    ],
+    "strata": [
+      "prostate",
+      "prostate",
+      "prostate",
+      "prostate",
+      "prostate",
+      "prostate",
+      "kidney",
+      "kidney",
+      "kidney",
+      "kidney",
+      "lung",
+      "lung",
+      "lung",
+      "lung",
+      "lung",
+      "lung",
+      "colon",
+      "colon",
+      "colon",
+      "colon",
+      "colon",
+      "colon"
+    ]
+  },
+  "region_mode": "spot",
   "block_k": 7,
   "round_sizes": [
     1,
@@ -20,239 +86,699 @@
   "partA_batched": {
     "1": {
       "recon_margin": {
-        "n_slides": 7,
+        "n_slides": 22,
         "per_slide": [
-          -0.077,
-          -0.0581,
-          -0.0294,
-          -0.1123,
-          -0.0893,
-          -0.0275,
-          -0.0608
+          -0.0945,
+          -0.0536,
+          -0.1247,
+          -0.1145,
+          -0.1462,
+          -0.1593,
+          -0.0152,
+          -0.3685,
+          -0.2125,
+          -0.0879,
+          -0.119,
+          -0.0951,
+          -0.1101,
+          -0.187,
+          -0.1823,
+          -0.1527,
+          -0.0718,
+          -0.2168,
+          -0.1233,
+          -0.1649,
+          -0.2828,
+          -0.2523
         ],
-        "mean": -0.0649,
-        "median": -0.0608,
+        "mean": -0.1516,
+        "median": -0.1355,
         "ci95": [
-          -0.0862,
-          -0.0445
+          -0.1858,
+          -0.1206
         ],
         "ci_excludes_zero": true,
         "n_pos": 0,
-        "n_neg": 7,
-        "sign_p": 0.0156
+        "n_neg": 22,
+        "sign_p": 0.0,
+        "n_clusters": 18,
+        "cluster_ci95": [
+          -0.186,
+          -0.1219
+        ],
+        "cluster_ci_excludes_zero": true,
+        "signflip_p": 0.0,
+        "by_stratum": {
+          "colon": {
+            "n": 6,
+            "mean": -0.1853
+          },
+          "kidney": {
+            "n": 4,
+            "mean": -0.171
+          },
+          "lung": {
+            "n": 6,
+            "mean": -0.141
+          },
+          "prostate": {
+            "n": 6,
+            "mean": -0.1155
+          }
+        },
+        "stratified_mean": -0.1532,
+        "stratified_ci95": [
+          -0.2,
+          -0.116
+        ],
+        "stratified_ci_excludes_zero": true
       },
       "detect_margin": {
-        "n_slides": 7,
+        "n_slides": 22,
         "per_slide": [
-          0.06,
-          0.0176,
-          0.0432,
-          0.0507,
-          -0.0355,
-          0.0697,
-          0.1201
+          0.0356,
+          -0.0206,
+          0.0933,
+          -0.0328,
+          -0.0275,
+          -0.0564,
+          0.0356,
+          -0.0068,
+          0.004,
+          0.0535,
+          0.0836,
+          -0.0266,
+          0.0534,
+          0.0559,
+          0.0355,
+          0.0168,
+          0.1348,
+          0.0212,
+          -0.0218,
+          0.0888,
+          -0.0281,
+          -0.0314
         ],
-        "mean": 0.0465,
-        "median": 0.0507,
+        "mean": 0.0209,
+        "median": 0.019,
         "ci95": [
-          0.0131,
-          0.0786
+          0.0005,
+          0.0424
         ],
         "ci_excludes_zero": true,
-        "n_pos": 6,
-        "n_neg": 1,
-        "sign_p": 0.125
+        "n_pos": 13,
+        "n_neg": 9,
+        "sign_p": 0.5235,
+        "n_clusters": 18,
+        "cluster_ci95": [
+          0.003,
+          0.0374
+        ],
+        "cluster_ci_excludes_zero": true,
+        "signflip_p": 0.0389,
+        "by_stratum": {
+          "colon": {
+            "n": 6,
+            "mean": 0.0273
+          },
+          "kidney": {
+            "n": 4,
+            "mean": 0.0216
+          },
+          "lung": {
+            "n": 6,
+            "mean": 0.0364
+          },
+          "prostate": {
+            "n": 6,
+            "mean": -0.0014
+          }
+        },
+        "stratified_mean": 0.021,
+        "stratified_ci95": [
+          0.0041,
+          0.0344
+        ],
+        "stratified_ci_excludes_zero": true
       },
-      "adaptive_detect_mean": 0.15360879391954838
+      "adaptive_detect_mean": 0.13693433644469058
     },
     "5": {
       "recon_margin": {
-        "n_slides": 7,
+        "n_slides": 22,
         "per_slide": [
-          -0.076,
-          -0.079,
-          -0.0429,
-          -0.0548,
-          -0.0652,
-          -0.0101,
-          -0.107
+          -0.063,
+          -0.0316,
+          -0.1175,
+          -0.0722,
+          -0.1267,
+          -0.1469,
+          -0.0175,
+          -0.4818,
+          -0.1852,
+          -0.0589,
+          -0.0734,
+          -0.0571,
+          -0.0629,
+          -0.146,
+          -0.1218,
+          -0.1418,
+          -0.0664,
+          -0.0993,
+          -0.1313,
+          -0.1891,
+          -0.2839,
+          -0.164
         ],
-        "mean": -0.0622,
-        "median": -0.0652,
+        "mean": -0.129,
+        "median": -0.1196,
         "ci95": [
-          -0.0826,
-          -0.0406
+          -0.1754,
+          -0.0933
         ],
         "ci_excludes_zero": true,
         "n_pos": 0,
-        "n_neg": 7,
-        "sign_p": 0.0156
+        "n_neg": 22,
+        "sign_p": 0.0,
+        "n_clusters": 18,
+        "cluster_ci95": [
+          -0.1752,
+          -0.0937
+        ],
+        "cluster_ci_excludes_zero": true,
+        "signflip_p": 0.0,
+        "by_stratum": {
+          "colon": {
+            "n": 6,
+            "mean": -0.1557
+          },
+          "kidney": {
+            "n": 4,
+            "mean": -0.1859
+          },
+          "lung": {
+            "n": 6,
+            "mean": -0.1005
+          },
+          "prostate": {
+            "n": 6,
+            "mean": -0.093
+          }
+        },
+        "stratified_mean": -0.1338,
+        "stratified_ci95": [
+          -0.2043,
+          -0.0897
+        ],
+        "stratified_ci_excludes_zero": true
       },
       "detect_margin": {
-        "n_slides": 7,
+        "n_slides": 22,
         "per_slide": [
+          0.0,
+          -0.0229,
+          0.0822,
+          -0.0378,
+          0.0668,
+          0.0098,
+          -0.0019,
+          -0.0136,
+          0.0091,
+          0.0545,
+          0.0448,
           0.0533,
-          -0.0059,
-          -0.0544,
-          0.003,
-          -0.0237,
-          0.0398,
-          0.076
+          0.037,
+          0.0527,
+          0.0303,
+          0.0596,
+          0.1103,
+          0.1014,
+          0.0123,
+          0.1173,
+          -0.0187,
+          -0.0042
         ],
-        "mean": 0.0126,
-        "median": 0.003,
+        "mean": 0.0337,
+        "median": 0.0336,
         "ci95": [
-          -0.0188,
-          0.0442
+          0.0158,
+          0.0517
         ],
-        "ci_excludes_zero": false,
-        "n_pos": 4,
-        "n_neg": 3,
-        "sign_p": 1.0
+        "ci_excludes_zero": true,
+        "n_pos": 15,
+        "n_neg": 6,
+        "sign_p": 0.0784,
+        "n_clusters": 18,
+        "cluster_ci95": [
+          0.0129,
+          0.0527
+        ],
+        "cluster_ci_excludes_zero": true,
+        "signflip_p": 0.0071,
+        "by_stratum": {
+          "colon": {
+            "n": 6,
+            "mean": 0.0531
+          },
+          "kidney": {
+            "n": 4,
+            "mean": 0.012
+          },
+          "lung": {
+            "n": 6,
+            "mean": 0.0463
+          },
+          "prostate": {
+            "n": 6,
+            "mean": 0.0164
+          }
+        },
+        "stratified_mean": 0.0319,
+        "stratified_ci95": [
+          0.0126,
+          0.047
+        ],
+        "stratified_ci_excludes_zero": true
       },
-      "adaptive_detect_mean": 0.11965846222357232
+      "adaptive_detect_mean": 0.14976384975427806
     },
     "25": {
       "recon_margin": {
-        "n_slides": 7,
+        "n_slides": 22,
         "per_slide": [
-          -0.0588,
-          -0.1151,
-          -0.0305,
-          -0.0602,
-          -0.0617,
-          -0.0199,
-          -0.0603
+          -0.0395,
+          -0.0691,
+          -0.1254,
+          -0.1729,
+          -0.0969,
+          -0.1523,
+          -0.0204,
+          -0.4505,
+          -0.1436,
+          -0.0456,
+          -0.0643,
+          -0.0871,
+          -0.0844,
+          -0.1025,
+          -0.1336,
+          -0.0754,
+          -0.0604,
+          -0.0781,
+          -0.1358,
+          -0.2595,
+          -0.2209,
+          -0.2392
         ],
-        "mean": -0.0581,
-        "median": -0.0602,
+        "mean": -0.1299,
+        "median": -0.0997,
         "ci95": [
-          -0.0795,
-          -0.0389
+          -0.1726,
+          -0.0943
         ],
         "ci_excludes_zero": true,
         "n_pos": 0,
-        "n_neg": 7,
-        "sign_p": 0.0156
+        "n_neg": 22,
+        "sign_p": 0.0,
+        "n_clusters": 18,
+        "cluster_ci95": [
+          -0.1763,
+          -0.095
+        ],
+        "cluster_ci_excludes_zero": true,
+        "signflip_p": 0.0,
+        "by_stratum": {
+          "colon": {
+            "n": 6,
+            "mean": -0.1656
+          },
+          "kidney": {
+            "n": 4,
+            "mean": -0.165
+          },
+          "lung": {
+            "n": 6,
+            "mean": -0.0912
+          },
+          "prostate": {
+            "n": 6,
+            "mean": -0.1093
+          }
+        },
+        "stratified_mean": -0.1328,
+        "stratified_ci95": [
+          -0.1997,
+          -0.0915
+        ],
+        "stratified_ci_excludes_zero": true
       },
       "detect_margin": {
-        "n_slides": 7,
+        "n_slides": 22,
         "per_slide": [
-          0.0289,
-          -0.0735,
-          0.0113,
-          0.0418,
-          0.0207,
-          0.0299,
-          0.0417
+          0.0067,
+          -0.0171,
+          0.0773,
+          0.0131,
+          0.0688,
+          -0.0233,
+          0.0188,
+          0.0169,
+          -0.0202,
+          0.0051,
+          0.0328,
+          -0.0237,
+          0.0021,
+          0.0186,
+          0.0421,
+          -0.0245,
+          0.0392,
+          0.0189,
+          -0.0039,
+          0.0327,
+          -0.0104,
+          -0.0377
         ],
-        "mean": 0.0144,
-        "median": 0.0289,
+        "mean": 0.0106,
+        "median": 0.0099,
         "ci95": [
-          -0.0169,
-          0.035
+          -0.0017,
+          0.023
         ],
         "ci_excludes_zero": false,
-        "n_pos": 6,
-        "n_neg": 1,
-        "sign_p": 0.125
+        "n_pos": 14,
+        "n_neg": 8,
+        "sign_p": 0.2863,
+        "n_clusters": 18,
+        "cluster_ci95": [
+          -0.0003,
+          0.0214
+        ],
+        "cluster_ci_excludes_zero": false,
+        "signflip_p": 0.08,
+        "by_stratum": {
+          "colon": {
+            "n": 6,
+            "mean": 0.0065
+          },
+          "kidney": {
+            "n": 4,
+            "mean": 0.0052
+          },
+          "lung": {
+            "n": 6,
+            "mean": 0.0079
+          },
+          "prostate": {
+            "n": 6,
+            "mean": 0.0209
+          }
+        },
+        "stratified_mean": 0.0101,
+        "stratified_ci95": [
+          0.0003,
+          0.0201
+        ],
+        "stratified_ci_excludes_zero": true
       },
-      "adaptive_detect_mean": 0.12144349538578868
+      "adaptive_detect_mean": 0.12658019190208672
     },
     "oneshot": {
       "recon_margin": {
-        "n_slides": 7,
+        "n_slides": 22,
         "per_slide": [
-          -0.1442,
-          -0.1994,
-          -0.0342,
-          -0.1078,
-          -0.0975,
-          -0.11,
-          -0.138
+          -0.1425,
+          -0.1862,
+          -0.2334,
+          -0.3038,
+          -0.3075,
+          -0.3148,
+          -0.0339,
+          -0.5301,
+          -0.3518,
+          -0.1825,
+          -0.116,
+          -0.0986,
+          -0.1201,
+          -0.3428,
+          -0.1222,
+          -0.2362,
+          -0.1417,
+          -0.2092,
+          -0.2568,
+          -0.3224,
+          -0.2253,
+          -0.4083
         ],
-        "mean": -0.1187,
-        "median": -0.11,
+        "mean": -0.2357,
+        "median": -0.2293,
         "ci95": [
-          -0.1516,
-          -0.083
+          -0.2843,
+          -0.1896
         ],
         "ci_excludes_zero": true,
         "n_pos": 0,
-        "n_neg": 7,
-        "sign_p": 0.0156
+        "n_neg": 22,
+        "sign_p": 0.0,
+        "n_clusters": 18,
+        "cluster_ci95": [
+          -0.2875,
+          -0.1885
+        ],
+        "cluster_ci_excludes_zero": true,
+        "signflip_p": 0.0,
+        "by_stratum": {
+          "colon": {
+            "n": 6,
+            "mean": -0.2606
+          },
+          "kidney": {
+            "n": 4,
+            "mean": -0.2746
+          },
+          "lung": {
+            "n": 6,
+            "mean": -0.1726
+          },
+          "prostate": {
+            "n": 6,
+            "mean": -0.248
+          }
+        },
+        "stratified_mean": -0.239,
+        "stratified_ci95": [
+          -0.303,
+          -0.1827
+        ],
+        "stratified_ci_excludes_zero": true
       },
       "detect_margin": {
-        "n_slides": 7,
+        "n_slides": 22,
         "per_slide": [
-          0.0978,
-          0.0765,
-          -0.0263,
-          -0.003,
-          -0.0237,
-          0.102,
-          0.0098
+          0.0711,
+          0.0069,
+          -0.0258,
+          -0.1034,
+          -0.0747,
+          -0.0798,
+          -0.0206,
+          -0.0602,
+          -0.1421,
+          -0.0727,
+          0.0,
+          -0.0148,
+          -0.037,
+          -0.2204,
+          -0.0066,
+          -0.0841,
+          0.0074,
+          -0.0613,
+          -0.0474,
+          -0.0603,
+          -0.0208,
+          -0.0692
         ],
-        "mean": 0.0333,
-        "median": 0.0098,
+        "mean": -0.0507,
+        "median": -0.0538,
         "ci95": [
-          -0.0041,
-          0.0719
+          -0.0761,
+          -0.027
         ],
-        "ci_excludes_zero": false,
-        "n_pos": 4,
-        "n_neg": 3,
-        "sign_p": 1.0
+        "ci_excludes_zero": true,
+        "n_pos": 3,
+        "n_neg": 18,
+        "sign_p": 0.0015,
+        "n_clusters": 18,
+        "cluster_ci95": [
+          -0.0765,
+          -0.0267
+        ],
+        "cluster_ci_excludes_zero": true,
+        "signflip_p": 0.0007,
+        "by_stratum": {
+          "colon": {
+            "n": 6,
+            "mean": -0.0419
+          },
+          "kidney": {
+            "n": 4,
+            "mean": -0.0739
+          },
+          "lung": {
+            "n": 6,
+            "mean": -0.0605
+          },
+          "prostate": {
+            "n": 6,
+            "mean": -0.0343
+          }
+        },
+        "stratified_mean": -0.0527,
+        "stratified_ci95": [
+          -0.0783,
+          -0.0297
+        ],
+        "stratified_ci_excludes_zero": true
       },
-      "adaptive_detect_mean": 0.14037023502693166
+      "adaptive_detect_mean": 0.06530462688001708
     }
   },
   "partB_contiguous": {
     "recon_margin": {
-      "n_slides": 7,
+      "n_slides": 22,
       "per_slide": [
-        -0.0266,
-        -0.0206,
-        0.0155,
-        -0.0021,
-        -0.0327,
-        -0.0079,
-        -0.0423
+        -0.0318,
+        -0.0513,
+        -0.0568,
+        -0.0432,
+        -0.1058,
+        -0.0937,
+        -0.0257,
+        -0.0695,
+        -0.1918,
+        -0.0562,
+        -0.0302,
+        -0.0342,
+        -0.0388,
+        -0.121,
+        -0.1313,
+        -0.0793,
+        -0.0337,
+        -0.0763,
+        -0.0806,
+        -0.0988,
+        -0.281,
+        -0.1774
       ],
-      "mean": -0.0167,
-      "median": -0.0206,
+      "mean": -0.0867,
+      "median": -0.0729,
       "ci95": [
-        -0.0298,
-        -0.003
+        -0.1145,
+        -0.0636
       ],
       "ci_excludes_zero": true,
-      "n_pos": 1,
-      "n_neg": 6,
-      "sign_p": 0.125
+      "n_pos": 0,
+      "n_neg": 22,
+      "sign_p": 0.0,
+      "n_clusters": 18,
+      "cluster_ci95": [
+        -0.1158,
+        -0.063
+      ],
+      "cluster_ci_excludes_zero": true,
+      "signflip_p": 0.0,
+      "by_stratum": {
+        "colon": {
+          "n": 6,
+          "mean": -0.1246
+        },
+        "kidney": {
+          "n": 4,
+          "mean": -0.0858
+        },
+        "lung": {
+          "n": 6,
+          "mean": -0.0725
+        },
+        "prostate": {
+          "n": 6,
+          "mean": -0.0638
+        }
+      },
+      "stratified_mean": -0.0867,
+      "stratified_ci95": [
+        -0.1122,
+        -0.0633
+      ],
+      "stratified_ci_excludes_zero": true
     },
     "detect_margin": {
-      "n_slides": 7,
+      "n_slides": 22,
       "per_slide": [
-        0.0,
-        0.0235,
-        0.0488,
-        -0.0209,
-        0.0237,
-        -0.01,
-        0.0809
+        0.06,
+        0.0343,
+        0.0699,
+        -0.0575,
+        -0.0727,
+        -0.0221,
+        0.045,
+        0.0212,
+        0.0464,
+        0.0253,
+        0.0299,
+        0.0444,
+        0.0082,
+        0.1718,
+        0.0026,
+        0.0275,
+        0.0515,
+        0.0542,
+        0.0095,
+        0.0335,
+        -0.0229,
+        -0.0398
       ],
-      "mean": 0.0209,
-      "median": 0.0235,
+      "mean": 0.0236,
+      "median": 0.0287,
       "ci95": [
-        -0.0022,
-        0.047
+        0.0035,
+        0.0451
       ],
-      "ci_excludes_zero": false,
-      "n_pos": 4,
-      "n_neg": 2,
-      "sign_p": 0.6875
+      "ci_excludes_zero": true,
+      "n_pos": 17,
+      "n_neg": 5,
+      "sign_p": 0.0169,
+      "n_clusters": 18,
+      "cluster_ci95": [
+        0.0023,
+        0.0441
+      ],
+      "cluster_ci_excludes_zero": true,
+      "signflip_p": 0.0484,
+      "by_stratum": {
+        "colon": {
+          "n": 6,
+          "mean": 0.0143
+        },
+        "kidney": {
+          "n": 4,
+          "mean": 0.0345
+        },
+        "lung": {
+          "n": 6,
+          "mean": 0.0474
+        },
+        "prostate": {
+          "n": 6,
+          "mean": 0.002
+        }
+      },
+      "stratified_mean": 0.0245,
+      "stratified_ci95": [
+        0.0061,
+        0.0435
+      ],
+      "stratified_ci_excludes_zero": true
     },
-    "adaptive_detect_mean": 0.12891991533306535,
-    "cover_detect_mean": 0.10806061241596018
+    "adaptive_detect_mean": 0.1324905122009434,
+    "cover_detect_mean": 0.10884582156921954
   }
 }

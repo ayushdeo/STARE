@@ -1,1394 +1,495 @@
 {
-  "ranking_col": null,
-  "per_tissue_cap": 8,
-  "candidates": {
+  "metadata_source": "HEST_v1_3_0.csv",
+  "params": {
+    "per": 6,
+    "max_per_study": 2,
+    "min_spots": 1000,
+    "max_px": 0.6,
+    "apply": true
+  },
+  "current": {
+    "prostate": {
+      "TENX174": "keep"
+    },
+    "kidney": {
+      "TENX186": "EXCLUDE: species=Mus musculus",
+      "TENX173": "keep"
+    },
+    "lung": {
+      "TENX171": "keep",
+      "TENX170": "keep"
+    },
+    "colon": {
+      "TENX175": "EXCLUDE: species=Homo sapiens/Mus musculus",
+      "TENX156": "keep"
+    }
+  },
+  "picks": {
     "prostate": [
       {
         "id": "TENX174",
         "st_technology": "Visium HD",
+        "species": "Homo sapiens",
         "organ": "Prostate",
-        "tissue": "Prostate"
-      },
-      {
-        "id": "TENX46",
-        "st_technology": "Visium",
-        "organ": "Prostate",
-        "tissue": "Prostate"
-      },
-      {
-        "id": "TENX41",
-        "st_technology": "Visium",
-        "organ": "Prostate",
-        "tissue": "Prostate"
+        "tissue": "Prostate",
+        "disease_state": "Cancer",
+        "patient": null,
+        "subseries": null,
+        "study": "Visium HD Spatial Gene Expression Library, Human Prostate Cancer (FFPE)",
+        "specimen": "Visium HD Spatial Gene Expression Library, Human Prostate Cancer (FFPE)",
+        "spots_under_tissue": 2385,
+        "pixel_size_um_embedded": 0.264583333333333,
+        "pixel_size_um_estimated": 0.273803518867898,
+        "fullres_px_width": 28288,
+        "fullres_px_height": 24794,
+        "preservation_method": "FFPE"
       },
       {
         "id": "TENX40",
         "st_technology": "Visium",
+        "species": "Homo sapiens",
         "organ": "Prostate",
-        "tissue": "Prostate"
-      },
-      {
-        "id": "INT35",
-        "st_technology": "Visium",
-        "organ": "Prostate",
-        "tissue": "Prostate"
-      },
-      {
-        "id": "INT28",
-        "st_technology": "Visium",
-        "organ": "Prostate",
-        "tissue": "Prostate"
-      },
-      {
-        "id": "INT27",
-        "st_technology": "Visium",
-        "organ": "Prostate",
-        "tissue": "Prostate"
-      },
-      {
-        "id": "INT26",
-        "st_technology": "Visium",
-        "organ": "Prostate",
-        "tissue": "Prostate"
-      },
-      {
-        "id": "INT25",
-        "st_technology": "Visium",
-        "organ": "Prostate",
-        "tissue": "Prostate"
-      },
-      {
-        "id": "MEND162",
-        "st_technology": "Visium",
-        "organ": "Prostate",
-        "tissue": "Prostate"
-      },
-      {
-        "id": "MEND161",
-        "st_technology": "Visium",
-        "organ": "Prostate",
-        "tissue": "Prostate"
+        "tissue": "Prostate",
+        "disease_state": "Cancer",
+        "patient": null,
+        "subseries": null,
+        "study": "Human Prostate Cancer, Adenocarcinoma with Invasive Carcinoma (FFPE)",
+        "specimen": "Human Prostate Cancer, Adenocarcinoma with Invasive Carcinoma (FFPE)",
+        "spots_under_tissue": 4371,
+        "pixel_size_um_embedded": null,
+        "pixel_size_um_estimated": 0.344678587557694,
+        "fullres_px_width": 27482,
+        "fullres_px_height": 25219,
+        "preservation_method": "FFPE"
       },
       {
         "id": "MEND160",
         "st_technology": "Visium",
+        "species": "Homo sapiens",
         "organ": "Prostate",
-        "tissue": "Prostate"
+        "tissue": "Prostate",
+        "disease_state": "Cancer",
+        "patient": "patient 1",
+        "subseries": "patient_1_H1_4",
+        "study": "Spatially resolved clonal copy number alterations in benign and malignant tissue",
+        "specimen": "Spatially resolved clonal copy number alterations in benign and malignant tissue:patient 1",
+        "spots_under_tissue": 4079,
+        "pixel_size_um_embedded": null,
+        "pixel_size_um_estimated": 0.572964930138462,
+        "fullres_px_width": 15821,
+        "fullres_px_height": 15821,
+        "preservation_method": "Fresh Frozen"
       },
       {
-        "id": "MEND159",
+        "id": "TENX46",
         "st_technology": "Visium",
+        "species": "Homo sapiens",
         "organ": "Prostate",
-        "tissue": "Prostate"
+        "tissue": "Prostate",
+        "disease_state": "Cancer",
+        "patient": null,
+        "subseries": null,
+        "study": "Human Prostate Cancer, Acinar Cell Carcinoma (FFPE)",
+        "specimen": "Human Prostate Cancer, Acinar Cell Carcinoma (FFPE)",
+        "spots_under_tissue": 3043,
+        "pixel_size_um_embedded": null,
+        "pixel_size_um_estimated": 0.344470500902188,
+        "fullres_px_width": 27472,
+        "fullres_px_height": 25188,
+        "preservation_method": "FFPE"
       },
       {
-        "id": "MEND158",
+        "id": "TENX41",
         "st_technology": "Visium",
+        "species": "Homo sapiens",
         "organ": "Prostate",
-        "tissue": "Prostate"
-      },
-      {
-        "id": "MEND157",
-        "st_technology": "Visium",
-        "organ": "Prostate",
-        "tissue": "Prostate"
-      },
-      {
-        "id": "MEND156",
-        "st_technology": "Visium",
-        "organ": "Prostate",
-        "tissue": "Prostate"
-      },
-      {
-        "id": "MEND154",
-        "st_technology": "Visium",
-        "organ": "Prostate",
-        "tissue": "Prostate"
-      },
-      {
-        "id": "MEND153",
-        "st_technology": "Visium",
-        "organ": "Prostate",
-        "tissue": "Prostate"
-      },
-      {
-        "id": "MEND152",
-        "st_technology": "Visium",
-        "organ": "Prostate",
-        "tissue": "Prostate"
-      },
-      {
-        "id": "MEND151",
-        "st_technology": "Visium",
-        "organ": "Prostate",
-        "tissue": "Prostate"
-      },
-      {
-        "id": "MEND150",
-        "st_technology": "Visium",
-        "organ": "Prostate",
-        "tissue": "Prostate"
-      },
-      {
-        "id": "MEND149",
-        "st_technology": "Visium",
-        "organ": "Prostate",
-        "tissue": "Prostate"
-      },
-      {
-        "id": "MEND148",
-        "st_technology": "Visium",
-        "organ": "Prostate",
-        "tissue": "Prostate"
-      },
-      {
-        "id": "MEND147",
-        "st_technology": "Visium",
-        "organ": "Prostate",
-        "tissue": "Prostate"
-      },
-      {
-        "id": "MEND146",
-        "st_technology": "Visium",
-        "organ": "Prostate",
-        "tissue": "Prostate"
-      },
-      {
-        "id": "MEND145",
-        "st_technology": "Visium",
-        "organ": "Prostate",
-        "tissue": "Prostate"
+        "tissue": "Prostate",
+        "disease_state": "Healthy",
+        "patient": null,
+        "subseries": null,
+        "study": "Normal Human Prostate (FFPE)",
+        "specimen": "Normal Human Prostate (FFPE)",
+        "spots_under_tissue": 2543,
+        "pixel_size_um_embedded": null,
+        "pixel_size_um_estimated": 0.344827258190636,
+        "fullres_px_width": 27469,
+        "fullres_px_height": 25224,
+        "preservation_method": "FFPE"
       },
       {
         "id": "MEND144",
         "st_technology": "Visium",
+        "species": "Homo sapiens",
         "organ": "Prostate",
-        "tissue": "Prostate"
-      },
-      {
-        "id": "MEND143",
-        "st_technology": "Visium",
-        "organ": "Prostate",
-        "tissue": "Prostate"
-      },
-      {
-        "id": "MEND142",
-        "st_technology": "Visium",
-        "organ": "Prostate",
-        "tissue": "Prostate"
-      },
-      {
-        "id": "MEND141",
-        "st_technology": "Visium",
-        "organ": "Prostate",
-        "tissue": "Prostate"
-      },
-      {
-        "id": "MEND140",
-        "st_technology": "Visium",
-        "organ": "Prostate",
-        "tissue": "Prostate"
-      },
-      {
-        "id": "MEND139",
-        "st_technology": "Visium",
-        "organ": "Prostate",
-        "tissue": "Prostate"
-      },
-      {
-        "id": "MEND62",
-        "st_technology": "Visium",
-        "organ": "Prostate",
-        "tissue": "prostate"
-      },
-      {
-        "id": "MEND61",
-        "st_technology": "Visium",
-        "organ": "Prostate",
-        "tissue": "prostate"
-      },
-      {
-        "id": "MEND60",
-        "st_technology": "Visium",
-        "organ": "Prostate",
-        "tissue": "prostate"
-      },
-      {
-        "id": "MEND59",
-        "st_technology": "Visium",
-        "organ": "Prostate",
-        "tissue": "prostate"
-      },
-      {
-        "id": "NCBI793",
-        "st_technology": "Visium",
-        "organ": "Prostate",
-        "tissue": "Prostate"
-      },
-      {
-        "id": "NCBI792",
-        "st_technology": "Visium",
-        "organ": "Prostate",
-        "tissue": "Prostate"
+        "tissue": "Prostate",
+        "disease_state": "Cancer",
+        "patient": "patient 2",
+        "subseries": "patient_2_V1_3",
+        "study": "Spatially resolved clonal copy number alterations in benign and malignant tissue",
+        "specimen": "Spatially resolved clonal copy number alterations in benign and malignant tissue:patient 2",
+        "spots_under_tissue": 4074,
+        "pixel_size_um_embedded": null,
+        "pixel_size_um_estimated": 0.341346131391185,
+        "fullres_px_width": 24000,
+        "fullres_px_height": 24258,
+        "preservation_method": "Fresh Frozen"
       }
     ],
     "kidney": [
       {
-        "id": "TENX186",
-        "st_technology": "Visium HD 3'",
-        "organ": "Kidney",
-        "tissue": "Kidney"
-      },
-      {
         "id": "TENX173",
         "st_technology": "Visium HD",
+        "species": "Homo sapiens",
         "organ": "Kidney",
-        "tissue": "Kidney"
-      },
-      {
-        "id": "TENX146",
-        "st_technology": "Visium HD",
-        "organ": "Kidney",
-        "tissue": "Kidney"
-      },
-      {
-        "id": "TENX75",
-        "st_technology": "Visium",
-        "organ": "Kidney/Brain",
-        "tissue": "Kidney/Brain"
+        "tissue": "Kidney",
+        "disease_state": "Healthy",
+        "patient": null,
+        "subseries": null,
+        "study": "Visium HD Spatial Gene Expression Library, Human Kidney (FFPE)",
+        "specimen": "Visium HD Spatial Gene Expression Library, Human Kidney (FFPE)",
+        "spots_under_tissue": 2684,
+        "pixel_size_um_embedded": 0.264583333333333,
+        "pixel_size_um_estimated": 0.273903889972517,
+        "fullres_px_width": 32674,
+        "fullres_px_height": 43999,
+        "preservation_method": "FFPE"
       },
       {
         "id": "TENX71",
         "st_technology": "Visium",
+        "species": "Homo sapiens",
         "organ": "Kidney",
-        "tissue": "Kidney"
-      },
-      {
-        "id": "TENX45",
-        "st_technology": "Visium",
-        "organ": "Kidney",
-        "tissue": "Kidney"
-      },
-      {
-        "id": "TENX22",
-        "st_technology": "Visium",
-        "organ": "Kidney",
-        "tissue": "Kidney"
-      },
-      {
-        "id": "INT24",
-        "st_technology": "Visium",
-        "organ": "Kidney",
-        "tissue": "Kidney"
-      },
-      {
-        "id": "INT23",
-        "st_technology": "Visium",
-        "organ": "Kidney",
-        "tissue": "Kidney"
-      },
-      {
-        "id": "INT22",
-        "st_technology": "Visium",
-        "organ": "Kidney",
-        "tissue": "Kidney"
+        "tissue": "Kidney",
+        "disease_state": "Healthy",
+        "patient": null,
+        "subseries": null,
+        "study": "Human Kidney, 11 mm Capture Area (FFPE)",
+        "specimen": "Human Kidney, 11 mm Capture Area (FFPE)",
+        "spots_under_tissue": 5936,
+        "pixel_size_um_embedded": 0.264583333333333,
+        "pixel_size_um_estimated": 0.273721602322227,
+        "fullres_px_width": 35976,
+        "fullres_px_height": 31762,
+        "preservation_method": "FFPE"
       },
       {
         "id": "INT21",
         "st_technology": "Visium",
+        "species": "Homo sapiens",
         "organ": "Kidney",
-        "tissue": "Kidney"
-      },
-      {
-        "id": "INT20",
-        "st_technology": "Visium",
-        "organ": "Kidney",
-        "tissue": "Kidney"
+        "tissue": "Kidney",
+        "disease_state": "Cancer",
+        "patient": "Patient 4",
+        "subseries": "ccRCC tumor ffpe_c_7",
+        "study": "Tertiary lymphoid structures generate and propagate anti-tumor antibody-producin",
+        "specimen": "Tertiary lymphoid structures generate and propagate anti-tumor antibody-producin:Patient 4",
+        "spots_under_tissue": 4975,
+        "pixel_size_um_embedded": 0.45766590389016,
+        "pixel_size_um_estimated": 0.457336659095795,
+        "fullres_px_width": 17128,
+        "fullres_px_height": 16878,
+        "preservation_method": null
       },
       {
         "id": "INT19",
         "st_technology": "Visium",
+        "species": "Homo sapiens",
         "organ": "Kidney",
-        "tissue": "Kidney"
-      },
-      {
-        "id": "INT18",
-        "st_technology": "Visium",
-        "organ": "Kidney",
-        "tissue": "Kidney"
-      },
-      {
-        "id": "INT17",
-        "st_technology": "Visium",
-        "organ": "Kidney",
-        "tissue": "Kidney"
-      },
-      {
-        "id": "INT16",
-        "st_technology": "Visium",
-        "organ": "Kidney",
-        "tissue": "Kidney"
-      },
-      {
-        "id": "INT15",
-        "st_technology": "Visium",
-        "organ": "Kidney",
-        "tissue": "Kidney"
-      },
-      {
-        "id": "INT14",
-        "st_technology": "Visium",
-        "organ": "Kidney",
-        "tissue": "Kidney"
-      },
-      {
-        "id": "INT13",
-        "st_technology": "Visium",
-        "organ": "Kidney",
-        "tissue": "Kidney"
-      },
-      {
-        "id": "INT12",
-        "st_technology": "Visium",
-        "organ": "Kidney",
-        "tissue": "Kidney"
-      },
-      {
-        "id": "INT11",
-        "st_technology": "Visium",
-        "organ": "Kidney",
-        "tissue": "Kidney"
-      },
-      {
-        "id": "INT10",
-        "st_technology": "Visium",
-        "organ": "Kidney",
-        "tissue": "Kidney"
-      },
-      {
-        "id": "INT9",
-        "st_technology": "Visium",
-        "organ": "Kidney",
-        "tissue": "Kidney"
-      },
-      {
-        "id": "INT8",
-        "st_technology": "Visium",
-        "organ": "Kidney",
-        "tissue": "Kidney"
-      },
-      {
-        "id": "INT7",
-        "st_technology": "Visium",
-        "organ": "Kidney",
-        "tissue": "Kidney"
-      },
-      {
-        "id": "INT6",
-        "st_technology": "Visium",
-        "organ": "Kidney",
-        "tissue": "Kidney"
-      },
-      {
-        "id": "INT5",
-        "st_technology": "Visium",
-        "organ": "Kidney",
-        "tissue": "Kidney"
-      },
-      {
-        "id": "INT4",
-        "st_technology": "Visium",
-        "organ": "Kidney",
-        "tissue": "Kidney"
-      },
-      {
-        "id": "INT3",
-        "st_technology": "Visium",
-        "organ": "Kidney",
-        "tissue": "Kidney"
-      },
-      {
-        "id": "INT2",
-        "st_technology": "Visium",
-        "organ": "Kidney",
-        "tissue": "Kidney"
-      },
-      {
-        "id": "INT1",
-        "st_technology": "Visium",
-        "organ": "Kidney",
-        "tissue": "Kidney"
-      },
-      {
-        "id": "MEND54",
-        "st_technology": "Visium",
-        "organ": "Kidney",
-        "tissue": "kidney"
-      },
-      {
-        "id": "MEND49",
-        "st_technology": "Visium",
-        "organ": "Kidney",
-        "tissue": "kidney"
-      },
-      {
-        "id": "MEND48",
-        "st_technology": "Visium",
-        "organ": "Kidney",
-        "tissue": "kidney"
-      },
-      {
-        "id": "NCBI714",
-        "st_technology": "Visium",
-        "organ": "Kidney",
-        "tissue": "Kidney"
-      },
-      {
-        "id": "NCBI713",
-        "st_technology": "Visium",
-        "organ": "Kidney",
-        "tissue": "Kidney"
-      },
-      {
-        "id": "NCBI712",
-        "st_technology": "Visium",
-        "organ": "Kidney",
-        "tissue": "Kidney"
-      },
-      {
-        "id": "NCBI711",
-        "st_technology": "Visium",
-        "organ": "Kidney",
-        "tissue": "Kidney"
-      },
-      {
-        "id": "NCBI710",
-        "st_technology": "Visium",
-        "organ": "Kidney",
-        "tissue": "Kidney"
-      },
-      {
-        "id": "NCBI709",
-        "st_technology": "Visium",
-        "organ": "Kidney",
-        "tissue": "Kidney"
-      },
-      {
-        "id": "NCBI708",
-        "st_technology": "Visium",
-        "organ": "Kidney",
-        "tissue": "Kidney"
-      },
-      {
-        "id": "NCBI707",
-        "st_technology": "Visium",
-        "organ": "Kidney",
-        "tissue": "Kidney"
-      },
-      {
-        "id": "NCBI706",
-        "st_technology": "Visium",
-        "organ": "Kidney",
-        "tissue": "Kidney"
-      },
-      {
-        "id": "NCBI705",
-        "st_technology": "Visium",
-        "organ": "Kidney",
-        "tissue": "Kidney"
-      },
-      {
-        "id": "NCBI704",
-        "st_technology": "Visium",
-        "organ": "Kidney",
-        "tissue": "Kidney"
-      },
-      {
-        "id": "NCBI703",
-        "st_technology": "Visium",
-        "organ": "Kidney",
-        "tissue": "Kidney"
-      },
-      {
-        "id": "NCBI702",
-        "st_technology": "Visium",
-        "organ": "Kidney",
-        "tissue": "Kidney"
-      },
-      {
-        "id": "NCBI701",
-        "st_technology": "Visium",
-        "organ": "Kidney",
-        "tissue": "Kidney"
-      },
-      {
-        "id": "NCBI700",
-        "st_technology": "Visium",
-        "organ": "Kidney",
-        "tissue": "Kidney"
-      },
-      {
-        "id": "NCBI699",
-        "st_technology": "Visium",
-        "organ": "Kidney",
-        "tissue": "Kidney"
-      },
-      {
-        "id": "NCBI698",
-        "st_technology": "Visium",
-        "organ": "Kidney",
-        "tissue": "Kidney"
-      },
-      {
-        "id": "NCBI697",
-        "st_technology": "Visium",
-        "organ": "Kidney",
-        "tissue": "Kidney"
-      },
-      {
-        "id": "NCBI696",
-        "st_technology": "Visium",
-        "organ": "Kidney",
-        "tissue": "Kidney"
-      },
-      {
-        "id": "NCBI695",
-        "st_technology": "Visium",
-        "organ": "Kidney",
-        "tissue": "Kidney"
-      },
-      {
-        "id": "NCBI694",
-        "st_technology": "Visium",
-        "organ": "Kidney",
-        "tissue": "Kidney"
-      },
-      {
-        "id": "NCBI693",
-        "st_technology": "Visium",
-        "organ": "Kidney",
-        "tissue": "Kidney"
-      },
-      {
-        "id": "NCBI692",
-        "st_technology": "Visium",
-        "organ": "Kidney",
-        "tissue": "Kidney"
-      },
-      {
-        "id": "NCBI599",
-        "st_technology": "Visium",
-        "organ": "Kidney",
-        "tissue": "Kidney"
-      },
-      {
-        "id": "NCBI598",
-        "st_technology": "Visium",
-        "organ": "Kidney",
-        "tissue": "Kidney"
-      },
-      {
-        "id": "NCBI597",
-        "st_technology": "Visium",
-        "organ": "Kidney",
-        "tissue": "Kidney"
-      },
-      {
-        "id": "NCBI596",
-        "st_technology": "Visium",
-        "organ": "Kidney",
-        "tissue": "Kidney"
-      },
-      {
-        "id": "NCBI568",
-        "st_technology": "Visium",
-        "organ": "Kidney",
-        "tissue": "Kidney"
-      },
-      {
-        "id": "NCBI567",
-        "st_technology": "Visium",
-        "organ": "Kidney",
-        "tissue": "Kidney"
-      },
-      {
-        "id": "NCBI566",
-        "st_technology": "Visium",
-        "organ": "Kidney",
-        "tissue": "Kidney"
-      },
-      {
-        "id": "NCBI565",
-        "st_technology": "Visium",
-        "organ": "Kidney",
-        "tissue": "Kidney"
-      },
-      {
-        "id": "NCBI564",
-        "st_technology": "Visium",
-        "organ": "Kidney",
-        "tissue": "Kidney"
-      },
-      {
-        "id": "NCBI563",
-        "st_technology": "Visium",
-        "organ": "Kidney",
-        "tissue": "Kidney"
-      },
-      {
-        "id": "NCBI562",
-        "st_technology": "Visium",
-        "organ": "Kidney",
-        "tissue": "Kidney"
-      },
-      {
-        "id": "NCBI540",
-        "st_technology": "Visium",
-        "organ": "Kidney",
-        "tissue": "Kidney"
-      },
-      {
-        "id": "NCBI539",
-        "st_technology": "Visium",
-        "organ": "Kidney",
-        "tissue": "Kidney"
-      },
-      {
-        "id": "NCBI538",
-        "st_technology": "Visium",
-        "organ": "Kidney",
-        "tissue": "Kidney"
+        "tissue": "Kidney",
+        "disease_state": "Cancer",
+        "patient": "Patient 6",
+        "subseries": "ccRCC tumor ffpe_c_20",
+        "study": "Tertiary lymphoid structures generate and propagate anti-tumor antibody-producin",
+        "specimen": "Tertiary lymphoid structures generate and propagate anti-tumor antibody-producin:Patient 6",
+        "spots_under_tissue": 4948,
+        "pixel_size_um_embedded": 0.45766590389016,
+        "pixel_size_um_estimated": 0.45725462779329,
+        "fullres_px_width": 16989,
+        "fullres_px_height": 16751,
+        "preservation_method": null
       }
     ],
     "lung": [
       {
         "id": "TENX171",
         "st_technology": "Visium HD",
+        "species": "Homo sapiens",
         "organ": "Lung",
-        "tissue": "Lung"
+        "tissue": "Lung",
+        "disease_state": "Cancer",
+        "patient": null,
+        "subseries": "Experiment 2, post-Xenium Prime 5K",
+        "study": "Visium HD Spatial Gene Expression Libraries, Post-Xenium, Human Lung Cancer (FFP",
+        "specimen": "Visium HD Spatial Gene Expression Libraries, Post-Xenium, Human Lung Cancer (FFP:Experiment 2, post-Xenium Prime 5K",
+        "spots_under_tissue": 1774,
+        "pixel_size_um_embedded": 0.264583333333333,
+        "pixel_size_um_estimated": 0.273696892898189,
+        "fullres_px_width": 26720,
+        "fullres_px_height": 43270,
+        "preservation_method": "FFPE"
       },
       {
         "id": "TENX170",
         "st_technology": "Visium HD",
+        "species": "Homo sapiens",
         "organ": "Lung",
-        "tissue": "Lung"
-      },
-      {
-        "id": "TENX169",
-        "st_technology": "Visium HD",
-        "organ": "Lung",
-        "tissue": "Lung"
-      },
-      {
-        "id": "TENX168",
-        "st_technology": "Visium HD",
-        "organ": "Lung",
-        "tissue": "Lung"
-      },
-      {
-        "id": "TENX167",
-        "st_technology": "Visium HD",
-        "organ": "Lung",
-        "tissue": "Lung"
+        "tissue": "Lung",
+        "disease_state": "Cancer",
+        "patient": null,
+        "subseries": "Experiment 2, HD only (control)",
+        "study": "Visium HD Spatial Gene Expression Libraries, Post-Xenium, Human Lung Cancer (FFP",
+        "specimen": "Visium HD Spatial Gene Expression Libraries, Post-Xenium, Human Lung Cancer (FFP:Experiment 2, HD only (control)",
+        "spots_under_tissue": 1877,
+        "pixel_size_um_embedded": 0.264583333333333,
+        "pixel_size_um_estimated": 0.27381161527725,
+        "fullres_px_width": 25078,
+        "fullres_px_height": 43266,
+        "preservation_method": "FFPE"
       },
       {
         "id": "TENX163",
         "st_technology": "Visium HD",
+        "species": "Homo sapiens",
         "organ": "Lung",
-        "tissue": "Lung"
-      },
-      {
-        "id": "TENX76",
-        "st_technology": "Visium",
-        "organ": "Lung/Brain",
-        "tissue": "Lung/Brain"
-      },
-      {
-        "id": "TENX74",
-        "st_technology": "Visium",
-        "organ": "Lung/Brain",
-        "tissue": "Lung/Brain"
+        "tissue": "Lung",
+        "disease_state": "Cancer",
+        "patient": null,
+        "subseries": null,
+        "study": "Visium HD Spatial Gene Expression Library, Human Lung Cancer (Fixed Frozen)",
+        "specimen": "Visium HD Spatial Gene Expression Library, Human Lung Cancer (Fixed Frozen)",
+        "spots_under_tissue": 2487,
+        "pixel_size_um_embedded": 0.264583333333333,
+        "pixel_size_um_estimated": 0.273716933152281,
+        "fullres_px_width": 54639,
+        "fullres_px_height": 29814,
+        "preservation_method": "Fixed Frozen"
       },
       {
         "id": "TENX72",
         "st_technology": "Visium",
+        "species": "Homo sapiens",
         "organ": "Lung",
-        "tissue": "Lung"
+        "tissue": "Lung",
+        "disease_state": "Cancer",
+        "patient": null,
+        "subseries": null,
+        "study": "Human Lung Cancer, 11 mm Capture Area (FFPE)",
+        "specimen": "Human Lung Cancer, 11 mm Capture Area (FFPE)",
+        "spots_under_tissue": 6195,
+        "pixel_size_um_embedded": 0.264583333333333,
+        "pixel_size_um_estimated": 0.273711234884543,
+        "fullres_px_width": 38510,
+        "fullres_px_height": 32875,
+        "preservation_method": "FFPE"
       },
       {
         "id": "TENX62",
         "st_technology": "Visium",
+        "species": "Homo sapiens",
         "organ": "Lung",
-        "tissue": "Lung"
-      },
-      {
-        "id": "MEND90",
-        "st_technology": "Visium",
-        "organ": "Lung",
-        "tissue": "lung"
-      },
-      {
-        "id": "MEND89",
-        "st_technology": "Visium",
-        "organ": "Lung",
-        "tissue": "lung"
-      },
-      {
-        "id": "MEND88",
-        "st_technology": "Visium",
-        "organ": "Lung",
-        "tissue": "lung"
-      },
-      {
-        "id": "MEND87",
-        "st_technology": "Visium",
-        "organ": "Lung",
-        "tissue": "lung"
-      },
-      {
-        "id": "MEND86",
-        "st_technology": "Visium",
-        "organ": "Lung",
-        "tissue": "lung"
-      },
-      {
-        "id": "MEND85",
-        "st_technology": "Visium",
-        "organ": "Lung",
-        "tissue": "lung"
-      },
-      {
-        "id": "MEND52",
-        "st_technology": "Visium",
-        "organ": "Lung",
-        "tissue": "lung"
-      },
-      {
-        "id": "MEND51",
-        "st_technology": "Visium",
-        "organ": "Lung",
-        "tissue": "lung"
-      },
-      {
-        "id": "MEND47",
-        "st_technology": "Visium",
-        "organ": "Lung",
-        "tissue": "lung"
-      },
-      {
-        "id": "MEND45",
-        "st_technology": "Visium",
-        "organ": "Lung",
-        "tissue": "lung"
-      },
-      {
-        "id": "MEND41",
-        "st_technology": "Visium",
-        "organ": "Lung",
-        "tissue": "lung"
-      },
-      {
-        "id": "NCBI727",
-        "st_technology": "Visium",
-        "organ": "Lung",
-        "tissue": "Lung"
-      },
-      {
-        "id": "NCBI537",
-        "st_technology": "Visium",
-        "organ": "Lung",
-        "tissue": "Lung"
-      },
-      {
-        "id": "NCBI536",
-        "st_technology": "Visium",
-        "organ": "Lung",
-        "tissue": "Lung"
-      },
-      {
-        "id": "NCBI535",
-        "st_technology": "Visium",
-        "organ": "Lung",
-        "tissue": "Lung"
-      },
-      {
-        "id": "NCBI534",
-        "st_technology": "Visium",
-        "organ": "Lung",
-        "tissue": "Lung"
-      },
-      {
-        "id": "MISC32",
-        "st_technology": "Visium",
-        "organ": "Lung",
-        "tissue": "Trachea"
-      },
-      {
-        "id": "MISC31",
-        "st_technology": "Visium",
-        "organ": "Lung",
-        "tissue": "Bronchi"
-      },
-      {
-        "id": "MISC30",
-        "st_technology": "Visium",
-        "organ": "Lung",
-        "tissue": "Bronchi"
-      },
-      {
-        "id": "MISC29",
-        "st_technology": "Visium",
-        "organ": "Lung",
-        "tissue": "Bronchi"
-      },
-      {
-        "id": "MISC28",
-        "st_technology": "Visium",
-        "organ": "Lung",
-        "tissue": "Parenchyma"
-      },
-      {
-        "id": "MISC27",
-        "st_technology": "Visium",
-        "organ": "Lung",
-        "tissue": "Bronchi"
-      },
-      {
-        "id": "MISC26",
-        "st_technology": "Visium",
-        "organ": "Lung",
-        "tissue": "Bronchi"
-      },
-      {
-        "id": "MISC25",
-        "st_technology": "Visium",
-        "organ": "Lung",
-        "tissue": "Parenchyma"
-      },
-      {
-        "id": "MISC24",
-        "st_technology": "Visium",
-        "organ": "Lung",
-        "tissue": "Parenchyma"
-      },
-      {
-        "id": "MISC23",
-        "st_technology": "Visium",
-        "organ": "Lung",
-        "tissue": "Bronchi"
-      },
-      {
-        "id": "MISC22",
-        "st_technology": "Visium",
-        "organ": "Lung",
-        "tissue": "Bronchi"
-      },
-      {
-        "id": "MISC21",
-        "st_technology": "Visium",
-        "organ": "Lung",
-        "tissue": "Parenchyma"
+        "tissue": "Lung",
+        "disease_state": "Cancer",
+        "patient": null,
+        "subseries": null,
+        "study": "Human Lung Cancer (FFPE)",
+        "specimen": "Human Lung Cancer (FFPE)",
+        "spots_under_tissue": 3858,
+        "pixel_size_um_embedded": 0.264583333333333,
+        "pixel_size_um_estimated": 0.27330518698616,
+        "fullres_px_width": 35637,
+        "fullres_px_height": 29395,
+        "preservation_method": "FFPE"
       },
       {
         "id": "MISC20",
         "st_technology": "Visium",
+        "species": "Homo sapiens",
         "organ": "Lung",
-        "tissue": "Parenchyma"
-      },
-      {
-        "id": "MISC19",
-        "st_technology": "Visium",
-        "organ": "Lung",
-        "tissue": "Parenchyma"
-      },
-      {
-        "id": "MISC18",
-        "st_technology": "Visium",
-        "organ": "Lung",
-        "tissue": "Parenchyma"
-      },
-      {
-        "id": "MISC17",
-        "st_technology": "Visium",
-        "organ": "Lung",
-        "tissue": "Bronchi"
-      },
-      {
-        "id": "MISC16",
-        "st_technology": "Visium",
-        "organ": "Lung",
-        "tissue": "Bronchi"
-      },
-      {
-        "id": "MISC15",
-        "st_technology": "Visium",
-        "organ": "Lung",
-        "tissue": "Bronchi"
-      },
-      {
-        "id": "MISC14",
-        "st_technology": "Visium",
-        "organ": "Lung",
-        "tissue": "Trachea"
-      },
-      {
-        "id": "MISC13",
-        "st_technology": "Visium",
-        "organ": "Lung",
-        "tissue": "Trachea"
+        "tissue": "Parenchyma",
+        "disease_state": "Treated",
+        "patient": "   ",
+        "subseries": "WSA_LngSP10193345",
+        "study": "A spatially resolved atlas of the human lung characterizes a gland-associated im",
+        "specimen": "A spatially resolved atlas of the human lung characterizes a gland-associated im:WSA_LngSP",
+        "spots_under_tissue": 3316,
+        "pixel_size_um_embedded": null,
+        "pixel_size_um_estimated": 0.4380718287556,
+        "fullres_px_width": 35112,
+        "fullres_px_height": 19720,
+        "preservation_method": "Fresh Frozen"
       }
     ],
     "colon": [
       {
-        "id": "TENX175",
-        "st_technology": "Visium HD 3'",
-        "organ": "Bowel",
-        "tissue": "Colon"
-      },
-      {
         "id": "TENX156",
         "st_technology": "Visium HD",
+        "species": "Homo sapiens",
         "organ": "Bowel",
-        "tissue": "Colon"
+        "tissue": "Colon",
+        "disease_state": "Cancer",
+        "patient": "Patient 1",
+        "subseries": "Visium HD, Sample P1 CRC",
+        "study": "Characterization of immune cell populations in the tumor microenvironment of col",
+        "specimen": "CRC-HD-study:P1",
+        "spots_under_tissue": 2179,
+        "pixel_size_um_embedded": 0.264583333333333,
+        "pixel_size_um_estimated": 0.273802324565481,
+        "fullres_px_width": 71106,
+        "fullres_px_height": 58791,
+        "preservation_method": "FFPE"
       },
       {
         "id": "TENX155",
         "st_technology": "Visium HD",
+        "species": "Homo sapiens",
         "organ": "Bowel",
-        "tissue": "Colon"
+        "tissue": "Colon",
+        "disease_state": "Cancer",
+        "patient": "Patient 2",
+        "subseries": "Visium HD, Sample P2 CRC",
+        "study": "Characterization of immune cell populations in the tumor microenvironment of col",
+        "specimen": "CRC-HD-study:P2",
+        "spots_under_tissue": 2281,
+        "pixel_size_um_embedded": 0.264583333333333,
+        "pixel_size_um_estimated": 0.273874419926874,
+        "fullres_px_width": 75250,
+        "fullres_px_height": 48740,
+        "preservation_method": "FFPE"
       },
       {
-        "id": "TENX154",
-        "st_technology": "Visium HD",
-        "organ": "Bowel",
-        "tissue": "Colon"
-      },
-      {
-        "id": "TENX153",
-        "st_technology": "Visium HD",
-        "organ": "Bowel",
-        "tissue": "Colon"
-      },
-      {
-        "id": "TENX152",
+        "id": "TENX70",
         "st_technology": "Visium",
+        "species": "Homo sapiens",
         "organ": "Bowel",
-        "tissue": "Colon"
-      },
-      {
-        "id": "MISC73",
-        "st_technology": "Visium",
-        "organ": "Bowel",
-        "tissue": "Colon"
-      },
-      {
-        "id": "MISC72",
-        "st_technology": "Visium",
-        "organ": "Bowel",
-        "tissue": "Colon"
-      },
-      {
-        "id": "MISC71",
-        "st_technology": "Visium",
-        "organ": "Bowel",
-        "tissue": "Colon"
-      },
-      {
-        "id": "MISC70",
-        "st_technology": "Visium",
-        "organ": "Bowel",
-        "tissue": "Colon"
-      },
-      {
-        "id": "MISC69",
-        "st_technology": "Visium",
-        "organ": "Bowel",
-        "tissue": "Colon"
-      },
-      {
-        "id": "MISC68",
-        "st_technology": "Visium",
-        "organ": "Bowel",
-        "tissue": "Colon"
-      },
-      {
-        "id": "MISC67",
-        "st_technology": "Visium",
-        "organ": "Bowel",
-        "tissue": "Colon"
-      },
-      {
-        "id": "MISC66",
-        "st_technology": "Visium",
-        "organ": "Bowel",
-        "tissue": "Colon"
-      },
-      {
-        "id": "MISC65",
-        "st_technology": "Visium",
-        "organ": "Bowel",
-        "tissue": "Colon"
-      },
-      {
-        "id": "MISC64",
-        "st_technology": "Visium",
-        "organ": "Bowel",
-        "tissue": "Colon"
-      },
-      {
-        "id": "MISC63",
-        "st_technology": "Visium",
-        "organ": "Bowel",
-        "tissue": "Colon"
-      },
-      {
-        "id": "MISC62",
-        "st_technology": "Visium",
-        "organ": "Bowel",
-        "tissue": "Colon"
-      },
-      {
-        "id": "MISC61",
-        "st_technology": "Visium",
-        "organ": "Bowel",
-        "tissue": "Colon"
-      },
-      {
-        "id": "MISC60",
-        "st_technology": "Visium",
-        "organ": "Bowel",
-        "tissue": "Colon"
-      },
-      {
-        "id": "MISC59",
-        "st_technology": "Visium",
-        "organ": "Bowel",
-        "tissue": "Colon"
-      },
-      {
-        "id": "MISC58",
-        "st_technology": "Visium",
-        "organ": "Bowel",
-        "tissue": "Colon"
-      },
-      {
-        "id": "MISC57",
-        "st_technology": "Visium",
-        "organ": "Bowel",
-        "tissue": "Colon"
-      },
-      {
-        "id": "MISC56",
-        "st_technology": "Visium",
-        "organ": "Bowel",
-        "tissue": "Colon"
-      },
-      {
-        "id": "MISC55",
-        "st_technology": "Visium",
-        "organ": "Bowel",
-        "tissue": "Colon"
-      },
-      {
-        "id": "MISC54",
-        "st_technology": "Visium",
-        "organ": "Bowel",
-        "tissue": "Colon"
-      },
-      {
-        "id": "MISC53",
-        "st_technology": "Visium",
-        "organ": "Bowel",
-        "tissue": "Colon"
-      },
-      {
-        "id": "MISC52",
-        "st_technology": "Visium",
-        "organ": "Bowel",
-        "tissue": "Colon"
-      },
-      {
-        "id": "MISC51",
-        "st_technology": "Visium",
-        "organ": "Bowel",
-        "tissue": "Colon"
-      },
-      {
-        "id": "MISC50",
-        "st_technology": "Visium",
-        "organ": "Bowel",
-        "tissue": "Colon"
-      },
-      {
-        "id": "MISC49",
-        "st_technology": "Visium",
-        "organ": "Bowel",
-        "tissue": "Colon"
-      },
-      {
-        "id": "MISC48",
-        "st_technology": "Visium",
-        "organ": "Bowel",
-        "tissue": "Colon"
-      },
-      {
-        "id": "MISC47",
-        "st_technology": "Visium",
-        "organ": "Bowel",
-        "tissue": "Colon"
-      },
-      {
-        "id": "MISC46",
-        "st_technology": "Visium",
-        "organ": "Bowel",
-        "tissue": "Colon"
-      },
-      {
-        "id": "MISC45",
-        "st_technology": "Visium",
-        "organ": "Bowel",
-        "tissue": "Colon"
-      },
-      {
-        "id": "MISC44",
-        "st_technology": "Visium",
-        "organ": "Bowel",
-        "tissue": "Colon"
-      },
-      {
-        "id": "MISC43",
-        "st_technology": "Visium",
-        "organ": "Bowel",
-        "tissue": "Colon"
-      },
-      {
-        "id": "MISC42",
-        "st_technology": "Visium",
-        "organ": "Bowel",
-        "tissue": "Colon"
-      },
-      {
-        "id": "MISC41",
-        "st_technology": "Visium",
-        "organ": "Bowel",
-        "tissue": "Colon"
-      },
-      {
-        "id": "MISC40",
-        "st_technology": "Visium",
-        "organ": "Bowel",
-        "tissue": "Colon"
-      },
-      {
-        "id": "MISC39",
-        "st_technology": "Visium",
-        "organ": "Bowel",
-        "tissue": "Colon"
-      },
-      {
-        "id": "MISC38",
-        "st_technology": "Visium",
-        "organ": "Bowel",
-        "tissue": "Colon"
-      },
-      {
-        "id": "MISC37",
-        "st_technology": "Visium",
-        "organ": "Bowel",
-        "tissue": "Colon"
-      },
-      {
-        "id": "MISC36",
-        "st_technology": "Visium",
-        "organ": "Bowel",
-        "tissue": "Colon"
-      },
-      {
-        "id": "MISC35",
-        "st_technology": "Visium",
-        "organ": "Bowel",
-        "tissue": "Colon"
-      },
-      {
-        "id": "MISC34",
-        "st_technology": "Visium",
-        "organ": "Bowel",
-        "tissue": "Colon"
-      },
-      {
-        "id": "MISC33",
-        "st_technology": "Visium",
-        "organ": "Bowel",
-        "tissue": "Colon"
-      },
-      {
-        "id": "TENX128",
-        "st_technology": "Visium HD",
-        "organ": "Bowel",
-        "tissue": "Colon"
+        "tissue": "Colorectal",
+        "disease_state": "Cancer",
+        "patient": null,
+        "subseries": null,
+        "study": "Human Colorectal Cancer, 11 mm Capture Area (FFPE)",
+        "specimen": "Human Colorectal Cancer, 11 mm Capture Area (FFPE)",
+        "spots_under_tissue": 9080,
+        "pixel_size_um_embedded": 0.264583333333333,
+        "pixel_size_um_estimated": 0.273591411325597,
+        "fullres_px_width": 51996,
+        "fullres_px_height": 44403,
+        "preservation_method": "FFPE"
       },
       {
         "id": "TENX92",
         "st_technology": "Visium",
+        "species": "Homo sapiens",
         "organ": "Bowel",
-        "tissue": "Colon"
+        "tissue": "Colon",
+        "disease_state": "Cancer",
+        "patient": null,
+        "subseries": "Post-Xenium, Replicate 1",
+        "study": "Visium CytAssist Gene Expression Libraries of Post-Xenium Human Colon Cancer (FF",
+        "specimen": "Visium CytAssist Gene Expression Libraries of Post-Xenium Human Colon Cancer (FF:Post-Xenium",
+        "spots_under_tissue": 6518,
+        "pixel_size_um_embedded": 0.264583333333333,
+        "pixel_size_um_estimated": 0.273596787204623,
+        "fullres_px_width": 28731,
+        "fullres_px_height": 37434,
+        "preservation_method": "FFPE"
       },
       {
-        "id": "TENX91",
+        "id": "MISC47",
         "st_technology": "Visium",
+        "species": "Homo sapiens",
         "organ": "Bowel",
-        "tissue": "Colon"
+        "tissue": "Colon",
+        "disease_state": "Cancer",
+        "patient": "   ",
+        "subseries": "8270_AS_10",
+        "study": "COLON MAP: Colon Molecular Atlas Project",
+        "specimen": "COLON MAP: Colon Molecular Atlas Project:8270_AS",
+        "spots_under_tissue": 4818,
+        "pixel_size_um_embedded": 1.0,
+        "pixel_size_um_estimated": 0.275734266671116,
+        "fullres_px_width": 33578,
+        "fullres_px_height": 40228,
+        "preservation_method": "FFPE"
       },
       {
-        "id": "TENX90",
+        "id": "ZEN48",
         "st_technology": "Visium",
+        "species": "Homo sapiens",
         "organ": "Bowel",
-        "tissue": "Colon"
-      },
-      {
-        "id": "TENX89",
-        "st_technology": "Visium",
-        "organ": "Bowel",
-        "tissue": "Colon"
-      },
-      {
-        "id": "TENX28",
-        "st_technology": "Visium",
-        "organ": "Bowel",
-        "tissue": "Colon"
-      },
-      {
-        "id": "ZEN47",
-        "st_technology": "Visium",
-        "organ": "Bowel",
-        "tissue": "Colon (right)"
-      },
-      {
-        "id": "ZEN46",
-        "st_technology": "Visium",
-        "organ": "Bowel",
-        "tissue": "Colon (right)"
-      },
-      {
-        "id": "ZEN45",
-        "st_technology": "Visium",
-        "organ": "Bowel",
-        "tissue": "Colon (Sigma)"
-      },
-      {
-        "id": "ZEN44",
-        "st_technology": "Visium",
-        "organ": "Bowel",
-        "tissue": "Colon (Sigma)"
-      },
-      {
-        "id": "ZEN42",
-        "st_technology": "Visium",
-        "organ": "Bowel",
-        "tissue": "Colon (right)"
-      },
-      {
-        "id": "ZEN38",
-        "st_technology": "Visium",
-        "organ": "Bowel",
-        "tissue": "Colon (right)"
-      },
-      {
-        "id": "MEND96",
-        "st_technology": "Visium",
-        "organ": "Bowel",
-        "tissue": "colon"
-      },
-      {
-        "id": "MEND95",
-        "st_technology": "Visium",
-        "organ": "Bowel",
-        "tissue": "colon"
-      },
-      {
-        "id": "MEND93",
-        "st_technology": "Visium",
-        "organ": "Bowel",
-        "tissue": "colon"
-      },
-      {
-        "id": "MEND92",
-        "st_technology": "Visium",
-        "organ": "Bowel",
-        "tissue": "colon"
-      },
-      {
-        "id": "MEND91",
-        "st_technology": "Visium",
-        "organ": "Bowel",
-        "tissue": "colon"
-      },
-      {
-        "id": "NCBI729",
-        "st_technology": "Visium",
-        "organ": "Bowel",
-        "tissue": "Colon"
-      },
-      {
-        "id": "NCBI728",
-        "st_technology": "Visium",
-        "organ": "Bowel",
-        "tissue": "Colon"
-      },
-      {
-        "id": "NCBI686",
-        "st_technology": "Visium",
-        "organ": "Bowel",
-        "tissue": "Colon"
-      },
-      {
-        "id": "NCBI685",
-        "st_technology": "Visium",
-        "organ": "Bowel",
-        "tissue": "Colon"
+        "tissue": "Rectum",
+        "disease_state": "Cancer",
+        "patient": "Patient 1",
+        "subseries": "A121573_Rep2",
+        "study": "Charting the Heterogeneity of Colorectal Cancer Consensus Molecular Subtypes usi",
+        "specimen": "Charting the Heterogeneity of Colorectal Cancer Consensus Molecular Subtypes usi:Patient 1",
+        "spots_under_tissue": 2385,
+        "pixel_size_um_embedded": 0.459801825413247,
+        "pixel_size_um_estimated": 0.459129673286413,
+        "fullres_px_width": 17168,
+        "fullres_px_height": 16832,
+        "preservation_method": "Fresh Frozen"
       }
     ]
+  },
+  "excluded_counts": {
+    "prostate": {
+      "technology": 25,
+      "low-res WSI px": 7,
+      "title contains 'degraded'": 4,
+      "species": 2
+    },
+    "kidney": {
+      "species": 8,
+      "technology": 2,
+      "spots_under_tissue": 6,
+      "low-res WSI px": 31
+    },
+    "lung": {
+      "technology": 28,
+      "species": 4,
+      "title contains 'degraded'": 6,
+      "spots_under_tissue": 11,
+      "organ/tissue mismatch": 13
+    },
+    "colon": {
+      "species": 11,
+      "technology": 6,
+      "spots_under_tissue": 7,
+      "organ/tissue mismatch": 14,
+      "title contains 'targeted'": 1,
+      "mixed organ": 2,
+      "title contains 'degraded'": 5
+    }
   },
   "suggested_HEST_SAMPLE_IDS": {
     "prostate": [
       "TENX174",
+      "TENX40",
+      "MEND160",
       "TENX46",
       "TENX41",
-      "TENX40",
-      "INT35",
-      "INT28",
-      "INT27",
-      "INT26"
+      "MEND144"
     ],
     "kidney": [
-      "TENX186",
       "TENX173",
-      "TENX146",
-      "TENX75",
       "TENX71",
-      "TENX45",
-      "TENX22",
-      "INT24"
+      "INT21",
+      "INT19"
     ],
     "lung": [
       "TENX171",
       "TENX170",
-      "TENX169",
-      "TENX168",
-      "TENX167",
       "TENX163",
-      "TENX76",
-      "TENX74"
+      "TENX72",
+      "TENX62",
+      "MISC20"
     ],
     "colon": [
-      "TENX175",
       "TENX156",
       "TENX155",
-      "TENX154",
-      "TENX153",
-      "TENX128",
-      "TENX152",
-      "MISC73"
+      "TENX70",
+      "TENX92",
+      "MISC47",
+      "ZEN48"
     ]
   }
 }
