@@ -192,3 +192,49 @@ before expanding:
   placements (k-means persisted to cache/placements), and a sparse Moran's I. Verified on a 132-run
   equivalence harness (11 policies x 3 imputers x 2 slide sizes x 2 budgets): identical selections and
   scores to the old code. Timing at R=6000, 20% budget: greedy_ig 8.6 s (was 319 s at R=2200).
+
+## Iteration 8 — expanded slide set RESULTS (n=22 slides, 18 study clusters)  [4070 run 3bd63a6; analysed 2026-10-09]
+**Slide set (gated v1.3 metadata).** Two of the original 7 are not human and were excluded by the pre-set filter:
+TENX186 (kidney) = *Mus musculus*; TENX175 (colon) = "Homo sapiens/Mus musculus". The n=7 results in the
+current manuscript therefore include a mouse and a mixed-species slide -> must be corrected. Final set: prostate 6,
+kidney 4, lung 6, colon 6 (7 Visium HD + 15 Visium; 18 HEST studies). TENX171/170 are two arms of one 10x lung
+experiment (same study cluster).
+**Scale audit.** All 5 retained original HD slides had exactly one pseudo-spot per legacy region (legacy grid
+= 61 um true; HD pseudo-spot pitch 128 um), so the old HD results were on native units. 5 of the new Visium slides
+would have pooled up to 3 spots under the legacy loader. Units still differ by platform (HD 128 um pitch vs
+Visium 55 um spots at 100 um pitch) -> platform-split reported.
+**Reproduction.** The 5 overlapping slides give per-slide margins close to n=7 (same sign; |diff| ~0.01-0.06,
+from true spot coordinates vs snapped grid centres). Pooled shifts come from the new slides.
+**Stats fix.** The 4070 JSONs stored a 4-decimal Monte Carlo sign-flip p (small p rounded to 0). The test is now
+exact up to 20 clusters (2^18 patterns; floor 7.6e-6) and script 14 recomputes it unrounded from per-slide margins.
+
+Pre-registered primary family (24 margins, Holm):
+- **Reconstruction null: CONFIRMED and strengthened.** greedy_ig ("ours") - best non-adaptive: -0.128/-0.083/
+  -0.040 at 0.5/1/2% (all 18 clusters negative, Holm p=1.8e-4), -0.011 at 5% (Holm 0.057), -0.002/-0.002 at
+  10/20% (90% cluster CI inside +-0.01 -> equivalent within 0.01 PCC). value_greedy - best coverage:
+  -0.136/-0.148/-0.152/-0.166 at 2/5/10/20% (Holm 1.8e-4), larger than at n=7 (-0.065 to -0.081); larger on
+  Visium (-0.15 to -0.19) than HD (-0.10). Every batched/contiguous recon margin is negative (Holm 1.8e-4).
+- **Detection advantage: NOT SUPPORTED after correction.** value_greedy - best coverage recall: +0.001/+0.013/
+  +0.021/+0.042 at 2/5/10/20% (raw p 0.72/0.042/0.040/0.044; Holm 0.36). Batched rs=5 +0.034 (raw 0.0073, Holm
+  0.073), rs=25 +0.011 (Holm 0.36), contiguous +0.024 (Holm 0.36); one-shot -0.051 (Holm 0.008, significantly
+  WORSE). Effects shrank vs n=7 (+0.046 -> +0.021 at 10%; +0.088 -> +0.042 at 20%). Absolute: at 20% value_greedy
+  recall 0.278 vs coverage ~0.20-0.23 vs heterogeneity oracle 0.999.
+- Per pre-registered rule 4 the detection claim is withdrawn: small positive point estimates, nominal p~0.04
+  uncorrected, not significant under Holm; not a power artifact of n=7 (power is now ample: the recon margins
+  reach the exact floor).
+
+Secondary:
+- **Platform split.** Detection gain sits in HD (+0.048 / +0.099 at 10/20%, 5 clusters -> min p 0.0625) and is
+  ~0 on Visium (+0.008 / +0.015, p 0.43/0.47).
+- **Competitors (10).** The NON-adaptive SCR2-ST-style diversity sampler beats the coverage envelope on detection
+  (+0.020 at 10%, p=0.0014; +0.029 at 20%, p=0.0002) about as much as adaptive value_greedy (+0.021/+0.042) ->
+  the detection gain over kmeans/grid/MI is not specific to adaptivity. Harmonized SOFisher port: recon
+  -0.19 to -0.28, detection ~0 (port remains weaker than value_greedy; native SOFisher result unchanged).
+- **HVG sensitivity (12).** Recon margin unchanged under ref_hvg (prospective) and negative under all_genes
+  (-0.03 to -0.08, CIs exclude 0): no leakage artifact.
+
+**Revised claim.** On 22 human slides from 18 studies, adaptive acquisition does not improve whole-slide
+reconstruction over strong non-adaptive placement (worse at low budgets, equivalent within 0.01 PCC at
+10-20%). For ROI detection, value-conditioned adaptivity gives at most a small recall gain (<=0.04 at 20%) that
+does not survive multiplicity correction, is concentrated in Visium HD slides, and is matched by a non-adaptive
+diversity design.

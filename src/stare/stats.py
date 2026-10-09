@@ -64,7 +64,7 @@ def cluster_bootstrap_ci(x, clusters, B: int = 5000, alpha: float = 0.05, seed: 
 def signflip_p(x, clusters=None, n_mc: int = 20000, seed: int = 0) -> float:
     """Two-sided randomization test of mean(x) == 0, flipping the sign of each CLUSTER jointly
     (valid when clusters are exchangeable under the null of a symmetric margin). Exact enumeration
-    for <= 16 clusters, else Monte Carlo with the +1 correction."""
+    for <= 20 clusters (2^20 sign patterns, chunked), else Monte Carlo with the +1 correction."""
     x = np.asarray(x, dtype=float)
     clusters = list(range(x.size)) if clusters is None else list(clusters)
     keys = sorted(set(clusters), key=str)
@@ -73,9 +73,13 @@ def signflip_p(x, clusters=None, n_mc: int = 20000, seed: int = 0) -> float:
     if k == 0:
         return float("nan")
     obs = abs(sums.sum())
-    if k <= 16:
-        signs = 1 - 2 * ((np.arange(2 ** k)[:, None] >> np.arange(k)) & 1)
-        return float(np.mean(np.abs(signs @ sums) >= obs - 1e-12))
+    if k <= 20:
+        hits, total, step = 0, 2 ** k, 1 << 16
+        for start in range(0, total, step):
+            pat = np.arange(start, min(start + step, total))
+            signs = 1 - 2 * ((pat[:, None] >> np.arange(k)) & 1)
+            hits += int(np.sum(np.abs(signs @ sums) >= obs - 1e-12))
+        return float(hits / total)
     rng = np.random.default_rng(seed)
     signs = rng.choice([-1.0, 1.0], size=(n_mc, k))
     return float((1 + np.sum(np.abs(signs @ sums) >= obs - 1e-12)) / (n_mc + 1))
@@ -91,7 +95,7 @@ def holm(pvals) -> list:
     for r, i in enumerate(order):
         running = max(running, min(1.0, (m - r) * p[i]))
         adj[i] = running
-    return [round(float(v), 4) if not np.isnan(v) else float("nan") for v in adj]
+    return [float(v) for v in adj]
 
 
 def stratified_summary(x, strata, clusters=None, B: int = 5000, alpha: float = 0.05, seed: int = 0) -> dict:
@@ -148,7 +152,7 @@ def paired_margin_summary(a_per_slide, b_per_slide, B: int = 5000, alpha: float 
         out["n_clusters"] = len(set(clusters))
         out["cluster_ci95"] = [round(clo, 4), round(chi, 4)]
         out["cluster_ci_excludes_zero"] = bool(clo > 0 or chi < 0)
-        out["signflip_p"] = round(signflip_p(m, clusters, seed=seed), 4)   # cluster-level; feed to holm()
+        out["signflip_p"] = float(signflip_p(m, clusters, seed=seed))   # cluster-level; unrounded (feeds holm)
     if strata is not None:
         out.update(stratified_summary(m, strata, clusters, B=B, alpha=alpha, seed=seed))
     return out

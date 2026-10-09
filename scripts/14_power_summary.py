@@ -49,10 +49,10 @@ def margins(obj, path=""):
 
 
 def p_of(m, grouping):
-    if "signflip_p" in m:
-        return m["signflip_p"]
+    """Exact cluster-level sign-flip p, recomputed from the stored per-slide margins (unrounded; the
+    JSONs from the 4070 run stored a 4-decimal Monte Carlo value, which rounds small p to 0)."""
     cl = (grouping or {}).get("clusters")
-    return round(stats.signflip_p(np.asarray(m["per_slide"], float), cl), 4)
+    return stats.signflip_p(np.asarray(m["per_slide"], float), cl)
 
 
 def main():
@@ -109,10 +109,10 @@ def main():
         for r in [r for r in rows if r["experiment"] == exp]:
             n7 = f"{r['n7_mean']:+.3f} {fmt(r['n7_ci95'])}" if "n7_mean" in r else "--"
             strat = "--" if r["stratified_mean"] is None else f"{r['stratified_mean']:+.3f} {fmt(r['stratified_ci95'])}"
-            hp = f"{r['holm_p_primary']:.4f}" if r.get("primary") else "--"
+            hp = f"{r['holm_p_primary']:.2g}" if r.get("primary") else "--"
             lines.append(f"| {'**P** ' if r.get('primary') else ''}{r['margin']} | {r['n']} ({r['n_clusters'] or '--'}) | {r['mean']:+.3f} | {fmt(r['ci95'])} | "
-                         f"{fmt(r['cluster_ci95'])} | {strat} | {r['signflip_p']:.4f} | {r['holm_p_within_experiment']:.4f} | "
-                         f"{hp} | {r['holm_p_all']:.4f} | {n7} |")
+                         f"{fmt(r['cluster_ci95'])} | {strat} | {r['signflip_p']:.2g} | {r['holm_p_within_experiment']:.2g} | "
+                         f"{hp} | {r['holm_p_all']:.2g} | {n7} |")
         lines.append("")
     md = Path("docs") / "POWER_SUMMARY.md"
     md.parent.mkdir(exist_ok=True)
@@ -121,8 +121,8 @@ def main():
     print(f"[power floor] {floor}")
     for r in prim:
         star = "*" if r["holm_p_primary"] < 0.05 else " "
-        print(f"  {r['experiment'][:18]:18s} {r['margin'][:52]:52s} {r['mean']:+.3f} p={r['signflip_p']:.4f} "
-              f"holm_primary={r['holm_p_primary']:.4f}{star}")
+        print(f"  {r['experiment'][:18]:18s} {r['margin'][:52]:52s} {r['mean']:+.3f} p={r['signflip_p']:.2g} "
+              f"holm_primary={r['holm_p_primary']:.2g}{star}")
 
 
 if __name__ == "__main__":
