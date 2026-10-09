@@ -102,6 +102,9 @@ for b in BUD05:
     b9 = f"{float(b):.2f}"
     cells = [f"{num(m['mean'])} {ci(m['ci'])}", pfmt(hp)]
     facts[f"er_{b}"] = m
+    # post hoc equivalence check (tolerance chosen after seeing the data): 90% study-cluster CI
+    facts[f"er_ci90_{b}"] = stats.cluster_bootstrap_ci(m["x"], G["clusters"], B=config.CI_BOOTSTRAP,
+                                                       alpha=0.10, seed=config.CI_SEED)
     for key in ["value_greedy_recon_vs_bestcover", "value_greedy_detect_vs_bestcover"]:
         if b9 in det09["rows"]:
             mm = margin_stats(det09["rows"][b9][key]["per_slide"], G)
