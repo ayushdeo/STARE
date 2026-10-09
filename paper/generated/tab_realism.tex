@@ -1,0 +1,13 @@
+\begin{tabular}{lcccc}
+\toprule
+ & \multicolumn{2}{c}{Reconstruction (PCC)} & \multicolumn{2}{c}{Detection (ROI recall)} \\
+\cmidrule(lr){2-3}\cmidrule(lr){4-5}
+Acquisition setting & $\Delta$ [95\% CI] & $p_H$ & $\Delta$ [95\% CI] & $p_H$ \\
+\midrule
+Sequential (1 region per round) & $-0.152$ $[-0.186, -0.122]$ & $<$0.001 & ${+}0.021$ $[{+}0.003, {+}0.037]$ & 0.362 \\
+Rounds of 5 regions & $-0.129$ $[-0.175, -0.094]$ & $<$0.001 & ${+}0.034$ $[{+}0.013, {+}0.053]$ & 0.073 \\
+Rounds of 25 regions & $-0.130$ $[-0.176, -0.095]$ & $<$0.001 & ${+}0.011$ $[-0.000, {+}0.021]$ & 0.362 \\
+Single round (whole budget) & $-0.236$ $[-0.288, -0.188]$ & $<$0.001 & $-0.051$ $[-0.077, -0.027]$ & 0.008 \\
+Contiguous blocks of 7 regions & $-0.087$ $[-0.116, -0.063]$ & $<$0.001 & ${+}0.024$ $[{+}0.002, {+}0.044]$ & 0.362 \\
+\bottomrule
+\end{tabular}

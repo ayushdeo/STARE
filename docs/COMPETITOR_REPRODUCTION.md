@@ -4,9 +4,9 @@ Two levels, both queued for the 4070. Level 1 (harmonized) confirms the reconcil
 simulator under matched objectives; Level 2 (native) reproduces the authors' own reported numbers.
 
 Verified targets (all real):
-- **SOFisher** — Ng et al., Nat. Commun. 2026 (bioRxiv 2024.07.05.602236). Repo: `Heathcliff-Ng/SOFisher`.
+- **SOFisher** — Li et al., Nat. Commun. 17:6830 (2026), doi 10.1038/s41467-026-73404-6 (bioRxiv 2024.07.05.602236). Repo: `Heathcliff-Ng/SOFisher`.
   DQN over FOVs; reward = capture more **regions of interest** (detection objective).
-- **SCR2-ST** — Zhu et al., MIDL 2026 / arXiv 2512.13635. Repo: `hrlblab/SCR2ST`. RL sampler reward =
+- **SCR2-ST** — Zhu et al., arXiv 2512.13635 (2025; venue not listed on arXiv). Repo: `hrlblab/SCR2ST`. RL sampler reward =
   single-cell manifold coverage + cell-type diversity + spatial uniformity (**diversity/coverage**
   objective); prediction head = regression + retrieval.
 

@@ -1,0 +1,12 @@
+\begin{tabular}{lccccccc}
+\toprule
+ & \multicolumn{3}{c}{Non-adaptive coverage} & \multicolumn{2}{c}{Competitor objectives} & & \\
+\cmidrule(lr){2-4}\cmidrule(lr){5-6}
+Budget & $k$-means & grid & MI-greedy & diversity$^\dagger$ & ROI-seeking$^\dagger$ & value-cond. & oracle$^\ast$ \\
+\midrule
+2\% & 0.018 & 0.022 & 0.018 & 0.026 & 0.021 & 0.027 & 0.100 \\
+5\% & 0.050 & 0.051 & 0.046 & 0.067 & 0.050 & 0.070 & 0.250 \\
+10\% & 0.110 & 0.103 & 0.094 & 0.136 & 0.104 & 0.137 & 0.500 \\
+20\% & 0.232 & 0.204 & 0.200 & 0.266 & 0.232 & 0.278 & 0.999 \\
+\bottomrule
+\end{tabular}

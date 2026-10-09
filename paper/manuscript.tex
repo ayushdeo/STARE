@@ -29,428 +29,412 @@ Spatial Transcriptomics Reconstruction}
 \maketitle
 
 \begin{abstract}
-Region-based spatial transcriptomics platforms profile only a subset of a tissue's regions, and the
-remaining regions must be reconstructed, usually by predicting expression from co-registered histology.
-Which regions to profile is a decision under a budget. We ask whether making this decision adaptively,
-by conditioning each next region on the expression measured so far, improves reconstruction relative to
-non-adaptive placement rules that fix all regions in advance. We evaluate adaptive acquisition on a
-reconstruction simulator built from HEST-1k Visium HD data~\citep{jaume2024hest}, using a frozen UNI2-h
-encoder~\citep{chen2024uni} and three imputers: a $k$-nearest-neighbor interpolator, a regression-kriging
-model, and a graph-based imputer with nonlinear image features and iterative spatial message passing.
-The non-adaptive baselines include variance-greedy and mutual-information-greedy placement from Gaussian-
-process sensor-placement theory~\citep{krause2008near} and clustering-based placement. Across seven slides
-from four tissues and budgets from 0.5\% to 20\% of regions, we found no statistically significant
-improvement of adaptive acquisition over the best non-adaptive baseline at any budget: every paired
-margin had a 95\% confidence interval that included or lay below zero. Differences that appeared on a
-single slide did not persist across slides. Conditioning the acquisition policy on measured expression
-did improve it relative to an image-only variant, but only with the graph-based imputer, and not by
-enough to exceed the non-adaptive baselines. In these experiments, reconstruction accuracy depended more
-on the imputer and the placement rule than on adaptivity.
+Region-based spatial transcriptomics profiles only part of a tissue section, so the choice of regions to
+profile is a budgeted decision. Recent methods make this choice adaptively, conditioning each next region on
+the expression already measured. We test whether adaptivity helps under two objectives: reconstructing
+expression in the unprofiled regions, and capturing regions of high molecular heterogeneity (ROI detection).
+The evaluation uses a simulator built from 22 human HEST-1k slides (7 Visium HD, 15 Visium) from 18 studies
+and four tissues, a frozen UNI2-h encoder, a graph-based imputer, and strong non-adaptive placement baselines,
+including mutual-information-greedy sensor placement. Analyses were specified before the run, cluster by
+study, and correct for 24 primary comparisons. For reconstruction, adaptive policies were worse than the best
+non-adaptive baseline at budgets of 0.5--2\% of regions (mean differences $-0.128$ to $-0.040$ PCC over the
+top-50 genes; Holm-adjusted $p<0.001$) and within $\pm0.01$ PCC of it at 10--20\%. A policy that selects
+directly on measured expression values was worse at every budget ($-0.136$ to $-0.165$). For ROI detection,
+the same policy raised recall by $+0.001$ to $+0.042$ over the best coverage baseline. None of these gains
+remained significant after correction (adjusted $p\ge0.36$). They were concentrated in the Visium HD slides
+and were of similar size to the gain of a non-adaptive diversity sampler. On synthetic data with strong ROI
+signal, the protocol detected an adaptivity advantage of $+0.10$ recall, so the null results are not a
+property of the simulator alone. In these experiments, the main lever for both objectives was the placement
+rule, not adaptivity.
 \end{abstract}
 
 \section{Introduction}
 
-Whole-transcriptome spatial assays are costly and throughput-limited. Region-of-interest platforms such
-as GeoMx DSP~\citep{merritt2020geomx} profile only a small, operator-chosen subset of a tissue's regions.
-The unprofiled regions are then reconstructed when needed, typically by predicting expression from
-co-registered hematoxylin-and-eosin (H\&E) morphology, a prediction task with a known accuracy
-ceiling~\citep{jaume2024hest,xie2023bleep}. How the profiled regions are chosen affects how much of the
-transcriptome is recovered at a given budget.
+Whole-transcriptome spatial assays are costly. Region-of-interest platforms such as GeoMx
+DSP~\citep{merritt2020geomx} profile a small, operator-chosen subset of a section, and regions that are not
+profiled are reconstructed when needed, usually by predicting expression from co-registered hematoxylin and
+eosin (H\&E) images~\citep{jaume2024hest,xie2023bleep}. Which regions are profiled therefore affects two
+different things: how much of the section's expression can be recovered, and whether the regions that matter
+biologically are measured at all.
 
-Because each measurement returns real expression values, one might expect a sequential policy that
-conditions the next region on the values measured so far (an adaptive, closed-loop policy) to outperform
-a policy that fixes all regions in advance. This is the active-feature-acquisition
-hypothesis~\citep{yin2020afa}. The region-selection methods currently used in spatial transcriptomics are
-non-adaptive: static gene-panel selectors~\citep{covert2023persist,reconst2026} and one-shot region
-rankers~\citep{spatialfinder2026}. We test whether adaptivity improves reconstruction, using the
-non-adaptive placement rules that Gaussian-process sensor-placement theory identifies as near-optimal for
-reconstructing a spatial field: variance-greedy and mutual-information-greedy placement, which are
-submodular and therefore admit a $(1-1/e)$ approximation guarantee~\citep{krause2008near}.
+Several recent methods treat region choice as a sequential decision. SOFisher~\citep{li2026sofisher} trains a
+reinforcement-learning policy that moves fields of view toward regions enriched for a target signal, using the
+expression measured so far. SCR$^2$-ST~\citep{zhu2025scr2st} uses reinforcement learning to choose sampling
+locations for expression prediction, with a reward dominated by coverage of a single-cell reference manifold.
+S2-omics~\citep{yuan2025s2omics} selects ROIs from histology alone, before any measurement, to capture
+molecular heterogeneity, and notes that sequential designs that wait for measured expression are hard to run
+in practice. The two objectives in these papers differ: SOFisher and S2-omics aim to capture particular
+regions, whereas reconstruction aims to predict expression everywhere. An improvement under one objective
+need not carry over to the other.
 
-We evaluate adaptive acquisition on a reconstruction simulator built from HEST-1k Visium HD data, holding
-the image encoder and the imputer fixed across all policies. We sweep budgets from 0.5\% to 20\% of
-regions, on seven slides from four tissues, and repeat the comparison under three imputers of increasing
-expressiveness. We report the paired difference between adaptive acquisition and the best non-adaptive
-baseline on each slide, summarized across slides with a bootstrap confidence interval and a sign test.
+We ask a narrow question under matched conditions. With the image encoder and imputer fixed, and against
+strong non-adaptive placement rules, does conditioning region choice on measured expression improve (i)
+whole-section reconstruction or (ii) ROI detection, and does any improvement survive acquisition in batches
+or contiguous blocks, as real platforms require? For reconstruction, Gaussian-process sensor placement gives
+a reason to expect little benefit: with a fixed kernel the posterior variance does not depend on the observed
+values, so adaptive and non-adaptive placement share the same optimum~\citep{krause2008near}. For detection,
+there is no such argument, since the target set is defined by the values themselves.
 
 \paragraph{Contributions.}
-We formalize adaptive region acquisition for spatial-transcriptomics reconstruction and pair it with
-non-adaptive placement baselines in a reproducible simulator. Across seven slides and three imputers, we
-find no statistically significant improvement from adaptivity at any budget. We report a secondary
-observation that helps explain this: conditioning the policy on measured expression improves it only when
-the imputer's predictions depend on the measured values, which is the condition sensor-placement theory
-identifies, but the improvement is not large enough to exceed the non-adaptive baselines. We state the
-budgets, tissues, and analysis choices explicitly, and we describe the settings under which adaptivity
-might still help.
-
-\section{Experimental setup}
-\label{sec:setup}
-
-We summarize the setup here; Section~\ref{sec:methods} gives full detail. A slide is partitioned into
-112\,$\mu$m square regions, each equal to one 224\,px UNI2-h patch at 20$\times$~\citep{chen2024uni}. The
-inputs are frozen UNI2-h embeddings; the ground truth is log1p-normalized pooled expression. The target is
-Pearson correlation (PCC) over the top-50 highly variable genes, scored on the unprofiled regions,
-following the HEST-Benchmark protocol~\citep{jaume2024hest}. A policy reveals regions sequentially up to a
-budget expressed as a fraction of all regions. A fixed imputer, shared across policies, then reconstructs
-the unprofiled regions.
-
-We evaluate three imputers: a $k$-nearest-neighbor interpolator (kNN), a regression-kriging model
-(kriging), and a graph-based imputer with nonlinear image features and iterative spatial message passing
-(graphflow). We evaluate nine policies: random, farthest-point (grid), $k$-means on image embeddings, a
-one-shot region ranker~\citep{spatialfinder2026}, variance-greedy and mutual-information-greedy
-placement~\citep{krause2008near}, an adaptive error-reduction policy, an adaptive maximum-uncertainty
-policy, and an image-only ablation of the adaptive error-reduction policy. Experiments span seven slides
-(prostate $\times 1$, kidney $\times 2$, lung $\times 2$, colon $\times 2$).
-
-We fixed the analysis before the multi-slide run. We defined a positive result as a paired margin,
-adaptive acquisition minus the best non-adaptive baseline, with a mean above zero and a 95\% bootstrap
-confidence interval excluding zero at at least one budget. On each slide, ``best non-adaptive baseline''
-is the highest-scoring non-adaptive policy on that slide.
-
-\section{Results}
-
-\subsection{Comparison with non-adaptive placement}
-Table~\ref{tab:absolute} reports absolute reconstruction accuracy. Both the best non-adaptive baseline
-and the adaptive error-reduction policy reach positive PCC at every budget; at 20\% budget, for example,
-the best non-adaptive baseline reaches 0.707 (kNN), 0.667 (kriging), and 0.684 (graphflow), and the
-adaptive policy reaches 0.574, 0.533, and 0.681. Table~\ref{tab:margins} reports the paired margin between
-the two, in PCC over the top-50 genes, as the mean and 95\% bootstrap confidence interval over the seven
-slides. The margin is the difference between two positive scores, not a score itself. Under the kNN and
-kriging imputers, the margin was negative and its confidence interval excluded zero at every budget. Under the graphflow imputer, the margin was smaller and its confidence interval
-included zero at the higher budgets: at 10\% budget the margin was $-0.005$ (95\% CI $-0.017$ to
-$+0.003$), and at 20\% it was $-0.004$ (95\% CI $-0.009$ to $+0.001$). In no configuration did the margin
-meet the pre-specified criterion for a positive result (Figure~\ref{fig:gap}a).
-
-We note the difference between per-slide and cross-slide analysis. On the single prostate slide, the
-graphflow adaptive policy exceeded the best non-adaptive baseline by 0.002 to 0.006 PCC at the 5\%, 10\%,
-and 20\% budgets. These differences were within the seed-to-seed standard deviation of the random
-baseline (about 0.002 to 0.005 PCC at those budgets), and they did not persist when the analysis was
-repeated across the seven slides.
-
-\begin{table}[t]
-\centering
-\caption{Absolute reconstruction accuracy (PCC over top-50 genes), cross-slide mean over 7 slides, for the
-best non-adaptive baseline (the highest-scoring non-adaptive policy per slide) and the adaptive
-error-reduction policy. All values are positive; the small differences between the two columns of each
-imputer are the margins in Table~\ref{tab:margins}.}
-\label{tab:absolute}
-\small
-\setlength{\tabcolsep}{5pt}
-\begin{tabular}{lcccccc}
-\toprule
- & \multicolumn{2}{c}{kNN} & \multicolumn{2}{c}{kriging} & \multicolumn{2}{c}{graphflow} \\
-\cmidrule(lr){2-3}\cmidrule(lr){4-5}\cmidrule(lr){6-7}
-Budget & non-adapt. & adaptive & non-adapt. & adaptive & non-adapt. & adaptive \\
-\midrule
-0.5\% & 0.091 & 0.026 & 0.169 & 0.063 & 0.423 & 0.282 \\
-1\%   & 0.503 & 0.406 & 0.247 & 0.089 & 0.521 & 0.412 \\
-2\%   & 0.607 & 0.520 & 0.301 & 0.106 & 0.595 & 0.540 \\
-5\%   & 0.671 & 0.573 & 0.461 & 0.256 & 0.645 & 0.624 \\
-10\%  & 0.693 & 0.579 & 0.562 & 0.445 & 0.665 & 0.660 \\
-20\%  & 0.707 & 0.574 & 0.667 & 0.533 & 0.684 & 0.681 \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-\begin{table}[t]
-\centering
-\caption{Paired margin between adaptive acquisition and the best non-adaptive baseline (PCC over top-50
-genes), reported as mean and 95\% bootstrap confidence interval over 7 slides. Negative values indicate
-lower performance than the best non-adaptive baseline.}
-\label{tab:margins}
-\small
-\setlength{\tabcolsep}{4pt}
-\begin{tabular}{lccc}
-\toprule
-Budget & kNN & kriging & graphflow \\
-\midrule
-0.5\% & $-0.065\,[-0.163,-0.002]$ & $-0.107\,[-0.199,-0.017]$ & $-0.141\,[-0.231,-0.059]$ \\
-1\%   & $-0.097\,[-0.150,-0.055]$ & $-0.158\,[-0.284,-0.052]$ & $-0.109\,[-0.147,-0.069]$ \\
-2\%   & $-0.087\,[-0.126,-0.048]$ & $-0.195\,[-0.331,-0.069]$ & $-0.055\,[-0.086,-0.027]$ \\
-5\%   & $-0.099\,[-0.152,-0.054]$ & $-0.204\,[-0.370,-0.056]$ & $-0.021\,[-0.043,-0.005]$ \\
-10\%  & $-0.113\,[-0.158,-0.071]$ & $-0.116\,[-0.232,-0.037]$ & $-0.005\,[-0.017,+0.003]$ \\
-20\%  & $-0.133\,[-0.169,-0.094]$ & $-0.134\,[-0.157,-0.110]$ & $-0.004\,[-0.009,+0.001]$ \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-\begin{figure}[t]
-\centering
-\includegraphics[width=\textwidth]{figure1_adaptivity_gap.pdf}
-\caption{(a) Paired margin between adaptive acquisition and the best non-adaptive baseline (PCC over
-top-50 genes) versus budget, for each imputer, as mean and 95\% bootstrap confidence interval over 7
-slides. The dashed line marks zero. (b) Paired margin between the adaptive error-reduction policy and its
-image-only ablation. This difference was positive with the graphflow imputer and near zero or negative
-with the kNN and kriging imputers. Generated by \texttt{scripts/06\_plot\_figure1.py}.}
-\label{fig:gap}
-\end{figure}
-
-\subsection{Non-adaptive baselines}
-The non-adaptive baselines were accurate. Averaged over the seven slides under the graphflow imputer,
-mutual-information-greedy and $k$-means placement reached PCC of 0.588 and 0.587 at 2\% budget and 0.682
-and 0.679 at 20\%. The best non-adaptive baseline on each slide averaged 0.595 at 2\% and 0.684 at 20\%.
-The adaptive error-reduction policy reached 0.540 at 2\% and 0.681 at 20\%. The one-shot region
-ranker~\citep{spatialfinder2026} was the exception among the non-adaptive baselines, with near-zero PCC at
-low budgets, consistent with its objective of covering morphological outliers rather than minimizing
-reconstruction error. Because we take the best non-adaptive baseline per slide, this policy is never the
-comparison point, so its performance does not affect the result. Our implementation of it is a
-reimplementation of the published ranking idea rather than the original system, and its low low-budget
-PCC may reflect that.
-
-\subsection{Effect of conditioning on measured expression}
-To isolate the contribution of the measured values to the acquisition decision, we compared the adaptive
-error-reduction policy with an image-only ablation that uses the same imputer but does not use measured
-expression in selection. Under the kNN and kriging imputers, this difference was near zero or negative.
-Under the graphflow imputer, it was positive: 0.116 (95\% CI 0.068 to 0.166) at 1\% budget and 0.103
-(95\% CI 0.076 to 0.132) at 2\%, positive on all seven slides, decreasing to 0.008 (95\% CI $-0.000$ to
-0.019) at 20\% (Figure~\ref{fig:gap}b). The graphflow imputer's predictions depend on the measured
-values, through the clamping of profiled regions during message passing, whereas the kNN imputer's
-predictive uncertainty depends only on which regions are profiled. The measured values therefore carried
-information for the acquisition decision only under the imputer whose predictions depend on them. This
-improvement over the image-only ablation was not, however, large enough to exceed the non-adaptive
-baselines (Table~\ref{tab:margins}).
-
-\subsection{Effect of imputer choice}
-The margin between adaptive acquisition and the best non-adaptive baseline at 20\% budget was $-0.133$
-with kNN, $-0.134$ with kriging, and $-0.004$ with graphflow (Table~\ref{tab:margins}). The margin was
-closer to zero for the imputer whose predictions depend most strongly on the measured values. At the
-budgets and slide count studied here, the margin did not reach a statistically significant positive value
-for any imputer.
-
-\subsection{Robustness and scope}
-The margins are paired within slide and summarized across seven slides from four tissues. The non-random
-policies are deterministic, so they have no within-slide sampling variance; the variation we report is
-across slides. The sign split is consistent with the confidence intervals: for example, the adaptive
-policy exceeded the best non-adaptive baseline on 0 of 7 slides under graphflow at budgets from 0.5\% to
-5\%. Absolute PCC is lower across slides than on the single prostate slide (for graphflow, the best
-non-adaptive baseline at 20\% averages 0.684 across slides versus 0.878 on prostate alone), because the
-kidney, lung, and colon slides are harder to reconstruct; the pooled estimate is therefore more
-conservative than the single-slide estimate.
-
-\section{Relation to sensor-placement theory}
-\label{sec:theory}
-
-For a Gaussian process with a fixed, known kernel, the posterior variance at a location depends only on
-which locations have been observed, not on the observed values~\citep{krause2008near}. Under that
-condition, the variance-minimizing set of measurement locations can be chosen in advance, and observing
-the values does not change the optimal choice: adaptive and non-adaptive placement have the same optimum.
-The kNN imputer approximates this condition. Its predictive uncertainty is a function of the profiled
-region locations and does not use the measured values. This is consistent with the kNN result in
-Table~\ref{tab:margins}, where the margin is negative at every budget and becomes more negative as the
-budget grows.
-
-When the imputer's predictions depend on the measured values, the adaptive and non-adaptive optima can
-differ, and an adaptive policy could in principle improve reconstruction. The kriging and graphflow
-imputers have this property, and the ablation in Section~3.3 shows that the graphflow policy does extract
-information from the measured values. In our experiments this did not translate into a significant
-improvement over the best non-adaptive baseline. One interpretation is that the value of reallocating a
-measurement based on observed values was small relative to the value of covering the slide well, which the
-non-adaptive placement rules already achieve. This interpretation is consistent with our data but is not
-established by them; the experiments test the end-to-end comparison, not this specific decomposition.
-
-\section{Discussion}
-
-\paragraph{Settings where adaptivity might help.}
-Adaptivity would be more likely to help when a single measurement changes the imputer's predicted error
-substantially and non-locally, for example with imputers whose predictive uncertainty is strongly
-heteroscedastic or generative, at very low budgets with strong priors, or in multi-round designs where a
-coarse first pass reshapes a second. Each of these predicts a positive margin over the best non-adaptive
-baseline with a confidence interval excluding zero, which the present protocol would detect. We did not
-observe such a margin here, but we did not test these settings directly.
-
-\paragraph{Practical implication.}
-In these experiments, reconstruction accuracy depended mainly on the imputer and on the placement rule.
-For budget-constrained reconstruction of the kind studied here, mutual-information or clustering-based
-placement computed in advance was as accurate as the adaptive policies we tested, at lower computational
-cost.
-
-\paragraph{Limitations.}
-The graphflow imputer implements several inductive biases associated with flow-matching spatial models
-(nonlinear image features, a spatial graph, conditioning on neighboring measured values, and iterative
-refinement), but it is not a reproduction of a specific published model, and a fully trained model of that
-type might behave differently. We used seven HEST Visium HD slides across four tissues, the tissues used in
-prior region-ranking work; the slide count is limited by the availability of Visium HD samples with
-whole-transcriptome ground truth. We used the top-50-highly-variable-gene target and patient-stratified
-protocol of HEST-Benchmark for comparability with prior histology-to-expression results. The budgets span
-low values, where region choice has the largest effect, up to 20\%, where policies converge. We report
-uncertainty across slides rather than within slide because the non-random policies are deterministic and
-the slide is the unit of generalization. A larger set of slides, additional imputers, or an equivalence
-analysis would sharpen these estimates; we report a detection result, not an equivalence result.
+(1) A simulator protocol for region acquisition on 22 human HEST-1k slides from 18 studies, with analyses
+that resample whole studies and correct for multiple comparisons, specified and committed before the
+expanded run. (2) For reconstruction, adaptive policies were worse than the best non-adaptive placement at
+low budgets and equivalent to it within 0.01 PCC at 10--20\%; a policy that selects on measured values was
+worse at every budget. (3) For ROI detection, value-conditioned selection gave small recall gains that did
+not survive correction, were concentrated in one platform, and were matched by a non-adaptive diversity
+sampler. Synthetic positive controls show that the protocol can register an adaptivity advantage when one
+exists. (4) Code, configuration, and scripts that regenerate every table and figure from the result files.
 
 \section{Related work}
 
 \paragraph{Predicting expression from histology.}
-Several methods predict spatial expression from H\&E images, including contrastive
-retrieval~\citep{xie2023bleep}, flow matching over spatial neighborhoods~\citep{huang2025stflow},
-diffusion models~\citep{zhu2025stem}, and autoregressive models~\citep{genar2025}, benchmarked on
-HEST-1k~\citep{jaume2024hest}. Reported accuracy is higher for a subset of marker genes and lower for most
-genes. We hold the encoder and imputer fixed and study region selection separately.
+Methods for predicting spatial expression from H\&E include contrastive retrieval~\citep{xie2023bleep}, flow
+matching over spatial neighborhoods~\citep{huang2025stflow}, diffusion models~\citep{zhu2025stem}, and
+autoregressive models~\citep{genar2025}, benchmarked on HEST-1k~\citep{jaume2024hest}. We hold the
+predictor fixed and study which regions it is given.
 
-\paragraph{Selecting what to measure.}
-Existing selection methods are non-adaptive. Gene-panel selectors choose a fixed set of
-genes~\citep{covert2023persist,reconst2026}; region rankers score regions once by heuristic
-diversity~\citep{spatialfinder2026}. These methods do not condition selection on expression measured
-during acquisition. We study the adaptive extension and compare it with non-adaptive placement.
+\paragraph{Choosing what to measure.}
+Gene-panel selectors choose a fixed set of genes~\citep{covert2023persist,reconst2026}. Region selectors
+include one-shot rankers that score regions from images~\citep{spatialfinder2026}, histology-based ROI
+selection for molecular heterogeneity~\citep{yuan2025s2omics}, and sequential reinforcement-learning
+samplers~\citep{li2026sofisher,zhu2025scr2st}. These papers compare against random, uniform, or manual
+selection; we add sensor-placement baselines and evaluate both objectives on the same slides.
 
 \paragraph{Active acquisition and sensor placement.}
-Active feature acquisition frames sequential measurement as a policy-learning
-problem~\citep{yin2020afa}. Gaussian-process sensor placement provides the non-adaptive baselines used
-here and the result that a fixed-kernel posterior makes adaptive and non-adaptive placement
-equivalent~\citep{krause2008near}. We apply this comparison to spatial-transcriptomics region acquisition
-and report cross-slide confidence intervals.
+Active feature acquisition treats measurement as a sequential policy~\citep{yin2020afa}. Variance- and
+mutual-information-greedy placement in Gaussian processes are submodular and near-optimal for reconstructing
+a spatial field~\citep{krause2008near}; we use them as non-adaptive baselines.
 
-\section{Methods}
-\label{sec:methods}
+\section{Experimental setup}
+\label{sec:setup}
 
-\paragraph{Data and region grid.}
-We use HEST-1k Visium HD samples~\citep{jaume2024hest} from four tissues (prostate, kidney, lung, colon),
-seven slides total. Fine bins are pooled into 112\,$\mu$m square regions, each equal to one 224\,px patch
-at 20$\times$, the UNI2-h input size, so that region and encoder patch coincide. Per region we compute
-log1p-normalized pooled expression. Genes expressed in fewer than 10\% of spots are removed, and the top-50
-highly variable genes are selected per slide. The image encoder is UNI2-h (ViT-H, 1536-dimensional),
-frozen~\citep{chen2024uni}; a region's embedding is the mean of its patch embeddings, $L_2$-normalized.
+\paragraph{Slides and acquisition unit.}
+We use 22 human slides from HEST-1k~\citep{jaume2024hest} across prostate (6), kidney (4), lung (6), and
+colon (6); 7 are Visium HD and 15 are standard Visium (Appendix~\ref{app:slides}). Slides were selected by
+rules fixed in advance: human, whole-transcriptome, at least 1{,}000 spots under tissue, source image at most
+0.6\,$\mu$m/px, one slide per specimen, and at most two slides per study. The 22 slides come from 18 HEST
+studies. The acquisition unit (``region'') is one native spot. For Visium, spots are 55\,$\mu$m in diameter
+on a 100\,$\mu$m pitch; the Visium HD slides are distributed by HEST as aggregated pseudo-spots with a
+median spacing of 128\,$\mu$m on our slides. Coordinates are converted to microns with each slide's
+estimated pixel size. Slides contain 1{,}766 to 9{,}080 regions. Each region's image input is the HEST
+224\,px patch at 0.5\,$\mu$m/px centred on the spot, embedded with frozen UNI2-h~\citep{chen2024uni}.
+Expression is log1p-transformed; genes detected in fewer than 10\% of regions are removed.
 
-\paragraph{Simulator.}
-A policy reveals regions one at a time up to a budget. The profiled regions' expression is exposed to the
-imputer, which reconstructs the unprofiled regions. All policies use the same imputer and encoder, so the
-comparison reflects the selection rule.
+\paragraph{Simulator and objectives.}
+A policy reveals regions up to a budget given as a fraction of the slide's regions (0.5\% to 20\%). A revealed
+region exposes its measured expression. For \emph{reconstruction}, a fixed imputer predicts the unprofiled
+regions from the profiled ones, and we score the per-gene Pearson correlation over unprofiled regions,
+averaged over the top-50 highly variable genes (PCC), following the HEST-Benchmark target~\citep{jaume2024hest}.
+For \emph{ROI detection}, we define ROIs from ground truth as the 20\% of regions with the highest local
+molecular heterogeneity (variance of top-50-gene expression across a region's 8 nearest spatial neighbours,
+averaged over genes), in the spirit of S2-omics~\citep{yuan2025s2omics}, and score recall: the fraction of ROI
+regions that were profiled. ROIs and gene sets are used only for evaluation.
 
-\paragraph{Imputers.}
-The kNN imputer predicts a region as the mean expression of its 10 nearest profiled regions in a joint
-image-and-space feature space; its uncertainty is neighbor variance. The kriging imputer reduces
-embeddings to 64 principal components, fits a ridge regression from image to expression on the profiled
-regions, and spatially interpolates the residuals; its uncertainty is the residual variance among spatial
-neighbors, which depends on the measured values. The graphflow imputer uses a random-Fourier-feature map of
-the image principal components (512 features) with ridge regression on the profiled regions, followed by
-20 steps of message passing on a fixed 8-nearest-neighbor graph in which profiled regions are held at their
-measured values at each step; its uncertainty is one minus the graph influence reaching a region from the
-profiled nodes. All hyperparameters are listed in Appendix~\ref{app:repro}.
+\paragraph{Imputer.}
+The primary imputer (graphflow) maps image principal components through 512 random Fourier features, fits a
+ridge regression to expression on the profiled regions, and then runs 20 steps of message passing on a fixed
+8-nearest-neighbour graph in image-and-space features, holding profiled regions at their measured values.
+Its predictions depend on the measured values. Its uncertainty, one minus the graph influence reaching a
+region from profiled nodes, depends on which regions are profiled but not on their values. A $k$-nearest
+neighbour and a regression-kriging imputer were run on the earlier slide set only (Appendix~\ref{app:imputers}).
 
 \paragraph{Policies.}
-The non-adaptive policies are random (averaged over 5 seeds), farthest-point (grid), $k$-means on image
-embeddings, a one-shot region ranker~\citep{spatialfinder2026}, and variance-greedy and
-mutual-information-greedy placement. The placement policies use an RBF kernel on joint image-and-coordinate
-features with a median-heuristic lengthscale and an incremental conditional-variance recursion;
-mutual-information-greedy uses the ratio $\mathrm{Var}(y\mid A)/\mathrm{Var}(y\mid V\setminus A)$
-~\citep{krause2008near}. The adaptive policies are error-reduction (which scores a region by the summed
-imputer uncertainty of its neighborhood, recomputed after each reveal) and maximum-uncertainty (which
-selects the region of highest imputer uncertainty, recomputed after each reveal). The image-only ablation
-is the error-reduction policy with the measured expression withheld from selection.
+Non-adaptive: random (5 seeds), farthest-point in space (grid), $k$-means on image embeddings with medoids,
+a reimplementation of a one-shot image ranker~\citep{spatialfinder2026}, and variance-greedy and
+mutual-information (MI)-greedy placement with an RBF kernel on joint image-and-coordinate
+features~\citep{krause2008near}. Sequential: \emph{error-reduction} selects the region whose 15 nearest
+unprofiled neighbours in the imputer's feature space have the largest summed imputer uncertainty; \emph{maximum-uncertainty} selects the
+region of highest imputer uncertainty. Under graphflow both depend on the profiled set but not on the measured
+values. \emph{Value-conditioned} selection scores each candidate by the standardized kernel-weighted local variance
+of the measured expression around it plus 0.5 times its standardized distance to the nearest profiled region,
+and starts from the region nearest the slide centroid; its choices depend on the measured values, so it is the
+direct test of value-adaptivity. Two further policies
+implement the stated objectives of prior samplers in our simulator: a \emph{diversity} sampler (farthest-point
+in joint image and space, after SCR$^2$-ST~\citep{zhu2025scr2st}, non-adaptive) and an \emph{ROI-seeking}
+sampler (moves toward measured regions with large expression deviation, after SOFisher~\citep{li2026sofisher},
+adaptive). These are reimplementations of the objectives, not the authors' trained models.
 
-\paragraph{Analysis.}
-The primary metric is per-gene Pearson correlation over the unprofiled regions, averaged over the top-50
-genes. For each imputer and budget we record per-slide PCC for every policy. We form paired margins across
-the seven slides and summarize each with a percentile bootstrap confidence interval (5000 resamples of the
-slides) and an exact two-sided sign test. The pre-specified positive-result criterion, fixed before the
-multi-slide run, is a mean margin above zero with a 95\% confidence interval excluding zero at at least
-one budget. All reported numbers are regenerated from the result files by the released code.
+\paragraph{Comparators and statistics.}
+For reconstruction, the comparator on each slide is the best of the five non-adaptive policies other than
+random (``best non-adaptive''). For detection and the realism experiments, it is the best of $k$-means, grid,
+and MI-greedy (``best coverage''). Taking the per-slide maximum favours the baseline. For each margin
+(policy minus comparator, per slide) we report the mean, a 95\% percentile bootstrap CI that resamples whole
+studies (5{,}000 resamples), and an exact two-sided sign-flip test that flips the signs of whole studies
+(all $2^{18}$ patterns). Slides from the same study are therefore not treated as independent. Before the run
+we fixed a primary family of 24 margins (reconstruction and detection at each budget, and the realism
+settings) and adjust its $p$-values with Holm's method~\citep{holm1979simple} ($p_H$). The decision rules,
+also fixed in advance, were: an adaptivity advantage is claimed only for a positive margin with $p_H<0.05$.
+
+\section{Results}
+
+\subsection{Synthetic controls: can the protocol register an adaptivity advantage?}
+We first checked that the simulator and metrics can show an advantage when one exists, using synthetic
+$20\times20$ slides with image-unpredictable, spatially clustered structure (8 slides per setting, 10\%
+budget, $k$-NN imputer; Figure~\ref{fig:controls}). For reconstruction, we added a non-deployable
+\emph{difficulty oracle} that orders regions by true local heterogeneity weighted by distance to regions
+already chosen. It did not exceed the best coverage baseline at any structure length: its margin was $-0.105$
+and $-0.066$ PCC at the two shortest correlation lengths and between $-0.013$ and $-0.020$ at the three
+longer ones, with every CI below zero (Figure~\ref{fig:controls}a). For detection, the value-conditioned policy's recall margin over the
+best coverage baseline rose with the ROI signal amplitude $\alpha$, from $-0.045$ at $\alpha=0$ to $+0.052$
+(95\% CI $+0.033$ to $+0.071$) at $\alpha=4$ and $+0.101$ ($+0.065$ to $+0.135$) at $\alpha=8$, positive on
+all 8 slides in both settings (Figure~\ref{fig:controls}b). The error-reduction policy, which targets the
+imputer's uncertainty (here the variance of measured expression among neighbours) rather than local
+heterogeneity, stayed at or below zero. The protocol can therefore register a value-adaptivity advantage for
+detection when the ROI signal is strong, and in this setting even ground-truth-informed ordering did not help
+reconstruction.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.85\textwidth]{fig_controls.pdf}
+\caption{Synthetic controls (8 slides per point, 10\% budget, mean and 95\% bootstrap CI over slides).
+(a) Reconstruction margin over the best coverage baseline versus the correlation length of the hidden
+structure, for a ground-truth difficulty oracle and the error-reduction policy. (b) Detection-recall margin
+versus ROI signal amplitude. The dashed line marks zero.}
+\label{fig:controls}
+\end{figure}
+
+\subsection{Reconstruction on 22 slides}
+Table~\ref{tab:recon} gives absolute PCC. The best non-adaptive baseline reached 0.470 at 0.5\% budget and
+0.709 at 20\%; MI-greedy alone reached 0.412 and 0.707. Table~\ref{tab:primary} and
+Figure~\ref{fig:main}a give the paired margins. The error-reduction policy was below the best non-adaptive
+baseline by 0.128, 0.083, and 0.040 PCC at 0.5\%, 1\%, and 2\% ($p_H<0.001$; lower in all 18 studies at 0.5\% and
+1\% and in 17 of 18 at 2\%) and by 0.011 at 5\% ($p_H=0.057$). At 10\% and 20\% the margins were $-0.002$; their 90\% study-cluster CIs,
+$[-0.006, +0.001]$ and $[-0.003, +0.001]$, lie within $\pm0.01$ PCC, so the two are equivalent at that
+tolerance (an equivalence margin we chose after seeing the data). The maximum-uncertainty policy behaved
+similarly; at 20\% it was $+0.001$ above the best non-adaptive baseline (95\% CI $-0.001$ to $+0.003$,
+unadjusted $p=0.35$). The value-conditioned policy, the one that selects on measured values, was below the
+best coverage baseline at every budget, by 0.136 to 0.165 PCC ($p_H<0.001$), reaching 0.544 at 20\% against
+about 0.70 for the coverage policies.
+
+\begin{table}[t]
+\centering
+\caption{Absolute reconstruction accuracy (PCC over the top-50 genes on unprofiled regions), mean over 22
+slides, graphflow imputer. ``Best per slide'' is the highest-scoring non-adaptive policy on each slide.
+Value-conditioned selection was run at 2--20\% only.}
+\label{tab:recon}
+\small
+\input{generated/tab_recon_abs.tex}
+\end{table}
+
+\begin{table}[t]
+\centering
+\caption{Primary margins over 22 slides (18 study clusters). $\Delta$ is the mean per-slide difference with a
+95\% bootstrap CI that resamples studies; $p_H$ is the exact study-level sign-flip $p$-value, Holm-adjusted over
+the 24 pre-specified primary margins (this table and Table~\ref{tab:realism}).}
+\label{tab:primary}
+\resizebox{\textwidth}{!}{\input{generated/tab_primary.tex}}
+\end{table}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\textwidth]{fig_main.pdf}
+\caption{Margins over 22 slides, mean and 95\% CI resampling studies. (a) Reconstruction. (b) ROI-detection
+recall for the value-conditioned policy and the non-adaptive diversity sampler. (c) Detection margin of the
+value-conditioned policy at 10\% budget as acquisition is batched (regions per round; ``all'' is a single
+round) or made contiguous (``blocks'': each round reveals the 7 regions nearest a chosen seed).}
+\label{fig:main}
+\end{figure}
+
+\subsection{ROI detection on 22 slides}
+Table~\ref{tab:detect} gives absolute recall. Coverage policies captured ROIs at about the rate expected from
+the budget (recall 0.200--0.232 at 20\%), and the ground-truth ordering reached 0.999. The value-conditioned
+policy reached 0.278. Its margins over the best coverage baseline were $+0.001$, $+0.013$, $+0.021$, and
+$+0.042$ at 2\%, 5\%, 10\%, and 20\% (Table~\ref{tab:primary}, Figure~\ref{fig:main}b). The unadjusted
+$p$-values at 5--20\% were 0.040--0.044, and after Holm adjustment over the primary family all were 0.36. By
+the pre-specified rule, these margins do not establish a detection advantage.
+
+Two further comparisons bear on how to read the small positive estimates. First, the non-adaptive diversity
+sampler improved recall over the best coverage baseline by a similar amount: $+0.020$ (95\% CI $+0.009$ to
+$+0.031$) at 10\% and $+0.029$ ($+0.018$ to $+0.042$) at 20\%, with Holm-adjusted $p$ of 0.015 and 0.002
+within that experiment, where the value-conditioned margins had adjusted $p=0.36$
+(Table~\ref{tab:detect}, Figure~\ref{fig:main}b). Second, the detection margins were concentrated in the
+Visium HD slides: at 10\% and 20\% they were $+0.048$ and $+0.099$ on HD (7 slides, 5 studies, the smallest
+attainable $p$ with 5 clusters is 0.0625) and $+0.008$ and $+0.015$ on Visium (15 slides, 13 studies;
+$p=0.43$ and $0.47$; Appendix~\ref{app:split}). The ROI-seeking sampler did not improve recall
+($-0.012$ to $-0.005$, all CIs including zero) and reduced reconstruction PCC by 0.19 to 0.28.
+
+\begin{table}[t]
+\centering
+\caption{Absolute ROI-detection recall (fraction of the top-20\% most heterogeneous regions profiled), mean over
+22 slides. $^\dagger$Reimplementations of the stated objectives of SCR$^2$-ST (diversity, non-adaptive) and
+SOFisher (ROI-seeking, adaptive) in our simulator. $^\ast$Profiles regions in order of true heterogeneity; it
+uses ground truth and bounds recall from above.}
+\label{tab:detect}
+\small
+\input{generated/tab_detect_abs.tex}
+\end{table}
+
+\subsection{Batched and contiguous acquisition}
+Real platforms acquire regions in rounds, and ROIs are contiguous. At 10\% budget we revealed regions in
+rounds of 1, 5, or 25, or in a single round, with the policy using only measurements available at the start
+of each round, and separately in contiguous blocks of 7 regions around a policy-chosen seed
+(Table~\ref{tab:realism}, Figure~\ref{fig:main}c). Reconstruction margins were negative in every setting
+($p_H<0.001$). Detection margins were $+0.021$, $+0.034$, and $+0.011$ for rounds of 1, 5, and 25, and
+$+0.024$ for contiguous blocks, none with $p_H<0.05$ (rounds of 5: $p_H=0.073$). With a single round the
+policy has no measurements and falls back to its starting rule, which takes the regions nearest the slide
+centroid; this compact block captured fewer ROIs than the coverage policies (margin $-0.051$, $p_H=0.008$).
+
+\begin{table}[t]
+\centering
+\caption{Value-conditioned policy minus best coverage at 10\% budget under batched and contiguous acquisition
+(22 slides; $\Delta$ with 95\% CI resampling studies; $p_H$ Holm-adjusted over the primary family).}
+\label{tab:realism}
+\resizebox{\textwidth}{!}{\input{generated/tab_realism.tex}}
+\end{table}
+
+\subsection{Robustness}
+\emph{Gene set.} Selecting the top-50 genes from the full slide uses information that a prospective
+experiment would not have. Selecting them instead from a random 15\% reference subset gave reconstruction
+margins within 0.003 of the full-slide choice, and scoring all filtered genes gave smaller but still negative
+margins ($-0.033$ to $-0.079$; all CIs below zero; Appendix~\ref{app:hvg}). \emph{Tissue.} The value-conditioned
+reconstruction margins were negative in all four tissues at every budget, as were the error-reduction margins
+at 0.5--5\%; at 10--20\% the error-reduction margin in kidney was $+0.001$ and $+0.000$. The detection margins
+were positive in kidney, lung, and colon and between $-0.006$ and $-0.001$ in prostate at 2--10\%
+(Appendix~\ref{app:split}). \emph{Native SOFisher.} We ran the authors' SOFisher code on its bundled mouse cortex data
+for 5 million steps; the evaluation reward for captured target regions rose from a median of $-238$ early in
+training to $+147$ late (Appendix~\ref{app:sofisher}), confirming that the method optimizes target-region capture.
+We could not run SCR$^2$-ST natively because its processed training data are not publicly available.
+
+\section{Discussion}
+
+\paragraph{Reconstruction.} The reconstruction results agree with the sensor-placement argument. With the
+imputer's uncertainty independent of measured values, the sequential policies are in effect alternative
+fixed designs, and they matched the best fixed design at moderate budgets and fell behind it at low budgets,
+where coverage matters most. Selecting on measured values moved measurements toward locally variable areas
+and away from coverage, which lowered PCC by 0.14 to 0.17. On synthetic data, ordering by true local
+difficulty did not help either. Whole-section reconstruction rewards spreading measurements across the
+section, and adaptivity in these experiments only redistributed measurements away from that.
+
+\paragraph{Detection.} Detection is the objective under which adaptivity could help, and the synthetic
+control shows that it does when the ROI signal in measured expression is strong. On real slides the estimated
+gain was at most 0.04 recall at 20\% budget, against a gap of about 0.72 to the ground-truth ordering, and it
+did not survive correction. A non-adaptive diversity design gave a similar gain, so the part of the gain we
+can resolve is not specific to adaptivity. The concentration in Visium HD slides may reflect the smoother
+pseudo-spot signal or the particular studies; with 5 HD studies we cannot separate these.
+
+\paragraph{Practical implication.} For budgets and slides like these, a placement rule computed in advance
+(MI-greedy or $k$-means) was as accurate for reconstruction as any adaptive policy we tested. For detection, a
+non-adaptive diversity design reached recall within 0.012 of the value-conditioned policy (0.266 against
+0.278 at 20\% budget) without waiting for measurements between rounds.
+
+\paragraph{Limitations.} The simulator is retrospective: a revealed region returns its measured expression
+without additional noise, batch effects, or turnaround time, which favours adaptive policies. The acquisition
+unit is a spot or HD pseudo-spot, smaller than typical GeoMx ROIs, and the HD and Visium units differ in
+spacing. The 22-slide results use one imputer; the kNN and kriging comparisons rest on 5 slides. The ROI
+definition is one choice among several, and ROIs from expert annotation could behave differently. The prior
+samplers were evaluated as reimplementations of their objectives in our simulator, not as the authors'
+trained systems; SOFisher was run natively only on its own data, and SCR$^2$-ST not at all. The equivalence
+tolerance of 0.01 PCC was chosen after the data were seen. Budgets above 20\% were not tested.
 
 \section{Conclusion}
 
-We evaluated adaptive, closed-loop region acquisition for spatial-transcriptomics reconstruction against
-non-adaptive placement baselines, on seven slides and under three imputers. We found no statistically
-significant improvement from adaptivity at any budget. Conditioning the acquisition policy on measured
-expression improved it only when the imputer's predictions depended on those values, and not by enough to
-exceed the non-adaptive baselines. These results are consistent with the sensor-placement result that a
-fixed-kernel posterior makes adaptive and non-adaptive placement equivalent. We report the budgets,
-tissues, and analysis choices used, and we identify settings, such as sharply data-dependent imputers and
-multi-round designs, under which adaptivity might still improve reconstruction and that our protocol would
-detect.
+Across 22 human slides from 18 studies, adaptive region acquisition did not improve whole-section
+reconstruction over strong non-adaptive placement: it was worse at low budgets and equivalent within 0.01 PCC
+at 10--20\%, and selecting on measured values was worse at every budget. For ROI detection, value-conditioned
+selection produced small recall gains that did not survive correction for multiple comparisons and were
+matched by a non-adaptive diversity design. The same protocol registered a clear detection advantage on
+synthetic data with strong ROI signal, which marks the setting in which adaptivity is worth testing again:
+targets that are invisible in histology but strongly expressed once measured.
 
 \paragraph{Reproducibility.}
-Code, configuration, and the scripts that regenerate the tables and figure from the result files are
-available at \url{https://github.com/ayushdeo/STARE}.
+Code, configuration, result files, and the scripts that regenerate every table and figure
+(\texttt{scripts/14\_power\_summary.py}, \texttt{scripts/15\_paper\_assets.py}) are available at
+\url{https://github.com/ayushdeo/STARE}.
 
 \appendix
 
-\section{Reproducibility: configuration}
+\section{Slides}
+\label{app:slides}
+
+Table~\ref{tab:slides} lists the slides. ``Cluster'' indexes the HEST study used as the resampling unit;
+``Pitch'' is the median nearest-neighbour spacing of regions in microns.
+
+\begin{table}[htbp]
+\centering
+\caption{The 22 slides (HEST-1k v1.3 metadata).}
+\label{tab:slides}
+\resizebox{\textwidth}{!}{\input{generated/tab_slides.tex}}
+\end{table}
+
+\paragraph{Changes from the earlier seven-slide analysis.} An earlier version of this analysis used seven
+Visium HD slides and described regions as 112\,$\mu$m squares. Two corrections apply. First, the current HEST
+metadata lists two of those slides as non-human (TENX186, \emph{Mus musculus}; TENX175, mixed human and mouse);
+both are excluded here. Second, the loader had assumed 0.5\,$\mu$m/px, whereas the HD images are about
+0.274\,$\mu$m/px, so the regions were about 61\,$\mu$m squares containing exactly one pseudo-spot each. The
+present analysis defines the unit as the spot directly. On the five retained slides, the per-slide
+value-conditioned margins (reconstruction and detection, four budgets) differ between the two runs by a
+median of 0.015 (maximum 0.096), from the use of true spot positions instead of grid centres; 3 of 40 change
+sign, two of them smaller than 0.005 in magnitude and one detection margin moving from $-0.050$ to $+0.015$. With seven slides the smallest attainable
+exact $p$-value is 0.016, so none of the earlier margins could have survived a correction for 24 comparisons.
+
+\section{Platform and tissue splits}
+\label{app:split}
+
+\begin{table}[htbp]
+\centering
+\caption{Selected margins by platform (with unadjusted study-level sign-flip $p$) and by tissue (mean).
+With 5 HD studies the smallest attainable $p$ is 0.0625.}
+\label{tab:split}
+\resizebox{\textwidth}{!}{\input{generated/tab_split.tex}}
+\end{table}
+
+\section{Gene-set sensitivity}
+\label{app:hvg}
+
+\begin{table}[htbp]
+\centering
+\caption{Value-conditioned minus best coverage reconstruction margin (PCC) under three gene sets, 22 slides,
+95\% CI resampling studies.}
+\label{tab:hvg}
+\small
+\input{generated/tab_hvg.tex}
+\end{table}
+
+\section{Imputer comparison on the earlier slide set}
+\label{app:imputers}
+
+The kNN and kriging imputers were run only on the earlier slide set. Table~\ref{tab:imputers} reports the
+error-reduction policy minus the best non-adaptive baseline on the five human slides from that run (legacy
+unit, which equals one pseudo-spot per region on these slides), with the number of slides on which the
+margin was positive. With five slides these values are descriptive.
+
+\begin{table}[htbp]
+\centering
+\caption{Error-reduction minus best non-adaptive (PCC), mean over 5 human Visium HD slides (positive/total).}
+\label{tab:imputers}
+\small
+\input{generated/tab_imputers_legacy.tex}
+\end{table}
+
+\section{Native SOFisher run}
+\label{app:sofisher}
+
+We ran SOFisher from the authors' repository on its bundled mouse cortex data with default settings for
+5 million steps (seed 222). The only change was the addition of checkpoint and resume support, so that the run
+could be continued after interruptions. Figure~\ref{fig:sofisher} shows the evaluation reward, which counts
+captured target regions. Its median over the first 5\% of training was $-238$ and over the last 10\% was $+147$
+(best 514). Rare evaluation episodes have rewards near $-1.7\times10^5$, so we plot rolling medians.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.7\textwidth]{fig_sofisher_native.pdf}
+\caption{SOFisher evaluation reward during training (rolling median), native run.}
+\label{fig:sofisher}
+\end{figure}
+
+\section{Configuration}
 \label{app:repro}
 
-All values below are fixed in the released \texttt{config.py}. The random policy is averaged over seeds
-$\{0,1,2,3,4\}$; the other policies are deterministic. The global seed is 2021. Cross-slide confidence
-intervals use a percentile bootstrap with 5000 resamples ($\alpha=0.05$, seed 2021) and an exact
-two-sided sign test.
-
-\begin{table}[htbp]
-\centering
-\caption{Data, evaluation, and encoder settings.}
-\label{tab:cfg-data}
-\begin{tabular}{lll}
-\toprule
-Group & Parameter & Value \\
-\midrule
-Region grid   & side length & 112\,$\mu$m ($=224$\,px @ 20$\times$) \\
-              & Visium HD binning & 8\,$\mu$m bins pooled into regions \\
-Genes         & targets & top-50 highly variable genes per slide (log1p) \\
-              & gene filter & remove genes in $<10\%$ of spots \\
-Encoder       & model & UNI2-h (ViT-H, frozen) \\
-              & embedding dim & 1536 \\
-              & region embedding & mean of patch embeddings, $L_2$-normalized \\
-Budgets       & fractions of regions & $\{0.5, 1, 2, 5, 10, 20\}\%$ \\
-Split         & scheme & patient-stratified \\
-Primary metric & PCC (top-50) & per-gene Pearson over unprofiled regions, top-50 genes \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-\begin{table}[htbp]
-\centering
-\caption{Imputer hyperparameters (fixed, shared across policies).}
-\label{tab:cfg-imputer}
-\begin{tabular}{lll}
-\toprule
-Imputer & Parameter & Value \\
-\midrule
-kNN       & neighbors $k$            & 10 \\
-          & feature space            & joint image+space, $\alpha=0.5$ \\
-\midrule
-kriging   & image PCA dim            & 64 \\
-          & ridge $\alpha$           & 10.0 \\
-          & residual neighbors $k$   & 10 \\
-\midrule
-graphflow & image PCA dim            & 64 \\
-          & random Fourier features  & 512 (median-heuristic bandwidth) \\
-          & ridge $\alpha$           & 10.0 \\
-          & graph neighbors $k$      & 8 \\
-          & message-passing steps    & 20 \\
-          & step size                & 0.5 \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-\begin{table}[htbp]
-\centering
-\caption{Policy hyperparameters. Placement baselines use an RBF kernel on joint image-and-coordinate
-features with a median-heuristic lengthscale.}
-\label{tab:cfg-policy}
-\begin{tabular}{lll}
-\toprule
-Policy & Parameter & Value \\
-\midrule
-variance-/MI-greedy    & feature PCA dim   & 64 \\
-                       & lengthscale       & median-heuristic (scale 1.0) \\
-                       & kernel noise      & $10^{-2}$ \\
-error-reduction        & neighborhood $k$  & 15 \\
-random                 & seeds             & $\{0,1,2,3,4\}$ \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-\begin{table}[htbp]
-\centering
-\caption{Slides used (HEST-1k Visium HD sample IDs), 7 slides across 4 tissues.}
-\label{tab:cfg-slides}
-\begin{tabular}{ll}
-\toprule
-Tissue & HEST sample IDs \\
-\midrule
-prostate & TENX174 \\
-kidney   & TENX186, TENX173 \\
-lung     & TENX171, TENX170 \\
-colon    & TENX175, TENX156 \\
-\bottomrule
-\end{tabular}
-\end{table}
+All values are fixed in the released \texttt{config.py}. Seeds: global 2021; random policy $\{0,\dots,4\}$.
+Imputer (graphflow): image PCA 64, random Fourier features 512 (median-heuristic bandwidth), ridge 10, graph
+$k=8$, 20 steps, step size 0.5. kNN imputer: $k=10$, joint image and space features. Kriging: image PCA 64, ridge
+10, residual $k=10$. Placement: feature PCA 64, median-heuristic lengthscale, noise $10^{-2}$. Error-reduction
+neighbourhood 15. Value-conditioned: spatial kernel width 0.1 of the slide diagonal, exploration weight 0.5;
+the ROI-seeking sampler uses the same values. Detection ROIs: top 20\% by heterogeneity over 8 spatial
+neighbours. Statistics: 5{,}000 bootstrap resamples, exact sign-flip enumeration over study clusters, Holm over
+24 primary margins. The code used for the larger slides replaces dense distance computations with sparse and
+incremental ones; on a 132-run check (11 policies, 3 imputers, 2 slide sizes, 2 budgets) it reproduced the
+original code's selections and scores exactly.
 
 \clearpage
 \bibliographystyle{plainnat}
