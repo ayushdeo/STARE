@@ -6,6 +6,8 @@ from .greedy_ig import GreedyInfoGainPolicy
 from .placement import VarianceGreedyPolicy, MIGreedyPolicy
 from .value_greedy import ValueGreedyPolicy
 from .competitors import SCR2STDiversityPolicy, SOFisherROIPolicy
+from .residual_guided import ResidualGuidedPolicy
+from .feedback import FeedbackAblation
 
 REGISTRY = {
     "random": RandomPolicy,
@@ -19,6 +21,7 @@ REGISTRY = {
     "value_greedy": ValueGreedyPolicy,           # value-conditioned adaptive (selection uses measured y)
     "scr2st": SCR2STDiversityPolicy,             # harmonized SCR2-ST (diversity+coverage, non-adaptive)
     "sofisher": SOFisherROIPolicy,               # harmonized SOFisher (ROI-seeking, adaptive)
+    "residual_guided": ResidualGuidedPolicy,     # value-conditioned, aligned with reconstruction error (needs graphflow)
 }
 
 

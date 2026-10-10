@@ -116,6 +116,11 @@ class GreedyInfoGainPolicy(Policy):
         self._nbr = (slide, idx)
         return idx
 
+    def _unit_error(self, state):
+        """Per-unprofiled-region error estimate summed by the error-reduction score. Default: the
+        imputer's uncertainty (value-independent under graphflow). Subclasses may override."""
+        return self.imputer.uncertainty(state)
+
     def _error_reduction_scores(self, state, unpro):
         """score(r) = sum over unprofiled neighbours j of r (in the imputer's feature space) of
         uncertainty(j). Measuring r anchors those neighbours -> expected total error reduction.
@@ -123,7 +128,7 @@ class GreedyInfoGainPolicy(Policy):
         Computed by filtering cached all-region kNN lists rather than refitting a kNN index on the
         unprofiled set every step; the lists are widened and recomputed whenever a row runs short,
         so the neighbour sets are the same as a fresh fit."""
-        unc = self.imputer.uncertainty(state)               # (U,) aligned with unpro
+        unc = self._unit_error(state)                       # (U,) aligned with unpro
         R = state.slide.n_regions
         k = int(min(self.er_k, len(unpro)))
         width = k + 64

@@ -1,0 +1,667 @@
+{
+  "status": "post-review re-analysis of existing results (not pre-registered)",
+  "feasible_comparators_recon": {
+    "0.005": {
+      "loso_choice_counts": {
+        "grid": 0,
+        "kmeans": 15,
+        "oneshot_spatialfinder": 0,
+        "var_greedy": 0,
+        "mi_greedy": 0
+      },
+      "comparator_mean": {
+        "per_slide_best": 0.4702,
+        "loso": 0.4495,
+        "mi_greedy": 0.4121
+      },
+      "error_reduction": {
+        "vs_loso": {
+          "mean": -0.1068,
+          "ci95": [
+            -0.1491,
+            -0.0674
+          ],
+          "p": 6.103515625e-05,
+          "n_pos": 2,
+          "n": 22
+        },
+        "vs_mi_greedy": {
+          "mean": -0.0695,
+          "ci95": [
+            -0.1016,
+            -0.0295
+          ],
+          "p": 0.0051727294921875,
+          "n_pos": 3,
+          "n": 22
+        },
+        "vs_per_slide_best": {
+          "mean": -0.1276,
+          "ci95": [
+            -0.162,
+            -0.0965
+          ],
+          "p": 7.62939453125e-06,
+          "n_pos": 0,
+          "n": 22
+        }
+      },
+      "max_uncertainty": {
+        "vs_loso": {
+          "mean": -0.1014,
+          "ci95": [
+            -0.1447,
+            -0.0606
+          ],
+          "p": 0.00017547607421875,
+          "n_pos": 3,
+          "n": 22
+        },
+        "vs_mi_greedy": {
+          "mean": -0.064,
+          "ci95": [
+            -0.0963,
+            -0.0245
+          ],
+          "p": 0.00640106201171875,
+          "n_pos": 3,
+          "n": 22
+        },
+        "vs_per_slide_best": {
+          "mean": -0.1221,
+          "ci95": [
+            -0.1568,
+            -0.0912
+          ],
+          "p": 7.62939453125e-06,
+          "n_pos": 0,
+          "n": 22
+        }
+      },
+      "hindsight_gap_best_minus_loso": {
+        "mean": 0.0208,
+        "ci95": [
+          0.0065,
+          0.0378
+        ],
+        "p": 0.015625,
+        "n_pos": 8,
+        "n": 22
+      }
+    },
+    "0.010": {
+      "loso_choice_counts": {
+        "grid": 0,
+        "kmeans": 15,
+        "oneshot_spatialfinder": 0,
+        "var_greedy": 0,
+        "mi_greedy": 0
+      },
+      "comparator_mean": {
+        "per_slide_best": 0.5497,
+        "loso": 0.5341,
+        "mi_greedy": 0.5225
+      },
+      "error_reduction": {
+        "vs_loso": {
+          "mean": -0.067,
+          "ci95": [
+            -0.0928,
+            -0.0442
+          ],
+          "p": 3.0517578125e-05,
+          "n_pos": 3,
+          "n": 22
+        },
+        "vs_mi_greedy": {
+          "mean": -0.0554,
+          "ci95": [
+            -0.0759,
+            -0.0329
+          ],
+          "p": 0.0005340576171875,
+          "n_pos": 2,
+          "n": 22
+        },
+        "vs_per_slide_best": {
+          "mean": -0.0826,
+          "ci95": [
+            -0.1045,
+            -0.0637
+          ],
+          "p": 7.62939453125e-06,
+          "n_pos": 0,
+          "n": 22
+        }
+      },
+      "max_uncertainty": {
+        "vs_loso": {
+          "mean": -0.0723,
+          "ci95": [
+            -0.096,
+            -0.0491
+          ],
+          "p": 6.103515625e-05,
+          "n_pos": 3,
+          "n": 22
+        },
+        "vs_mi_greedy": {
+          "mean": -0.0606,
+          "ci95": [
+            -0.0799,
+            -0.0381
+          ],
+          "p": 0.0004730224609375,
+          "n_pos": 2,
+          "n": 22
+        },
+        "vs_per_slide_best": {
+          "mean": -0.0878,
+          "ci95": [
+            -0.1066,
+            -0.0692
+          ],
+          "p": 7.62939453125e-06,
+          "n_pos": 0,
+          "n": 22
+        }
+      },
+      "hindsight_gap_best_minus_loso": {
+        "mean": 0.0156,
+        "ci95": [
+          0.006,
+          0.0266
+        ],
+        "p": 0.00390625,
+        "n_pos": 10,
+        "n": 22
+      }
+    },
+    "0.020": {
+      "loso_choice_counts": {
+        "grid": 0,
+        "kmeans": 3,
+        "oneshot_spatialfinder": 0,
+        "var_greedy": 0,
+        "mi_greedy": 12
+      },
+      "comparator_mean": {
+        "per_slide_best": 0.6074,
+        "loso": 0.5906,
+        "mi_greedy": 0.5986
+      },
+      "error_reduction": {
+        "vs_loso": {
+          "mean": -0.0235,
+          "ci95": [
+            -0.0394,
+            -0.0074
+          ],
+          "p": 0.01268768310546875,
+          "n_pos": 5,
+          "n": 22
+        },
+        "vs_mi_greedy": {
+          "mean": -0.0315,
+          "ci95": [
+            -0.0461,
+            -0.0154
+          ],
+          "p": 0.0024871826171875,
+          "n_pos": 3,
+          "n": 22
+        },
+        "vs_per_slide_best": {
+          "mean": -0.0402,
+          "ci95": [
+            -0.0538,
+            -0.0274
+          ],
+          "p": 1.52587890625e-05,
+          "n_pos": 1,
+          "n": 22
+        }
+      },
+      "max_uncertainty": {
+        "vs_loso": {
+          "mean": -0.0281,
+          "ci95": [
+            -0.0411,
+            -0.015
+          ],
+          "p": 0.00186920166015625,
+          "n_pos": 3,
+          "n": 22
+        },
+        "vs_mi_greedy": {
+          "mean": -0.0361,
+          "ci95": [
+            -0.0495,
+            -0.0214
+          ],
+          "p": 0.00063323974609375,
+          "n_pos": 2,
+          "n": 22
+        },
+        "vs_per_slide_best": {
+          "mean": -0.0449,
+          "ci95": [
+            -0.0573,
+            -0.033
+          ],
+          "p": 7.62939453125e-06,
+          "n_pos": 0,
+          "n": 22
+        }
+      },
+      "hindsight_gap_best_minus_loso": {
+        "mean": 0.0167,
+        "ci95": [
+          0.008,
+          0.027
+        ],
+        "p": 0.0001220703125,
+        "n_pos": 15,
+        "n": 22
+      }
+    },
+    "0.050": {
+      "loso_choice_counts": {
+        "grid": 0,
+        "kmeans": 0,
+        "oneshot_spatialfinder": 0,
+        "var_greedy": 0,
+        "mi_greedy": 15
+      },
+      "comparator_mean": {
+        "per_slide_best": 0.6605,
+        "loso": 0.6592,
+        "mi_greedy": 0.6592
+      },
+      "error_reduction": {
+        "vs_loso": {
+          "mean": -0.0096,
+          "ci95": [
+            -0.0174,
+            -0.0028
+          ],
+          "p": 0.021331787109375,
+          "n_pos": 8,
+          "n": 22
+        },
+        "vs_mi_greedy": {
+          "mean": -0.0096,
+          "ci95": [
+            -0.0174,
+            -0.0028
+          ],
+          "p": 0.021331787109375,
+          "n_pos": 8,
+          "n": 22
+        },
+        "vs_per_slide_best": {
+          "mean": -0.0109,
+          "ci95": [
+            -0.0185,
+            -0.0045
+          ],
+          "p": 0.00519561767578125,
+          "n_pos": 8,
+          "n": 22
+        }
+      },
+      "max_uncertainty": {
+        "vs_loso": {
+          "mean": -0.0117,
+          "ci95": [
+            -0.0188,
+            -0.0049
+          ],
+          "p": 0.00713348388671875,
+          "n_pos": 5,
+          "n": 22
+        },
+        "vs_mi_greedy": {
+          "mean": -0.0117,
+          "ci95": [
+            -0.0188,
+            -0.0049
+          ],
+          "p": 0.00713348388671875,
+          "n_pos": 5,
+          "n": 22
+        },
+        "vs_per_slide_best": {
+          "mean": -0.013,
+          "ci95": [
+            -0.0198,
+            -0.0065
+          ],
+          "p": 0.00153350830078125,
+          "n_pos": 4,
+          "n": 22
+        }
+      },
+      "hindsight_gap_best_minus_loso": {
+        "mean": 0.0013,
+        "ci95": [
+          0.0004,
+          0.0026
+        ],
+        "p": 0.015625,
+        "n_pos": 7,
+        "n": 22
+      }
+    },
+    "0.100": {
+      "loso_choice_counts": {
+        "grid": 0,
+        "kmeans": 0,
+        "oneshot_spatialfinder": 0,
+        "var_greedy": 0,
+        "mi_greedy": 15
+      },
+      "comparator_mean": {
+        "per_slide_best": 0.6866,
+        "loso": 0.6851,
+        "mi_greedy": 0.6851
+      },
+      "error_reduction": {
+        "vs_loso": {
+          "mean": -0.0008,
+          "ci95": [
+            -0.0055,
+            0.0029
+          ],
+          "p": 0.7632598876953125,
+          "n_pos": 12,
+          "n": 22
+        },
+        "vs_mi_greedy": {
+          "mean": -0.0008,
+          "ci95": [
+            -0.0055,
+            0.0029
+          ],
+          "p": 0.7632598876953125,
+          "n_pos": 12,
+          "n": 22
+        },
+        "vs_per_slide_best": {
+          "mean": -0.0023,
+          "ci95": [
+            -0.0066,
+            0.001
+          ],
+          "p": 0.339996337890625,
+          "n_pos": 11,
+          "n": 22
+        }
+      },
+      "max_uncertainty": {
+        "vs_loso": {
+          "mean": -0.0003,
+          "ci95": [
+            -0.0047,
+            0.0027
+          ],
+          "p": 0.950897216796875,
+          "n_pos": 15,
+          "n": 22
+        },
+        "vs_mi_greedy": {
+          "mean": -0.0003,
+          "ci95": [
+            -0.0047,
+            0.0027
+          ],
+          "p": 0.950897216796875,
+          "n_pos": 15,
+          "n": 22
+        },
+        "vs_per_slide_best": {
+          "mean": -0.0017,
+          "ci95": [
+            -0.0059,
+            0.001
+          ],
+          "p": 0.4816436767578125,
+          "n_pos": 12,
+          "n": 22
+        }
+      },
+      "hindsight_gap_best_minus_loso": {
+        "mean": 0.0015,
+        "ci95": [
+          0.0005,
+          0.0026
+        ],
+        "p": 0.015625,
+        "n_pos": 8,
+        "n": 22
+      }
+    },
+    "0.200": {
+      "loso_choice_counts": {
+        "grid": 0,
+        "kmeans": 0,
+        "oneshot_spatialfinder": 0,
+        "var_greedy": 0,
+        "mi_greedy": 15
+      },
+      "comparator_mean": {
+        "per_slide_best": 0.7093,
+        "loso": 0.7071,
+        "mi_greedy": 0.7071
+      },
+      "error_reduction": {
+        "vs_loso": {
+          "mean": 0.0007,
+          "ci95": [
+            -0.0015,
+            0.0028
+          ],
+          "p": 0.5370254516601562,
+          "n_pos": 13,
+          "n": 22
+        },
+        "vs_mi_greedy": {
+          "mean": 0.0007,
+          "ci95": [
+            -0.0015,
+            0.0028
+          ],
+          "p": 0.5370254516601562,
+          "n_pos": 13,
+          "n": 22
+        },
+        "vs_per_slide_best": {
+          "mean": -0.0015,
+          "ci95": [
+            -0.0037,
+            0.0009
+          ],
+          "p": 0.2232666015625,
+          "n_pos": 7,
+          "n": 22
+        }
+      },
+      "max_uncertainty": {
+        "vs_loso": {
+          "mean": 0.0032,
+          "ci95": [
+            0.0018,
+            0.0044
+          ],
+          "p": 0.00067901611328125,
+          "n_pos": 19,
+          "n": 22
+        },
+        "vs_mi_greedy": {
+          "mean": 0.0032,
+          "ci95": [
+            0.0018,
+            0.0044
+          ],
+          "p": 0.00067901611328125,
+          "n_pos": 19,
+          "n": 22
+        },
+        "vs_per_slide_best": {
+          "mean": 0.0009,
+          "ci95": [
+            -0.001,
+            0.0028
+          ],
+          "p": 0.34682464599609375,
+          "n_pos": 14,
+          "n": 22
+        }
+      },
+      "hindsight_gap_best_minus_loso": {
+        "mean": 0.0023,
+        "ci95": [
+          0.0012,
+          0.0033
+        ],
+        "p": 0.0009765625,
+        "n_pos": 12,
+        "n": 22
+      }
+    }
+  },
+  "direct_value_vs_diversity": {
+    "0.02": {
+      "detect_value_minus_diversity": {
+        "mean": 0.0008,
+        "ci95": [
+          -0.0038,
+          0.0056
+        ],
+        "p": 0.7796173095703125,
+        "n_pos": 9,
+        "n": 22
+      },
+      "recon_value_minus_diversity": {
+        "mean": -0.0058,
+        "ci95": [
+          -0.0537,
+          0.0352
+        ],
+        "p": 0.7965011596679688,
+        "n_pos": 12,
+        "n": 22
+      }
+    },
+    "0.05": {
+      "detect_value_minus_diversity": {
+        "mean": 0.0028,
+        "ci95": [
+          -0.0072,
+          0.0124
+        ],
+        "p": 0.628021240234375,
+        "n_pos": 8,
+        "n": 22
+      },
+      "recon_value_minus_diversity": {
+        "mean": -0.0516,
+        "ci95": [
+          -0.0878,
+          -0.021
+        ],
+        "p": 0.00443267822265625,
+        "n_pos": 6,
+        "n": 22
+      }
+    },
+    "0.10": {
+      "detect_value_minus_diversity": {
+        "mean": 0.0014,
+        "ci95": [
+          -0.0174,
+          0.0203
+        ],
+        "p": 0.919281005859375,
+        "n_pos": 8,
+        "n": 22
+      },
+      "recon_value_minus_diversity": {
+        "mean": -0.0843,
+        "ci95": [
+          -0.1134,
+          -0.0609
+        ],
+        "p": 3.0517578125e-05,
+        "n_pos": 2,
+        "n": 22
+      }
+    },
+    "0.20": {
+      "detect_value_minus_diversity": {
+        "mean": 0.0122,
+        "ci95": [
+          -0.0212,
+          0.0483
+        ],
+        "p": 0.6243133544921875,
+        "n_pos": 11,
+        "n": 22
+      },
+      "recon_value_minus_diversity": {
+        "mean": -0.1231,
+        "ci95": [
+          -0.1683,
+          -0.0906
+        ],
+        "p": 1.52587890625e-05,
+        "n_pos": 1,
+        "n": 22
+      }
+    }
+  },
+  "power": {
+    "detect_0.05": {
+      "observed_mean": 0.0134,
+      "slide_sd": 0.0329,
+      "mde80_unadjusted": 0.0198,
+      "mde80_bonferroni24": 0.0329,
+      "power_at_observed_mean": {
+        "0.05": 0.4975,
+        "0.00208": 0.0825
+      }
+    },
+    "detect_0.10": {
+      "observed_mean": 0.0209,
+      "slide_sd": 0.0507,
+      "mde80_unadjusted": 0.0304,
+      "mde80_bonferroni24": 0.0456,
+      "power_at_observed_mean": {
+        "0.05": 0.4875,
+        "0.00208": 0.0775
+      }
+    },
+    "detect_0.20": {
+      "observed_mean": 0.0416,
+      "slide_sd": 0.0923,
+      "mde80_unadjusted": 0.0554,
+      "mde80_bonferroni24": 0.0831,
+      "power_at_observed_mean": {
+        "0.05": 0.685,
+        "0.00208": 0.1125
+      }
+    },
+    "recon_errred_0.100": {
+      "observed_mean": -0.0023,
+      "slide_sd": 0.0098,
+      "mde80_unadjusted": 0.0078,
+      "mde80_bonferroni24": 0.0137
+    },
+    "recon_errred_0.200": {
+      "observed_mean": -0.0015,
+      "slide_sd": 0.0057,
+      "mde80_unadjusted": 0.004,
+      "mde80_bonferroni24": 0.0057
+    }
+  }
+}

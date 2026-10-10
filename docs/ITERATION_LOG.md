@@ -238,3 +238,53 @@ reconstruction over strong non-adaptive placement (worse at low budgets, equival
 10-20%). For ROI detection, value-conditioned adaptivity gives at most a small recall gain (<=0.04 at 20%) that
 does not survive multiplicity correction, is concentrated in Visium HD slides, and is matched by a non-adaptive
 diversity design.
+
+## Iteration 9 — reviewer round 2 (major revision): PRE-REGISTERED plan  [written 2026-10-10, BEFORE scripts/17 is run]
+Reviewer concerns: (1) "best non-adaptive" is a per-slide hindsight maximum, not a deployable rule; (2) under
+graphflow, error-reduction / max-uncertainty are sequential FIXED designs (value-independent), and the
+value-conditioned policy seeks local variance, not reconstruction error; (3) controls do not establish sensitivity
+for reconstruction or power for small detection effects; (4) detection needs a direct value-conditioned vs
+diversity comparison and a feedback ablation; (5) scope (computational ROI, spot unit) must be explicit.
+
+**Post-review re-analyses of EXISTING results (post hoc; scripts/16_revision_local.py, results/revision_local.json):**
+- Value-independence verified directly: under graphflow, error-reduction selects identical regions when the
+  measured values are permuted (unit test, synthetic slide).
+- Feasible comparator (leave-one-study-out choice among grid/k-means/var-greedy/MI-greedy/one-shot; picks k-means at
+  0.5-1%, MI-greedy at 2-20% for most held-out studies): error-reduction - LOSO = -0.107/-0.067/-0.024/-0.010 at
+  0.5/1/2/5% (unadjusted p <= 0.021), -0.001 at 10% (p 0.76), +0.001 at 20% (p 0.54). Max-uncertainty - LOSO at 20% =
+  +0.003 [+0.002, +0.004], p = 0.0007 (a small positive margin for a sequential FIXED design that the hindsight
+  comparator had hidden). Hindsight gap (per-slide best - LOSO): +0.016 to +0.021 at <=2%, <=0.002 at >=5%.
+- Direct value-conditioned - diversity recall: +0.001/+0.003/+0.001/+0.012 at 2/5/10/20%, all CIs include 0
+  (p >= 0.62), positive on 8-11 of 22 slides.
+- Power (detection, value-conditioned - best coverage): MDE at 80% power = 0.020/0.030/0.055 recall at 5/10/20%
+  unadjusted, 0.033/0.046/0.083 at alpha = 0.05/24; power at the observed means ~0.49-0.69 unadjusted,
+  ~0.08-0.11 corrected. Q2 is therefore UNRESOLVED (underpowered), not negative.
+
+**New experiments (scripts/17_revision_experiments.py), analysed by scripts/18_revision_analysis.py:**
+- New policy `residual_guided` (value-conditioned, aligned with reconstruction error): error-reduction form with the
+  graphflow uncertainty replaced by (kNN-averaged leave-one-out ridge residual of measured values) x (1 - graph
+  influence). Feedback ablation wrapper `FeedbackAblation` (permute = policy sees another region's values;
+  constant = policy sees the slide mean). Selection rule unchanged by the wrapper.
+- Part A: 22 slides x 6 budgets; per-policy per-slide PCC and recall for grid, k-means, var-greedy, MI-greedy,
+  one-shot, scr2st, value_greedy (+_perm, +_const), residual_guided (+_perm).
+- Part B (reconstruction positive control): 20 appended genes with a 3-hotspot field (radius 5% of diagonal), SD =
+  alpha x median SD of the slide's top-50 genes, alpha in {0,1,2}; budgets 5,10%; NA pool + residual_guided (+_perm).
+
+**Primary family (18 margins, Holm, exact study-cluster sign-flip, 95% cluster CIs reported as unadjusted):**
+- Q1: residual_guided - LOSO_recon (PCC), 6 budgets.
+- Q2: value_greedy - value_greedy_perm (recall); value_greedy - LOSO_detect (recall); value_greedy - scr2st (recall);
+  each at 2/5/10/20%.
+LOSO comparators are chosen per budget and objective from the five non-adaptive policies by mean performance on the
+other studies. The per-slide maximum is kept only as a hindsight benchmark.
+**Secondary (Holm within family):** residual_guided - residual_guided_perm (PCC, 6); value_greedy - value_greedy_const
+(recall, 4); residual_guided - best_NA (PCC, 6); value_greedy - LOSO_recon (PCC, 4).
+**Positive control B (descriptive):** sensitivity for reconstruction is considered shown if residual_guided - LOSO > 0
+with a 95% cluster CI excluding 0 at alpha = 2 for either budget; if not, the paper states that the protocol's
+sensitivity to reconstruction gains is not established.
+**Decision rules:** Q1 benefit claimed only if a residual_guided - LOSO margin is > 0 with p_H < 0.05. Feedback benefit
+for detection claimed only if value_greedy - value_greedy_perm > 0 with p_H < 0.05. Non-significant margins are
+reported as "not established", with the MDE at 80% power, never as evidence of no effect.
+**Presentation (no new data):** error-reduction / max-uncertainty relabelled "sequential fixed designs"; CIs labelled
+unadjusted; the post hoc equivalence statement removed from the main narrative; single-round loss attributed to the
+centroid start rule; scope (computational heterogeneity ROIs, spot unit, retrospective simulator) in abstract and
+conclusion.
