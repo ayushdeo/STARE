@@ -61,7 +61,8 @@ class _GreedyEngine:
     the budget, or what has been revealed). Rank-1 downdates are applied as one matrix product."""
 
     def __init__(self, slide, mi: bool, lengthscale: float, noise: float, pca_dim: int):
-        self.slide, self.mi, self.noise = slide, mi, noise
+        # keep only the inputs of the kernel (not the slide, whose expression matrix may be a large copy)
+        self.emb, self.co, self.mi, self.noise = slide.image_embeddings, slide.region_coords, mi, noise
         K = _rbf_kernel(_joint_features(slide, pca_dim), lengthscale)
         self.K, R = K, K.shape[0]
         self.v = np.diag(K).astype(np.float64).copy()   # conditional variance given selected
@@ -89,14 +90,15 @@ class _GreedyEngine:
             self.U[m] = u
 
 
-_ENGINES: dict = {}          # (id(slide), mi, lengthscale, noise, pca_dim) -> _GreedyEngine
+_ENGINES: dict = {}          # (id(embeddings), id(coords), mi, lengthscale, noise, pca_dim) -> _GreedyEngine
 _MAX_ENGINES = 2             # each holds an R x R kernel; keep memory bounded
 
 
 def _engine(slide, mi, lengthscale, noise, pca_dim) -> _GreedyEngine:
-    key = (id(slide), mi, lengthscale, noise, pca_dim)
+    # keyed by the kernel's inputs (embeddings, coordinates); the engine holds them, so ids cannot be reused
+    key = (id(slide.image_embeddings), id(slide.region_coords), mi, lengthscale, noise, pca_dim)
     eng = _ENGINES.get(key)
-    if eng is None or eng.slide is not slide:
+    if eng is None or eng.emb is not slide.image_embeddings or eng.co is not slide.region_coords:
         while len(_ENGINES) >= _MAX_ENGINES:
             _ENGINES.pop(next(iter(_ENGINES)))
         eng = _ENGINES[key] = _GreedyEngine(slide, mi, lengthscale, noise, pca_dim)

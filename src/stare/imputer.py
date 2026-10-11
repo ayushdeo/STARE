@@ -26,6 +26,24 @@ from . import config
 from .simulator import AcquisitionState, Slide
 
 
+def _slide_cached(cache: dict, slide: Slide, build):
+    """Per-slide cache for quantities that depend only on the slide's image embeddings and coordinates.
+
+    Keyed by the identity of those two arrays, and the entry keeps references to them, so a key can never be
+    reused by a different slide (keying by id(slide) could be: a discarded temporary slide's id may be reused
+    by a new object, which returned another slide's cached graph). Copies made with dataclasses.replace -- the
+    feedback-ablation view and the spiked slides -- share the arrays and therefore share the entry, while
+    the cache never holds their (large) expression matrices."""
+    emb, co = slide.image_embeddings, slide.region_coords
+    key = (id(emb), id(co))
+    hit = cache.get(key)
+    if hit is not None and hit[0] is emb and hit[1] is co:
+        return hit[2]
+    val = build()
+    cache[key] = (emb, co, val)
+    return val
+
+
 class BaseImputer:
     def impute(self, state: AcquisitionState) -> np.ndarray:
         raise NotImplementedError
@@ -47,10 +65,10 @@ class KNNImputer(BaseImputer):
 
     # -- shared feature space (also used by the greedy policy) ---------------
     def features(self, slide: Slide) -> np.ndarray:
-        """(R, d) per-region features in the configured space. Cached per slide id()."""
-        key = id(slide)
-        if key in self._feat_cache:
-            return self._feat_cache[key]
+        """(R, d) per-region features in the configured space. Cached per slide (see _slide_cached)."""
+        return _slide_cached(self._feat_cache, slide, lambda: self._build_features(slide))
+
+    def _build_features(self, slide: Slide) -> np.ndarray:
         emb = slide.image_embeddings.astype(np.float64)
         emb = emb / np.clip(np.linalg.norm(emb, axis=1, keepdims=True), 1e-12, None)  # L2-normalize
         co = slide.region_coords.astype(np.float64)
@@ -65,7 +83,6 @@ class KNNImputer(BaseImputer):
                 [np.sqrt(self.alpha) * emb, np.sqrt(1.0 - self.alpha) * co], axis=1)
         else:
             raise ValueError(f"unknown IMPUTER_SPACE '{self.space}'")
-        self._feat_cache[key] = feats
         return feats
 
     def _neighbors(self, state: AcquisitionState) -> np.ndarray:
@@ -123,17 +140,14 @@ class LearnedKrigingImputer(BaseImputer):
         self._pca_cache: dict[int, np.ndarray] = {}
 
     def _image_pca(self, slide: Slide) -> np.ndarray:
-        key = id(slide)
-        if key in self._pca_cache:
-            return self._pca_cache[key]
-        X = slide.image_embeddings.astype(np.float64)
-        X = X - X.mean(0, keepdims=True)
-        d = min(self.pca_dim, X.shape[1], max(1, X.shape[0] - 1))
-        _, _, Vt = np.linalg.svd(X, full_matrices=False)
-        Z = X @ Vt[:d].T
-        Z = Z / np.clip(Z.std(0, keepdims=True), 1e-8, None)   # standardize
-        self._pca_cache[key] = Z
-        return Z
+        def build():
+            X = slide.image_embeddings.astype(np.float64)
+            X = X - X.mean(0, keepdims=True)
+            d = min(self.pca_dim, X.shape[1], max(1, X.shape[0] - 1))
+            _, _, Vt = np.linalg.svd(X, full_matrices=False)
+            Z = X @ Vt[:d].T
+            return Z / np.clip(Z.std(0, keepdims=True), 1e-8, None)   # standardize
+        return _slide_cached(self._pca_cache, slide, build)
 
     def _spatial_neighbors(self, slide: Slide, unpro, prof):
         co = slide.region_coords.astype(np.float64)
@@ -213,15 +227,12 @@ class GraphFlowImputer(BaseImputer):
 
     # -- shared joint features (also used by the greedy policy) --------------
     def features(self, slide: Slide) -> np.ndarray:
-        key = id(slide)
-        if key in self._feat_cache:
-            return self._feat_cache[key]
-        Z = self._image_pca(slide)
-        co = slide.region_coords.astype(np.float64)
-        co = (co - co.min(0)) / np.clip(co.max(0) - co.min(0), 1e-9, None)
-        feats = np.concatenate([Z, co], axis=1)
-        self._feat_cache[key] = feats
-        return feats
+        def build():
+            Z = self._image_pca(slide)
+            co = slide.region_coords.astype(np.float64)
+            co = (co - co.min(0)) / np.clip(co.max(0) - co.min(0), 1e-9, None)
+            return np.concatenate([Z, co], axis=1)
+        return _slide_cached(self._feat_cache, slide, build)
 
     def _image_pca(self, slide: Slide) -> np.ndarray:
         X = slide.image_embeddings.astype(np.float64)
@@ -234,9 +245,9 @@ class GraphFlowImputer(BaseImputer):
     def _rff(self, slide: Slide) -> np.ndarray:
         """PCA(image) -> random Fourier features approximating an RBF kernel (nonlinear backbone).
         phi(x) = sqrt(2/D) cos(W x + b), W ~ N(0, 2*gamma), b ~ U(0, 2pi). Cached per slide."""
-        key = id(slide)
-        if key in self._phi_cache:
-            return self._phi_cache[key]
+        return _slide_cached(self._phi_cache, slide, lambda: self._build_rff(slide))
+
+    def _build_rff(self, slide: Slide) -> np.ndarray:
         Z = self._image_pca(slide)
         d = Z.shape[1]
         # median-heuristic bandwidth -> gamma = 1/(2 * median_dist^2)
@@ -249,18 +260,16 @@ class GraphFlowImputer(BaseImputer):
         gamma = 1.0 / (2.0 * med ** 2)
         W = rng.normal(0.0, np.sqrt(2.0 * gamma), size=(self.rff_dim, d))
         b = rng.uniform(0.0, 2.0 * np.pi, size=self.rff_dim)
-        phi = np.sqrt(2.0 / self.rff_dim) * np.cos(Z @ W.T + b)
-        self._phi_cache[key] = phi
-        return phi
+        return np.sqrt(2.0 / self.rff_dim) * np.cos(Z @ W.T + b)
 
     def _adjacency(self, slide: Slide):
         """Fixed row-normalized kNN adjacency on joint features (data-INDEPENDENT graph; only the
         clamping is data-dependent). Symmetrized then row-normalized to a diffusion operator.
         Sparse (CSR) with a tree-based kNN: the same operator as the original dense build, which
         materialized an R x R x d distance tensor (~42 GB at 9k regions) and a dense R x R matrix."""
-        key = id(slide)
-        if key in self._adj_cache:
-            return self._adj_cache[key]
+        return _slide_cached(self._adj_cache, slide, lambda: self._build_adjacency(slide))
+
+    def _build_adjacency(self, slide: Slide):
         from scipy import sparse
         from sklearn.neighbors import NearestNeighbors
         F = self.features(slide)
@@ -273,9 +282,7 @@ class GraphFlowImputer(BaseImputer):
         A = sparse.csr_matrix((np.ones(R * k), (np.repeat(np.arange(R), k), nn.ravel())), shape=(R, R))
         A = A.maximum(A.T).tocsr()                           # symmetrize
         A = sparse.diags(1.0 / np.clip(np.asarray(A.sum(1)).ravel(), 1e-12, None)) @ A   # row-normalize
-        A = A.tocsr()
-        self._adj_cache[key] = A
-        return A
+        return A.tocsr()
 
     def _influence_uncertainty(self, state: AcquisitionState) -> np.ndarray:
         """Data-dependent uncertainty = 1 - graph influence of clamped (profiled) nodes. Needs only the

@@ -288,3 +288,16 @@ reported as "not established", with the MDE at 80% power, never as evidence of n
 unadjusted; the post hoc equivalence statement removed from the main narrative; single-round loss attributed to the
 centroid start rule; scope (computational heterogeneity ROIs, spot unit, retrospective simulator) in abstract and
 conclusion.
+- **Bug in the first 4070 run of script 17 (fixed 2026-10-10, before any result was analysed).** Crash at MEND144:
+  "index 4231 is out of bounds for axis 0 with size 4074". Cause: imputer caches (features, RFF, graph) and the
+  k-means / placement memos were keyed by id(slide); the feedback-ablation wrapper creates a temporary copy of the
+  slide per run, and a discarded copy's id was reused by a later copy of a different (smaller) slide, which then
+  received the stale cached graph. Fix: caches keyed by the identity of the image-embedding and coordinate arrays
+  (their only inputs), with references held so ids cannot be reused; copies share those arrays and so share
+  entries correctly. Reproduced on the pushed code (same IndexError) and verified fixed (48 shared-imputer runs
+  identical to fresh-imputer runs; 132-run equivalence check unchanged).
+  Validity of results saved before the crash: a stale entry from a different slide has a different region count
+  and makes the graph product fail on the first non-cold-start step, so any cross-slide reuse would have crashed
+  immediately; same-slide reuse returns identical values (shared arrays). The only pair of slides with equal
+  region counts (TENX174, ZEN48; 2,385) had not been reached. Saved results are therefore unaffected and the run
+  is resumed, not restarted.

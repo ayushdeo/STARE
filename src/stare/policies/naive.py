@@ -59,7 +59,7 @@ class VariancePolicy(Policy):
         raise RuntimeError("no unprofiled region left")
 
 
-_KMEANS_ORDERS: dict = {}     # (id(slide), budget, seed) -> (slide, order)
+_KMEANS_ORDERS: dict = {}     # (id(embeddings), budget, seed) -> (embeddings, order)
 
 
 def _disk_memo(state, seed, build):
@@ -112,10 +112,13 @@ class KMeansImagePolicy(Policy):
         if self._order is None:
             # memoized per (slide, budget, seed): the order is measurement-blind, so it is identical
             # across imputers and repeated runs (k-means with n_init=10 dominates the sweep's cost)
-            key = (id(state.slide), int(state.budget), self.seed)
+            # keyed by the embedding array (the order's only input); holding it prevents id reuse, and
+            # copies of a slide that share the array (feedback view, spiked slides) share the entry
+            emb = state.slide.image_embeddings
+            key = (id(emb), int(state.budget), self.seed)
             hit = _KMEANS_ORDERS.get(key)
-            if hit is None or hit[0] is not state.slide:
-                hit = _KMEANS_ORDERS[key] = (state.slide, _disk_memo(state, self.seed, self._build_order))
+            if hit is None or hit[0] is not emb:
+                hit = _KMEANS_ORDERS[key] = (emb, _disk_memo(state, self.seed, self._build_order))
             self._order = hit[1]
         for i in self._order:
             if not state.mask[i]:
