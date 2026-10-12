@@ -10,27 +10,30 @@ Source for *Evaluating Adaptive Region Acquisition for Spatial Transcriptomics R
 - `neurips_2023.sty` — NeurIPS style file (must be bundled).
 - `generated/*.tex` — every table, written by `../scripts/15_paper_assets.py`. Keep the folder name;
   the paper `\input`s `generated/tab_*.tex`. (`generated/facts.json` is not needed to compile.)
-- `fig_controls.pdf`, `fig_main.pdf`, `fig_sofisher_native.pdf` — figures, written by the same script.
+- `fig_controls.pdf`, `fig_r2.pdf`, `fig_sofisher_native.pdf` — figures (`fig_r2.pdf` from `scripts/19_paper_assets_round2.py`,
+  the others from `scripts/15_paper_assets.py`). `generated/r2_*.tex` come from script 19.
 
 `figure1_adaptivity_gap.pdf` / `.zip` belong to the earlier 7-slide draft and are no longer used.
 
 ## Regenerating numbers (never edit tables by hand)
 ```bash
 python -u scripts/14_power_summary.py    # Holm / study-cluster statistics -> results/power_summary.json
-python -u scripts/15_paper_assets.py     # tables + figures -> paper/generated/, paper/fig_*.pdf
+python -u scripts/15_paper_assets.py     # stage-1 tables + figures -> paper/generated/, paper/fig_*.pdf
+python -u scripts/18_revision_analysis.py      # stage-2 registered analysis -> results/revision_summary.json
+python -u scripts/19_paper_assets_round2.py    # stage-2 tables + main figure -> paper/generated/r2_*.tex, paper/fig_r2.pdf
 ```
 Both read only the committed `results/*.json`; no data download is needed.
 
 ## Compile
 natbib numeric citations with `plainnat`. Overleaf: upload the files above (with the `generated/`
 folder) and recompile. Locally: `pdflatex manuscript && bibtex manuscript && pdflatex manuscript &&
-pdflatex manuscript`, or `tectonic -X compile manuscript.tex`. Verified on 2026-10-09 with Tectonic
-0.17: 11 pages (main text ends on page 7), no overfull boxes, no undefined references.
+pdflatex manuscript`, or `tectonic -X compile manuscript.tex`. Verified on 2026-10-12 with Tectonic
+0.17: 14 pages (main text ends on page 8), no overfull boxes, no undefined references.
 
 ## arXiv tarball
 After one clean compile (which produces `manuscript.bbl`):
 ```bash
-tar czf arxiv_submission.tar.gz manuscript.tex manuscript.bbl neurips_2023.sty generated/*.tex fig_controls.pdf fig_main.pdf fig_sofisher_native.pdf
+tar czf arxiv_submission.tar.gz manuscript.tex manuscript.bbl neurips_2023.sty generated/*.tex fig_controls.pdf fig_r2.pdf fig_sofisher_native.pdf
 ```
 Suggested categories: cs.LG, cross-list q-bio.GN and q-bio.QM.
 

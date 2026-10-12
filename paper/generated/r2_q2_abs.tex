@@ -1,0 +1,12 @@
+\begin{tabular}{lcccccccc}
+\toprule
+ & \multicolumn{4}{c}{Non-adaptive} & \multicolumn{3}{c}{Value-conditioned (local variance)} & \\
+\cmidrule(lr){2-5}\cmidrule(lr){6-8}
+Budget & feasible & $k$-means & MI-greedy & diversity & observed & permuted & constant & oracle \\
+\midrule
+2\% & 0.018 & 0.018 & 0.018 & 0.026 & 0.027 & 0.021 & 0.022 & 0.100 \\
+5\% & 0.064 & 0.050 & 0.046 & 0.067 & 0.070 & 0.053 & 0.051 & 0.250 \\
+10\% & 0.120 & 0.110 & 0.094 & 0.136 & 0.137 & 0.107 & 0.103 & 0.500 \\
+20\% & 0.252 & 0.232 & 0.200 & 0.266 & 0.278 & 0.215 & 0.204 & 0.999 \\
+\bottomrule
+\end{tabular}
