@@ -4,7 +4,7 @@ Source for *Evaluating Adaptive Region Acquisition for Spatial Transcriptomics R
 (sole author). `manuscript.tex` is the source of record for the prose.
 
 ## Files needed to compile (upload all of these to Overleaf / include in the arXiv tarball)
-- `manuscript.tex` — the paper (main text + Appendices A–F).
+- `manuscript.tex` — the paper (main text + Appendices A–J).
 - `references.bib` — bibliography. SOFisher and S2-omics checked against Crossref; SCR2-ST against arXiv
   (2026-10-09; arXiv lists no venue, so it is cited as a preprint).
 - `neurips_2023.sty` — NeurIPS style file (must be bundled).
@@ -22,7 +22,7 @@ python -u scripts/15_paper_assets.py     # stage-1 tables + figures -> paper/gen
 python -u scripts/18_revision_analysis.py      # stage-2 registered analysis -> results/revision_summary.json
 python -u scripts/19_paper_assets_round2.py    # stage-2 tables + main figure -> paper/generated/r2_*.tex, paper/fig_r2.pdf
 ```
-Both read only the committed `results/*.json`; no data download is needed.
+All read only the committed `results/*.json`; no data download is needed.
 
 ## Compile
 natbib numeric citations with `plainnat`. Overleaf: upload the files above (with the `generated/`
