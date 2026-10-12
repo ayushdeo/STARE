@@ -301,3 +301,38 @@ conclusion.
   immediately; same-slide reuse returns identical values (shared arrays). The only pair of slides with equal
   region counts (TENX174, ZEN48; 2,385) had not been reached. Saved results are therefore unaffected and the run
   is resumed, not restarted.
+
+## Iteration 10 — reviewer round 2 RESULTS  [4070 run c4d3326; analysed 2026-10-12 with scripts/18 as pre-registered]
+Data check: all 22 slides x 6 budgets (Part A) and 22 x 3 alpha x 2 budgets (Part B) complete; the five non-adaptive
+policies reproduce script 05 per-slide PCC exactly (max |diff| 0), value-conditioned and diversity reproduce 09/10.
+All 20 spiked genes entered the top-50 on every slide at alpha = 1 and 2.
+LOSO choices: recon k-means (0.5-1%), MI-greedy (2-20%, k-means for 4 studies at 2%); detection var-greedy (2-10%,
+one-shot for some studies), one-shot ranker at 20%.
+
+**Primary family (18, Holm):**
+- Q1 residual_guided - LOSO (PCC): -0.092/-0.057/-0.025/-0.016/-0.007/-0.002 at 0.5/1/2/5/10/20%; p_H = 0.003/0.010/
+  0.099/0.003/0.010/0.13. No positive margin -> no Q1 benefit (rule); significantly WORSE at 0.5, 1, 5, 10%.
+- Q2 value_greedy - value_greedy_perm (recall): +0.005/+0.017/+0.030/+0.063 at 2/5/10/20%; unadjusted p 0.13/0.057/
+  0.053/0.027; p_H >= 0.29 -> feedback benefit NOT established. MDE80 (unadj.) 0.010/0.026/0.041/0.084: observed
+  effects are below the MDE at 5-20% (underpowered).
+- Q2 value_greedy - LOSO_detect: +0.008/+0.006/+0.017/+0.026, p_H >= 0.25.
+- Q2 value_greedy - scr2st: +0.001/+0.003/+0.001/+0.012, p >= 0.62, p_H = 1.
+**Secondary:**
+- residual_guided - residual_guided_perm (PCC): +0.031/+0.039/+0.031 at 0.5/1/2% (p_H 0.056/0.002/0.014), +0.009 at
+  5%, ~0 at 10-20%: informative feedback improves this policy at low budgets relative to the same rule with
+  uninformative values, but not to the level of the feasible non-adaptive comparator.
+- value_greedy - value_greedy_const (recall): +0.004/+0.019/+0.034/+0.074 (p_H 0.52/0.083/0.076/0.038).
+- value_greedy - LOSO_recon (PCC): -0.119 to -0.163 (p_H <= 0.0002). residual_guided - best_NA: -0.005 to -0.113.
+**Positive control B (pre-set criterion: residual_guided - LOSO > 0, CI excl. 0, at alpha = 2): NOT MET.**
+residual_guided - LOSO = -0.021 (5%) and -0.011 (10%) at alpha = 2 (CIs below 0); -0.015/-0.007 at alpha = 0.
+residual_guided - perm = +0.003 to +0.013 in all settings. Per the plan, the paper states that the protocol's
+sensitivity to reconstruction gains is not established.
+
+**Revised conclusions (to carry into the manuscript):**
+- Q1: none of the tested value-conditioned policies, including one aligned with reconstruction error, beat a
+  feasible non-adaptive rule at any budget; feedback improved the error-aligned policy over its permuted-feedback
+  version at 0.5-2%, so measured values carried usable information, but less than the coverage advantage of
+  k-means/MI-greedy. Because the positive control did not show a gain, Q1 is a statement about these policies, not
+  a demonstration that useful value-conditioned reconstruction is impossible.
+- Q2: unresolved. Feedback-ablation estimates are positive and grow with budget but are not significant after
+  correction and lie below the MDE; no advantage over the non-adaptive diversity design was found.
