@@ -8,6 +8,7 @@ from .value_greedy import ValueGreedyPolicy
 from .competitors import SCR2STDiversityPolicy, SOFisherROIPolicy
 from .residual_guided import ResidualGuidedPolicy
 from .feedback import FeedbackAblation
+from .hybrid import HybridPolicy
 
 REGISTRY = {
     "random": RandomPolicy,

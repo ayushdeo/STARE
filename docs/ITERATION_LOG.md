@@ -336,3 +336,44 @@ sensitivity to reconstruction gains is not established.
   a demonstration that useful value-conditioned reconstruction is impossible.
 - Q2: unresolved. Feedback-ablation estimates are positive and grow with budget but are not significant after
   correction and lie below the MDE; no advantage over the non-adaptive diversity design was found.
+
+## Iteration 11 — reviewer round 3: stage-3 PRE-REGISTERED plan  [written 2026-10-12, BEFORE scripts/21 is run]
+Reviewer points: (1) coverage-plus-feedback hybrid untested; (2) LOSO comparator couples the study margins through
+rule selection; (3) one permutation seed; clarify what the residual policy fits; (4) MDE quoted at unadjusted alpha;
+(5) Q3 uses stage-1 hindsight comparator without feedback control; (6) scope. Fixes: Table 1 caption (local-variance
+WAS run at 0.5-1% in stage 2), appendix float placement, precise wording for the feedback received.
+
+**Post hoc sensitivity of stage-2 data (scripts/20_stage2_sensitivity.py, results/stage2_sensitivity.json):**
+- Selection-aware bootstrap (LOSO re-selected inside each resample): Q1 residual - comparator CIs all below 0
+  (0.5%: [-0.132, -0.020] ... 20%: [-0.0043, -0.0005]); Q2 local-variance - comparator CIs all include 0.
+- Fixed MI-greedy comparator (valid sign-flip; Holm over the 18 analogous margins): Q1 residual - MI = -0.055/-0.045/
+  -0.033/-0.016/-0.007/-0.002 (p_H 0.42/0.09/0.014/0.003/0.011/0.11). Q2 local-variance - MI = +0.009/+0.024/+0.043/
+  +0.078 recall (p_H 0.17/0.063/0.043/0.043): SIGNIFICANT at 10-20% against MI-greedy, which is a weak detection
+  rule (recall 0.200 at 20% vs 0.252 for the cross-validated choice). The detection conclusion is comparator-
+  dependent: an advantage over a reconstruction-oriented coverage design, none over the best non-adaptive design
+  for detection. Fixed k-means: residual - k-means is +0.009 at 20% (p 0.03; k-means is weak at high budget).
+- Holm-level MDE (alpha = 0.05/18 bound) for stage-2 primary margins: Q2 feedback 0.015/0.035/0.066/0.112 recall at
+  2/5/10/20%; the unadjusted MDEs are descriptive only.
+- Clarification (point 3): with permuted feedback the residual policy's leave-one-out ridge model is fitted to the
+  permuted values it is shown; the scoring imputer is always fitted to the true values.
+
+**Stage-3 experiments (scripts/21_stage3_experiments.py; analysis scripts/22_stage3_analysis.py):**
+- Part H hybrids: first ceil(f x budget) regions from a FIXED coverage rule, the rest from feedback; f in {0.5, 0.8}.
+  Reconstruction: k-means (0.5, 1%), MI-greedy (2-20%), then the residual policy. Detection: variance-greedy (2-10%),
+  one-shot ranker (20%), then the local-variance policy. These rules are the stage-2 LOSO choices for most held-out
+  studies, i.e. chosen on stage-2 data from the same slides (this favours the baseline). Verified: the hybrid's
+  coverage phase is exactly the prefix of the rule's own full-budget selection (all 4 rules, both f, 2 budgets).
+  Each hybrid also with permuted feedback, seeds 1, 2.
+- Part S: extra permutation seeds for stage-2 ablations (local-variance seeds 1-4; residual seeds 1-2).
+- Part R: rounds of 5 regions at 10% and 20%, local-variance with real and permuted (seeds 1, 2) feedback.
+
+**Primary family (20, Holm; fixed-rule comparators, so the study-level sign-flip test is valid as specified):**
+hybrid(f) - the same fixed rule for the whole budget: reconstruction (PCC) f in {0.5, 0.8} x 6 budgets, detection
+(recall) f in {0.5, 0.8} x 4 budgets.
+**Secondary (Holm within, 24):** hybrid - permuted-feedback hybrid (seed mean), both objectives (20); rounds of 5:
+local-variance - fixed detection rule and - permuted (seed mean), 10% and 20% (4).
+**Descriptive:** per-seed stage-2 ablation margins and their across-seed SD; seed-averaged ablation margins.
+**Decision rule:** a hybrid benefit is claimed only for a positive margin with p_H < 0.05; otherwise "not
+established", reported with CIs and the Holm-level MDE bound (alpha/20).
+**Q3 framing:** batched results (stage 1 and Part R) are reported as an exploratory stress test, not a coequal
+confirmatory answer.
