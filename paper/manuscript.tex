@@ -9,6 +9,7 @@
 \usepackage{amsmath,amssymb}
 \usepackage{graphicx}
 \usepackage{booktabs}
+\usepackage{float}
 \usepackage{microtype}
 \usepackage{xcolor}
 \definecolor{linkblue}{rgb}{0.0,0.0,0.6}
@@ -182,8 +183,8 @@ observed dispersion.
 
 The analyses were registered in the repository in two stages, each before the corresponding experiments were run.
 Stage 1 compared policies with per-slide best rules in a family of 24 margins (Appendix~\ref{app:stage1}); the
-batched and contiguous experiments for Q3 come from this stage. Stage 2 was registered after peer review and before
-its experiments. It introduced the feasible comparator, the residual policy, and the feedback ablations, with a
+batched and contiguous experiments for Q3 come from this stage. Stage 2 was registered after the stage-1 results were
+known and before its experiments. It introduced the feasible comparator, the residual policy, and the feedback ablations, with a
 primary family of 18 margins: residual minus feasible for reconstruction at six budgets (Q1), and for detection at
 four budgets, local-variance minus its permuted-feedback version, minus the feasible rule, and minus the diversity
 sampler (Q2). The decision rules were to claim a benefit only for a positive margin with $p_H<0.05$ and to report
@@ -251,7 +252,7 @@ the feasible rule by $0.016$ to $0.021$ PCC at budgets of 2\% or less and by at 
 \centering
 \caption{Reconstruction accuracy (PCC over the top-50 genes on unprofiled regions), mean over 22 slides. ``Feasible''
 is the non-adaptive rule chosen on the other studies; ``per-slide best'' uses each slide's outcome. ``Residual,
-perm.'' is the residual policy given permuted feedback. Local-variance was run at 2--20\% only.}
+perm.'' is the residual policy given permuted feedback.}
 \label{tab:q1abs}
 \resizebox{\textwidth}{!}{\input{generated/r2_q1_abs.tex}}
 \end{table}
@@ -375,7 +376,7 @@ such as GeoMx; the HD and Visium units also differ in spacing. The batch and blo
 validate any particular platform. The 22-slide results use one imputer, and the $k$-NN and kriging comparisons rest on
 5 slides. The competitor samplers were reimplementations of objectives; SOFisher was run natively only on its own
 data and SCR$^2$-ST not at all. The feasible comparator, the residual policy, and the feedback ablations were added
-after peer review, although they were registered before their experiments. Budgets above 20\% were not tested.
+after the stage-1 results were known, although they were registered before their experiments. Budgets above 20\% were not tested.
 
 \section{Conclusion}
 
@@ -401,7 +402,7 @@ figure are available at \url{https://github.com/ayushdeo/STARE}.
 Table~\ref{tab:slides} lists the slides. ``Cluster'' indexes the HEST study used as the resampling unit, and ``Pitch''
 is the median nearest-neighbour spacing of regions.
 
-\begin{table}[htbp]
+\begin{table}[H]
 \centering
 \caption{The 22 slides (HEST-1k v1.3 metadata).}
 \label{tab:slides}
@@ -424,7 +425,7 @@ Stage 1 compared policies with the per-slide best rule (hindsight). Table~\ref{t
 family except the batched settings shown in Table~\ref{tab:realism}; Table~\ref{tab:stage1abs} gives absolute recall,
 including the ROI-seeking sampler.
 
-\begin{table}[htbp]
+\begin{table}[H]
 \centering
 \caption{Stage-1 primary margins (hindsight comparators). Error-reduction is compared with the per-slide best of five
 non-adaptive rules, local-variance with the per-slide best of $k$-means, grid, and MI-greedy. Unadjusted 95\% CIs
@@ -433,7 +434,7 @@ resampling studies; $p_H$ Holm-adjusted over the 24 stage-1 primary margins.}
 \resizebox{\textwidth}{!}{\input{generated/tab_primary.tex}}
 \end{table}
 
-\begin{table}[htbp]
+\begin{table}[H]
 \centering
 \caption{Stage-1 ROI-detection recall, mean over 22 slides. $^\dagger$Reimplementations of the stated objectives of
 SCR$^2$-ST (diversity, non-adaptive) and SOFisher (ROI-seeking, adaptive). $^\ast$Ground-truth ordering.}
@@ -445,7 +446,7 @@ SCR$^2$-ST (diversity, non-adaptive) and SOFisher (ROI-seeking, adaptive). $^\as
 \section{Feasible comparator choices and the hindsight gap}
 \label{app:comparators}
 
-\begin{table}[htbp]
+\begin{table}[H]
 \centering
 \caption{Rules chosen on the other studies (number of held-out studies, of 18) and the difference between the
 per-slide best rule and the feasible rule for reconstruction (unadjusted 95\% CI resampling studies).}
@@ -456,7 +457,7 @@ per-slide best rule and the feasible rule for reconstruction (unadjusted 95\% CI
 \section{Stage-2 secondary family}
 \label{app:secondary}
 
-\begin{table}[htbp]
+\begin{table}[H]
 \centering
 \caption{Stage-2 secondary margins, 22 slides. Unadjusted 95\% CIs resampling studies; $p_H$ Holm-adjusted over the
 secondary family.}
@@ -468,7 +469,7 @@ secondary family.}
 \section{Spiked positive control}
 \label{app:spike}
 
-\begin{table}[htbp]
+\begin{table}[H]
 \centering
 \caption{Semi-synthetic control on the 22 slides: residual policy (and its permuted-feedback version) minus the
 feasible rule, by spike amplitude and budget (PCC; unadjusted 95\% CIs resampling studies). The registered success
@@ -482,7 +483,7 @@ criterion was a positive margin with a CI excluding zero at $\alpha=2$.}
 
 The platform split is exploratory and the per-tissue means are descriptive; both use stage-1 margins.
 
-\begin{table}[htbp]
+\begin{table}[H]
 \centering
 \caption{Selected stage-1 margins by platform (unadjusted study-level sign-flip $p$) and by tissue (mean).}
 \label{tab:split}
@@ -492,7 +493,7 @@ The platform split is exploratory and the per-tissue means are descriptive; both
 \section{Gene-set sensitivity}
 \label{app:hvg}
 
-\begin{table}[htbp]
+\begin{table}[H]
 \centering
 \caption{Stage-1 local-variance minus best coverage reconstruction margin (PCC) under three gene sets, 22 slides,
 unadjusted 95\% CIs resampling studies (secondary).}
@@ -509,7 +510,7 @@ error-reduction minus the per-slide best non-adaptive rule on the five human sli
 one pseudo-spot each, with the number of slides on which the margin was positive. With five slides these values are
 descriptive.
 
-\begin{table}[htbp]
+\begin{table}[H]
 \centering
 \caption{Error-reduction minus per-slide best non-adaptive rule (PCC), mean over 5 human Visium HD slides
 (positive/total).}
@@ -527,7 +528,7 @@ interruptions. Figure~\ref{fig:sofisher} shows the evaluation reward, which coun
 was $-238$ over the first 5\% of training and $+147$ over the last 10\% (best 514). Rare evaluation episodes have
 rewards near $-1.7\times10^5$, so the figure shows rolling medians.
 
-\begin{figure}[htbp]
+\begin{figure}[H]
 \centering
 \includegraphics[width=0.7\textwidth]{fig_sofisher_native.pdf}
 \caption{SOFisher evaluation reward during training (rolling median), native run.}
