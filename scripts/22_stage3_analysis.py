@@ -80,6 +80,9 @@ def main():
             pm, _ = perm_mean("R", b, "batch5_vg", "recall")
             sec.append((f"rounds of {S3['r_round']}: local-var - permuted (seed mean)", b, vg - pm))
     S = S3.get("S", {})
+    if S and not all(l in S and set(S[l]) == set(S[L[0]]) and all(len(S[l][b]) == len(S[L[0]][b]) for b in S[L[0]]) for l in L):
+        desc["status"] = f"part S incomplete ({sum(l in S for l in L)}/{len(L)} slides started); seed variation not computed"
+        S = {}
     if S:
         for b in S[L[0]]:
             for base, a_name, a_perm, m in [("vg", "value_greedy", "value_greedy_perm", "recall"),
@@ -114,6 +117,8 @@ def main():
             print(f"  {fam[0].upper()} {r['margin'][:48]:48s} {r['budget']} {r['mean']:+.4f} {r['ci95_unadjusted']} "
                   f"p={r['p']:.2g} pH={r['p_holm']:.2g}{star} MDE={r['mde80_unadjusted']}/{r['mde80_family_bound']}")
     for k, d in desc.items():
+        if not isinstance(d, dict):
+            print(f"  D {k}: {d}"); continue
         print(f"  D {k}: per seed {d['per_seed_mean']} sd {d['across_seed_sd']} | seed-avg {d['seed_averaged']['mean']:+.4f} "
               f"{d['seed_averaged']['ci95_unadjusted']} p={d['seed_averaged']['p']:.2g}")
 

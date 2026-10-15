@@ -1,0 +1,714 @@
+{
+  "status": "stage-3 registered analysis (ITERATION_LOG iteration 11)",
+  "primary": [
+    {
+      "family": "primary",
+      "margin": "hybrid rec f=0.5 - fixed kmeans",
+      "budget": "0.005",
+      "mean": -0.0362,
+      "ci95_unadjusted": [
+        -0.0571,
+        -0.0184
+      ],
+      "p": 0.00028228759765625,
+      "n_pos": 4,
+      "n": 22,
+      "p_holm": 0.005645751953125,
+      "mde80_unadjusted": 0.0346,
+      "mde80_family_bound": 0.0562
+    },
+    {
+      "family": "primary",
+      "margin": "hybrid rec f=0.8 - fixed kmeans",
+      "budget": "0.005",
+      "mean": -0.0089,
+      "ci95_unadjusted": [
+        -0.0214,
+        0.0032
+      ],
+      "p": 0.20394134521484375,
+      "n_pos": 8,
+      "n": 22,
+      "p_holm": 1.0,
+      "mde80_unadjusted": 0.0211,
+      "mde80_family_bound": 0.0332
+    },
+    {
+      "family": "primary",
+      "margin": "hybrid rec f=0.5 - fixed kmeans",
+      "budget": "0.010",
+      "mean": -0.0101,
+      "ci95_unadjusted": [
+        -0.0197,
+        0.002
+      ],
+      "p": 0.1058807373046875,
+      "n_pos": 10,
+      "n": 22,
+      "p_holm": 1.0,
+      "mde80_unadjusted": 0.0151,
+      "mde80_family_bound": 0.0211
+    },
+    {
+      "family": "primary",
+      "margin": "hybrid rec f=0.8 - fixed kmeans",
+      "budget": "0.010",
+      "mean": -0.0094,
+      "ci95_unadjusted": [
+        -0.0189,
+        -0.0005
+      ],
+      "p": 0.065887451171875,
+      "n_pos": 7,
+      "n": 22,
+      "p_holm": 1.0,
+      "mde80_unadjusted": 0.0179,
+      "mde80_family_bound": 0.0255
+    },
+    {
+      "family": "primary",
+      "margin": "hybrid rec f=0.5 - fixed mi_greedy",
+      "budget": "0.020",
+      "mean": 0.0009,
+      "ci95_unadjusted": [
+        -0.007,
+        0.0112
+      ],
+      "p": 0.84515380859375,
+      "n_pos": 11,
+      "n": 22,
+      "p_holm": 1.0,
+      "mde80_unadjusted": 0.013,
+      "mde80_family_bound": 0.0174
+    },
+    {
+      "family": "primary",
+      "margin": "hybrid det f=0.5 - fixed var_greedy",
+      "budget": "0.020",
+      "mean": 0.0029,
+      "ci95_unadjusted": [
+        0.0003,
+        0.0051
+      ],
+      "p": 0.0419769287109375,
+      "n_pos": 14,
+      "n": 22,
+      "p_holm": 0.755584716796875,
+      "mde80_unadjusted": 0.004,
+      "mde80_family_bound": 0.0069
+    },
+    {
+      "family": "primary",
+      "margin": "hybrid rec f=0.8 - fixed mi_greedy",
+      "budget": "0.020",
+      "mean": 0.0067,
+      "ci95_unadjusted": [
+        0.0015,
+        0.0133
+      ],
+      "p": 0.01891326904296875,
+      "n_pos": 13,
+      "n": 22,
+      "p_holm": 0.35935211181640625,
+      "mde80_unadjusted": 0.0079,
+      "mde80_family_bound": 0.0127
+    },
+    {
+      "family": "primary",
+      "margin": "hybrid det f=0.8 - fixed var_greedy",
+      "budget": "0.020",
+      "mean": 0.0003,
+      "ci95_unadjusted": [
+        -0.0012,
+        0.0017
+      ],
+      "p": 0.66998291015625,
+      "n_pos": 8,
+      "n": 22,
+      "p_holm": 1.0,
+      "mde80_unadjusted": 0.0024,
+      "mde80_family_bound": 0.004
+    },
+    {
+      "family": "primary",
+      "margin": "hybrid rec f=0.5 - fixed mi_greedy",
+      "budget": "0.050",
+      "mean": -0.0027,
+      "ci95_unadjusted": [
+        -0.0075,
+        0.0019
+      ],
+      "p": 0.30347442626953125,
+      "n_pos": 12,
+      "n": 22,
+      "p_holm": 1.0,
+      "mde80_unadjusted": 0.0079,
+      "mde80_family_bound": 0.0131
+    },
+    {
+      "family": "primary",
+      "margin": "hybrid det f=0.5 - fixed var_greedy",
+      "budget": "0.050",
+      "mean": 0.0016,
+      "ci95_unadjusted": [
+        -0.0072,
+        0.0098
+      ],
+      "p": 0.7355499267578125,
+      "n_pos": 10,
+      "n": 22,
+      "p_holm": 1.0,
+      "mde80_unadjusted": 0.0145,
+      "mde80_family_bound": 0.02
+    },
+    {
+      "family": "primary",
+      "margin": "hybrid rec f=0.8 - fixed mi_greedy",
+      "budget": "0.050",
+      "mean": -0.0008,
+      "ci95_unadjusted": [
+        -0.004,
+        0.0025
+      ],
+      "p": 0.6619491577148438,
+      "n_pos": 13,
+      "n": 22,
+      "p_holm": 1.0,
+      "mde80_unadjusted": 0.0055,
+      "mde80_family_bound": 0.0079
+    },
+    {
+      "family": "primary",
+      "margin": "hybrid det f=0.8 - fixed var_greedy",
+      "budget": "0.050",
+      "mean": -0.0004,
+      "ci95_unadjusted": [
+        -0.0034,
+        0.0025
+      ],
+      "p": 0.8021240234375,
+      "n_pos": 8,
+      "n": 22,
+      "p_holm": 1.0,
+      "mde80_unadjusted": 0.0049,
+      "mde80_family_bound": 0.0077
+    },
+    {
+      "family": "primary",
+      "margin": "hybrid rec f=0.5 - fixed mi_greedy",
+      "budget": "0.100",
+      "mean": 0.0001,
+      "ci95_unadjusted": [
+        -0.0019,
+        0.0024
+      ],
+      "p": 0.9482345581054688,
+      "n_pos": 11,
+      "n": 22,
+      "p_holm": 1.0,
+      "mde80_unadjusted": 0.0033,
+      "mde80_family_bound": 0.005
+    },
+    {
+      "family": "primary",
+      "margin": "hybrid det f=0.5 - fixed var_greedy",
+      "budget": "0.100",
+      "mean": 0.0061,
+      "ci95_unadjusted": [
+        -0.0054,
+        0.0179
+      ],
+      "p": 0.3669586181640625,
+      "n_pos": 14,
+      "n": 22,
+      "p_holm": 1.0,
+      "mde80_unadjusted": 0.0179,
+      "mde80_family_bound": 0.0256
+    },
+    {
+      "family": "primary",
+      "margin": "hybrid rec f=0.8 - fixed mi_greedy",
+      "budget": "0.100",
+      "mean": 0.0006,
+      "ci95_unadjusted": [
+        -0.0011,
+        0.0022
+      ],
+      "p": 0.5211868286132812,
+      "n_pos": 13,
+      "n": 22,
+      "p_holm": 1.0,
+      "mde80_unadjusted": 0.0028,
+      "mde80_family_bound": 0.0044
+    },
+    {
+      "family": "primary",
+      "margin": "hybrid det f=0.8 - fixed var_greedy",
+      "budget": "0.100",
+      "mean": 0.0014,
+      "ci95_unadjusted": [
+        -0.0048,
+        0.0069
+      ],
+      "p": 0.6531753540039062,
+      "n_pos": 11,
+      "n": 22,
+      "p_holm": 1.0,
+      "mde80_unadjusted": 0.0097,
+      "mde80_family_bound": 0.0153
+    },
+    {
+      "family": "primary",
+      "margin": "hybrid rec f=0.5 - fixed mi_greedy",
+      "budget": "0.200",
+      "mean": -0.0019,
+      "ci95_unadjusted": [
+        -0.0039,
+        0.0001
+      ],
+      "p": 0.08100128173828125,
+      "n_pos": 7,
+      "n": 22,
+      "p_holm": 1.0,
+      "mde80_unadjusted": 0.0035,
+      "mde80_family_bound": 0.0053
+    },
+    {
+      "family": "primary",
+      "margin": "hybrid det f=0.5 - fixed oneshot",
+      "budget": "0.200",
+      "mean": -0.0002,
+      "ci95_unadjusted": [
+        -0.0328,
+        0.0342
+      ],
+      "p": 0.9914321899414062,
+      "n_pos": 8,
+      "n": 22,
+      "p_holm": 1.0,
+      "mde80_unadjusted": 0.0531,
+      "mde80_family_bound": 0.0682
+    },
+    {
+      "family": "primary",
+      "margin": "hybrid rec f=0.8 - fixed mi_greedy",
+      "budget": "0.200",
+      "mean": -0.0008,
+      "ci95_unadjusted": [
+        -0.0029,
+        0.001
+      ],
+      "p": 0.449432373046875,
+      "n_pos": 10,
+      "n": 22,
+      "p_holm": 1.0,
+      "mde80_unadjusted": 0.0038,
+      "mde80_family_bound": 0.0062
+    },
+    {
+      "family": "primary",
+      "margin": "hybrid det f=0.8 - fixed oneshot",
+      "budget": "0.200",
+      "mean": -0.0031,
+      "ci95_unadjusted": [
+        -0.0193,
+        0.0138
+      ],
+      "p": 0.7398452758789062,
+      "n_pos": 8,
+      "n": 22,
+      "p_holm": 1.0,
+      "mde80_unadjusted": 0.0248,
+      "mde80_family_bound": 0.0354
+    }
+  ],
+  "secondary": [
+    {
+      "family": "secondary",
+      "margin": "hybrid rec f=0.5 - permuted (seed mean)",
+      "budget": "0.005",
+      "mean": 0.0015,
+      "ci95_unadjusted": [
+        -0.0152,
+        0.0155
+      ],
+      "p": 0.910308837890625,
+      "n_pos": 11,
+      "n": 22,
+      "p_holm": 1.0,
+      "mde80_unadjusted": 0.0256,
+      "mde80_family_bound": 0.0415
+    },
+    {
+      "family": "secondary",
+      "margin": "hybrid rec f=0.8 - permuted (seed mean)",
+      "budget": "0.005",
+      "mean": 0.004,
+      "ci95_unadjusted": [
+        -0.0012,
+        0.01
+      ],
+      "p": 0.169921875,
+      "n_pos": 11,
+      "n": 22,
+      "p_holm": 1.0,
+      "mde80_unadjusted": 0.0082,
+      "mde80_family_bound": 0.0122
+    },
+    {
+      "family": "secondary",
+      "margin": "hybrid rec f=0.5 - permuted (seed mean)",
+      "budget": "0.010",
+      "mean": 0.0262,
+      "ci95_unadjusted": [
+        0.0065,
+        0.054
+      ],
+      "p": 0.012054443359375,
+      "n_pos": 16,
+      "n": 22,
+      "p_holm": 0.208740234375,
+      "mde80_unadjusted": 0.0295,
+      "mde80_family_bound": 0.0354
+    },
+    {
+      "family": "secondary",
+      "margin": "hybrid rec f=0.8 - permuted (seed mean)",
+      "budget": "0.010",
+      "mean": 0.0078,
+      "ci95_unadjusted": [
+        -0.0002,
+        0.0161
+      ],
+      "p": 0.08675384521484375,
+      "n_pos": 13,
+      "n": 22,
+      "p_holm": 0.7487869262695312,
+      "mde80_unadjusted": 0.0119,
+      "mde80_family_bound": 0.0179
+    },
+    {
+      "family": "secondary",
+      "margin": "hybrid rec f=0.5 - permuted (seed mean)",
+      "budget": "0.020",
+      "mean": 0.0156,
+      "ci95_unadjusted": [
+        0.0074,
+        0.0254
+      ],
+      "p": 0.0012359619140625,
+      "n_pos": 20,
+      "n": 22,
+      "p_holm": 0.027191162109375,
+      "mde80_unadjusted": 0.0128,
+      "mde80_family_bound": 0.0192
+    },
+    {
+      "family": "secondary",
+      "margin": "hybrid det f=0.5 - permuted (seed mean)",
+      "budget": "0.020",
+      "mean": 0.0066,
+      "ci95_unadjusted": [
+        0.0039,
+        0.0093
+      ],
+      "p": 0.00018310546875,
+      "n_pos": 18,
+      "n": 22,
+      "p_holm": 0.00439453125,
+      "mde80_unadjusted": 0.0041,
+      "mde80_family_bound": 0.0062
+    },
+    {
+      "family": "secondary",
+      "margin": "hybrid rec f=0.8 - permuted (seed mean)",
+      "budget": "0.020",
+      "mean": 0.0067,
+      "ci95_unadjusted": [
+        0.004,
+        0.0094
+      ],
+      "p": 0.0006866455078125,
+      "n_pos": 19,
+      "n": 22,
+      "p_holm": 0.0157928466796875,
+      "mde80_unadjusted": 0.0043,
+      "mde80_family_bound": 0.0079
+    },
+    {
+      "family": "secondary",
+      "margin": "hybrid det f=0.8 - permuted (seed mean)",
+      "budget": "0.020",
+      "mean": 0.0016,
+      "ci95_unadjusted": [
+        0.0002,
+        0.0028
+      ],
+      "p": 0.0460205078125,
+      "n_pos": 13,
+      "n": 22,
+      "p_holm": 0.477020263671875,
+      "mde80_unadjusted": 0.0023,
+      "mde80_family_bound": 0.0041
+    },
+    {
+      "family": "secondary",
+      "margin": "hybrid rec f=0.5 - permuted (seed mean)",
+      "budget": "0.050",
+      "mean": 0.0024,
+      "ci95_unadjusted": [
+        -0.0013,
+        0.0062
+      ],
+      "p": 0.2403106689453125,
+      "n_pos": 14,
+      "n": 22,
+      "p_holm": 1.0,
+      "mde80_unadjusted": 0.0057,
+      "mde80_family_bound": 0.0095
+    },
+    {
+      "family": "secondary",
+      "margin": "hybrid det f=0.5 - permuted (seed mean)",
+      "budget": "0.050",
+      "mean": 0.0141,
+      "ci95_unadjusted": [
+        0.0059,
+        0.0215
+      ],
+      "p": 0.00545501708984375,
+      "n_pos": 17,
+      "n": 22,
+      "p_holm": 0.1131134033203125,
+      "mde80_unadjusted": 0.0125,
+      "mde80_family_bound": 0.0196
+    },
+    {
+      "family": "secondary",
+      "margin": "hybrid rec f=0.8 - permuted (seed mean)",
+      "budget": "0.050",
+      "mean": 0.0012,
+      "ci95_unadjusted": [
+        -0.0012,
+        0.0039
+      ],
+      "p": 0.34900665283203125,
+      "n_pos": 16,
+      "n": 22,
+      "p_holm": 1.0,
+      "mde80_unadjusted": 0.0043,
+      "mde80_family_bound": 0.0055
+    },
+    {
+      "family": "secondary",
+      "margin": "hybrid det f=0.8 - permuted (seed mean)",
+      "budget": "0.050",
+      "mean": 0.0037,
+      "ci95_unadjusted": [
+        0.0011,
+        0.0059
+      ],
+      "p": 0.02005767822265625,
+      "n_pos": 16,
+      "n": 22,
+      "p_holm": 0.276947021484375,
+      "mde80_unadjusted": 0.0042,
+      "mde80_family_bound": 0.0065
+    },
+    {
+      "family": "secondary",
+      "margin": "hybrid rec f=0.5 - permuted (seed mean)",
+      "budget": "0.100",
+      "mean": -0.0008,
+      "ci95_unadjusted": [
+        -0.0027,
+        0.001
+      ],
+      "p": 0.402435302734375,
+      "n_pos": 8,
+      "n": 22,
+      "p_holm": 1.0,
+      "mde80_unadjusted": 0.0033,
+      "mde80_family_bound": 0.0052
+    },
+    {
+      "family": "secondary",
+      "margin": "hybrid det f=0.5 - permuted (seed mean)",
+      "budget": "0.100",
+      "mean": 0.0227,
+      "ci95_unadjusted": [
+        0.0077,
+        0.0352
+      ],
+      "p": 0.0115966796875,
+      "n_pos": 19,
+      "n": 22,
+      "p_holm": 0.208740234375,
+      "mde80_unadjusted": 0.0225,
+      "mde80_family_bound": 0.0418
+    },
+    {
+      "family": "secondary",
+      "margin": "hybrid rec f=0.8 - permuted (seed mean)",
+      "budget": "0.100",
+      "mean": -0.0018,
+      "ci95_unadjusted": [
+        -0.0031,
+        -0.0006
+      ],
+      "p": 0.006500244140625,
+      "n_pos": 5,
+      "n": 22,
+      "p_holm": 0.123504638671875,
+      "mde80_unadjusted": 0.0025,
+      "mde80_family_bound": 0.0039
+    },
+    {
+      "family": "secondary",
+      "margin": "hybrid det f=0.8 - permuted (seed mean)",
+      "budget": "0.100",
+      "mean": 0.0074,
+      "ci95_unadjusted": [
+        -0.0004,
+        0.0139
+      ],
+      "p": 0.08319854736328125,
+      "n_pos": 16,
+      "n": 22,
+      "p_holm": 0.7487869262695312,
+      "mde80_unadjusted": 0.0129,
+      "mde80_family_bound": 0.0194
+    },
+    {
+      "family": "secondary",
+      "margin": "hybrid rec f=0.5 - permuted (seed mean)",
+      "budget": "0.200",
+      "mean": -0.0025,
+      "ci95_unadjusted": [
+        -0.0044,
+        -0.0006
+      ],
+      "p": 0.018463134765625,
+      "n_pos": 3,
+      "n": 22,
+      "p_holm": 0.276947021484375,
+      "mde80_unadjusted": 0.0031,
+      "mde80_family_bound": 0.0043
+    },
+    {
+      "family": "secondary",
+      "margin": "hybrid det f=0.5 - permuted (seed mean)",
+      "budget": "0.200",
+      "mean": 0.0349,
+      "ci95_unadjusted": [
+        0.0097,
+        0.057
+      ],
+      "p": 0.0225067138671875,
+      "n_pos": 17,
+      "n": 22,
+      "p_holm": 0.276947021484375,
+      "mde80_unadjusted": 0.0401,
+      "mde80_family_bound": 0.0687
+    },
+    {
+      "family": "secondary",
+      "margin": "hybrid rec f=0.8 - permuted (seed mean)",
+      "budget": "0.200",
+      "mean": -0.0019,
+      "ci95_unadjusted": [
+        -0.0039,
+        -0.0002
+      ],
+      "p": 0.043365478515625,
+      "n_pos": 6,
+      "n": 22,
+      "p_holm": 0.477020263671875,
+      "mde80_unadjusted": 0.0032,
+      "mde80_family_bound": 0.0052
+    },
+    {
+      "family": "secondary",
+      "margin": "hybrid det f=0.8 - permuted (seed mean)",
+      "budget": "0.200",
+      "mean": 0.0169,
+      "ci95_unadjusted": [
+        0.0041,
+        0.0291
+      ],
+      "p": 0.018707275390625,
+      "n_pos": 15,
+      "n": 22,
+      "p_holm": 0.276947021484375,
+      "mde80_unadjusted": 0.0184,
+      "mde80_family_bound": 0.0289
+    },
+    {
+      "family": "secondary",
+      "margin": "rounds of 5: local-var - fixed var_greedy",
+      "budget": "0.100",
+      "mean": 0.0233,
+      "ci95_unadjusted": [
+        -0.0001,
+        0.0463
+      ],
+      "p": 0.08642578125,
+      "n_pos": 13,
+      "n": 22,
+      "p_holm": 0.7487869262695312,
+      "mde80_unadjusted": 0.0361,
+      "mde80_family_bound": 0.0568
+    },
+    {
+      "family": "secondary",
+      "margin": "rounds of 5: local-var - permuted (seed mean)",
+      "budget": "0.100",
+      "mean": 0.0497,
+      "ci95_unadjusted": [
+        0.0216,
+        0.0747
+      ],
+      "p": 0.0053863525390625,
+      "n_pos": 18,
+      "n": 22,
+      "p_holm": 0.1131134033203125,
+      "mde80_unadjusted": 0.0423,
+      "mde80_family_bound": 0.0726
+    },
+    {
+      "family": "secondary",
+      "margin": "rounds of 5: local-var - fixed oneshot",
+      "budget": "0.200",
+      "mean": 0.0352,
+      "ci95_unadjusted": [
+        -0.0168,
+        0.0952
+      ],
+      "p": 0.326629638671875,
+      "n_pos": 10,
+      "n": 22,
+      "p_holm": 1.0,
+      "mde80_unadjusted": 0.0746,
+      "mde80_family_bound": 0.0994
+    },
+    {
+      "family": "secondary",
+      "margin": "rounds of 5: local-var - permuted (seed mean)",
+      "budget": "0.200",
+      "mean": 0.0839,
+      "ci95_unadjusted": [
+        0.0247,
+        0.1405
+      ],
+      "p": 0.014984130859375,
+      "n_pos": 16,
+      "n": 22,
+      "p_holm": 0.23974609375,
+      "mde80_unadjusted": 0.0929,
+      "mde80_family_bound": 0.146
+    }
+  ],
+  "seed_variation": {
+    "status": "part S incomplete (5/22 slides started); seed variation not computed"
+  }
+}
