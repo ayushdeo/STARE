@@ -377,3 +377,15 @@ local-variance - fixed detection rule and - permuted (seed mean), 10% and 20% (4
 established", reported with CIs and the Holm-level MDE bound (alpha/20).
 **Q3 framing:** batched results (stage 1 and Part R) are reported as an exploratory stress test, not a coequal
 confirmatory answer.
+
+**Stage-3 results (analysed 2026-10-15; parts H and R complete on 22 slides, part S stopped at slide 5 of 22):**
+- Primary (20): no hybrid margin positive at p_H < 0.05. One significant negative: reconstruction, f = 0.5, 0.5%:
+  hybrid - k-means = -0.036 PCC (p_H 0.006). From 2% upward all margins within 0.007 PCC / 0.006 recall; Holm-level
+  MDE at 2-10% is 0.004-0.017 PCC and 0.004-0.026 recall (detection 20%: 0.035-0.068).
+- Secondary (24): hybrid - permuted significant at 2% only (reconstruction f 0.5 +0.016, f 0.8 +0.007; detection
+  f 0.5 +0.007). Permuted feedback drops the hybrid below the fixed rule; real feedback restores it (e.g. detection
+  10%: fixed 0.127, permuted 0.110, observed 0.133). Rounds of 5: local-variance - fixed +0.023 / +0.035, - permuted
+  +0.050 / +0.084 at 10 / 20% (p_H >= 0.11). Rounds of 5 recall 0.150 / 0.288 vs one-at-a-time 0.137 / 0.278.
+- Seed variation (descriptive) not yet computed: rerun part S to completion, then scripts 22 and 23.
+- Manuscript revised: stage 3 as section "Feedback on top of a coverage design"; Q3 exploratory; Holm-level MDEs;
+  post hoc feasible-comparator inference in an appendix; scope of computational ROIs in Limitations.

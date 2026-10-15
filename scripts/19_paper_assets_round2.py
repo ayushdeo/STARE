@@ -128,13 +128,13 @@ for b in DET:
                         "const": pre("value_greedy - value_greedy_const (recall)", b, "secondary")}
     for k, r in (("perm", a), ("div", d), ("fe", f)):
         fig_b[k].append((float(b), r["mean"], r["ci95_unadjusted"]))
-    rows.append(f"{pct(b)} & {num(a['mean'])} {ci(a['ci95_unadjusted'])} & {pf(a['p_holm'])} & {a['mde80_unadjusted']:.3f} & "
+    rows.append(f"{pct(b)} & {num(a['mean'])} {ci(a['ci95_unadjusted'])} & {pf(a['p_holm'])} & {a['mde80_family_bound']:.3f} & "
                 f"{num(f['mean'])} {ci(f['ci95_unadjusted'])} & {pf(f['p_holm'])} & "
                 f"{num(d['mean'])} {ci(d['ci95_unadjusted'])} & {pf(d['p_holm'])} \\\\")
 write("r2_q2_margins.tex", [r"\begin{tabular}{lcccccccc}", r"\toprule",
       r" & \multicolumn{3}{c}{value-cond. $-$ permuted feedback} & \multicolumn{2}{c}{value-cond. $-$ feasible} & \multicolumn{2}{c}{value-cond. $-$ diversity} \\",
       r"\cmidrule(lr){2-4}\cmidrule(lr){5-6}\cmidrule(lr){7-8}",
-      r"Budget & $\Delta$ [95\% CI] & $p_H$ & MDE & $\Delta$ [95\% CI] & $p_H$ & $\Delta$ [95\% CI] & $p_H$ \\", r"\midrule",
+      r"Budget & $\Delta$ [95\% CI] & $p_H$ & MDE$_H$ & $\Delta$ [95\% CI] & $p_H$ & $\Delta$ [95\% CI] & $p_H$ \\", r"\midrule",
       *rows, r"\bottomrule", r"\end{tabular}"])
 
 # ---------------------------------------------------------------- Q2 absolute recall

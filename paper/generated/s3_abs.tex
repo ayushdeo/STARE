@@ -1,0 +1,21 @@
+\begin{tabular}{lcccccc}
+\toprule
+ & & \multicolumn{2}{c}{hybrid, 50\% coverage} & \multicolumn{2}{c}{hybrid, 80\% coverage} & \\
+\cmidrule(lr){3-4}\cmidrule(lr){5-6}
+Budget & fixed rule & observed & permuted & observed & permuted & feedback policy alone \\
+\midrule
+\multicolumn{7}{l}{\emph{Reconstruction (PCC)}} \\
+0.5\% & 0.449 & 0.413 & 0.412 & 0.441 & 0.437 & 0.357 \\
+1\% & 0.534 & 0.524 & 0.498 & 0.525 & 0.517 & 0.477 \\
+2\% & 0.599 & 0.600 & 0.584 & 0.605 & 0.599 & 0.566 \\
+5\% & 0.659 & 0.656 & 0.654 & 0.658 & 0.657 & 0.643 \\
+10\% & 0.685 & 0.685 & 0.686 & 0.686 & 0.687 & 0.678 \\
+20\% & 0.707 & 0.705 & 0.708 & 0.706 & 0.708 & 0.705 \\
+\midrule
+\multicolumn{7}{l}{\emph{Detection (ROI recall)}} \\
+2\% & 0.023 & 0.026 & 0.019 & 0.024 & 0.022 & 0.027 \\
+5\% & 0.064 & 0.065 & 0.051 & 0.063 & 0.060 & 0.070 \\
+10\% & 0.127 & 0.133 & 0.110 & 0.128 & 0.121 & 0.137 \\
+20\% & 0.252 & 0.252 & 0.217 & 0.249 & 0.232 & 0.278 \\
+\bottomrule
+\end{tabular}
