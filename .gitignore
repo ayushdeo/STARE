@@ -36,3 +36,7 @@ model/
 *.tfevents*
 SOFisher/
 SCR2ST/
+paper/*.log
+paper/*.blg
+paper/*.aux
+paper/*.bbl
