@@ -1,12 +1,13 @@
 # paper/ — arXiv-ready manuscript (NeurIPS style, preprint mode)
 
-Source for *Evaluating Adaptive Region Acquisition for Spatial Transcriptomics Reconstruction*
+Source for *Where to Measure Next? Evaluating Feedback-Driven Region Selection for Spatial Transcriptomics*
 (sole author). `manuscript.tex` is the source of record for the prose.
 
 ## Files needed to compile (upload all of these to Overleaf / include in the arXiv tarball)
 - `manuscript.tex` — the paper (main text + Appendices A–L).
-- `references.bib` — bibliography. SOFisher and S2-omics checked against Crossref; SCR2-ST against arXiv
-  (2026-10-09; arXiv lists no venue, so it is cited as a preprint).
+- `references.bib` — bibliography (49 entries, all cited). Each entry added on 2026-10-16 carries its verification
+  source (Crossref, arXiv, JMLR, or NeurIPS proceedings) in its `note`; notes that say "to be checked by the author"
+  mark details that could not be confirmed online. SOFisher and S2-omics checked against Crossref; SCR2-ST against arXiv.
 - `neurips_2023.sty` — NeurIPS style file (must be bundled).
 - `generated/*.tex` — every table, written by `../scripts/15_paper_assets.py`. Keep the folder name;
   the paper `\input`s `generated/tab_*.tex`. (`generated/facts.json` is not needed to compile.)
@@ -33,7 +34,7 @@ All read only the committed `results/*.json`; no data download is needed.
 natbib numeric citations with `plainnat`. Overleaf: upload the files above (with the `generated/`
 folder) and recompile. Locally: `pdflatex manuscript && bibtex manuscript && pdflatex manuscript &&
 pdflatex manuscript`, or `tectonic -X compile manuscript.tex`. Verified on 2026-10-16 with Tectonic
-0.17: 19 pages (main text ends on page 10), no overfull boxes, no undefined references.
+0.17: 20 pages (main text ends on page 10), no overfull boxes, no undefined references.
 
 ## arXiv tarball
 After one clean compile (which produces `manuscript.bbl`):

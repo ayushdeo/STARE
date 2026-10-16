@@ -91,7 +91,7 @@ write("tab_recon_abs.tex", "\n".join([
     r"\begin{tabular}{lcccccc}", r"\toprule",
     r" & \multicolumn{3}{c}{Non-adaptive} & \multicolumn{3}{c}{Adaptive} \\",
     r"\cmidrule(lr){2-4}\cmidrule(lr){5-7}",
-    r"Budget & best per slide & MI-greedy & $k$-means & error-red. & max-unc. & value-cond. \\", r"\midrule",
+    r"Budget & best per slide & MI-greedy & $k$-means & error-red. & max-unc. & local-var. \\", r"\midrule",
     *rows, r"\bottomrule", r"\end{tabular}"]))
 
 # ---------------------------------------------------------------- Table: primary margins
@@ -117,7 +117,7 @@ write("tab_primary.tex", "\n".join([
     r"\begin{tabular}{lcccccc}", r"\toprule",
     r" & \multicolumn{4}{c}{Reconstruction (PCC, top-50 genes)} & \multicolumn{2}{c}{Detection (ROI recall)} \\",
     r"\cmidrule(lr){2-5}\cmidrule(lr){6-7}",
-    r" & \multicolumn{2}{c}{error-reduction $-$ best non-adapt.} & \multicolumn{2}{c}{value-cond. $-$ best coverage} & \multicolumn{2}{c}{value-cond. $-$ best coverage} \\",
+    r" & \multicolumn{2}{c}{error-reduction $-$ best non-adapt.} & \multicolumn{2}{c}{local-var. $-$ best coverage} & \multicolumn{2}{c}{local-var. $-$ best coverage} \\",
     r"\cmidrule(lr){2-3}\cmidrule(lr){4-5}\cmidrule(lr){6-7}",
     r"Budget & $\Delta$ [95\% CI] & $p_H$ & $\Delta$ [95\% CI] & $p_H$ & $\Delta$ [95\% CI] & $p_H$ \\", r"\midrule",
     *rows, r"\bottomrule", r"\end{tabular}"]))
@@ -150,7 +150,7 @@ write("tab_realism.tex", "\n".join([
 
 # ---------------------------------------------------------------- Table: absolute detection recall (10)
 POL = [("kmeans", "$k$-means"), ("grid", "grid"), ("mi_greedy", "MI-greedy"), ("scr2st", "diversity$^\\dagger$"),
-       ("sofisher", "ROI-seeking$^\\dagger$"), ("value_greedy", "value-cond."), ("oracle", "oracle$^\\ast$")]
+       ("sofisher", "ROI-seeking$^\\dagger$"), ("value_greedy", "local-var."), ("oracle", "oracle$^\\ast$")]
 rows = []
 for b in BUD09:
     rm = comp10["rows"][b]["detection_recall_means"]
@@ -187,9 +187,9 @@ ids = [s.split(":")[1] for s in ci05["slides"]]
 hd = np.array([i in HD for i in ids])
 strata = np.array(G["strata"])
 SPLITS = [("Recon., error-red. (1\\%)", ci05["margins"]["0.010"]["ours_vs_best_nonadapt"]["per_slide"]),
-          ("Recon., value-cond. (10\\%)", det09["rows"]["0.10"]["value_greedy_recon_vs_bestcover"]["per_slide"]),
-          ("Detect., value-cond. (10\\%)", det09["rows"]["0.10"]["value_greedy_detect_vs_bestcover"]["per_slide"]),
-          ("Detect., value-cond. (20\\%)", det09["rows"]["0.20"]["value_greedy_detect_vs_bestcover"]["per_slide"]),
+          ("Recon., local-var. (10\\%)", det09["rows"]["0.10"]["value_greedy_recon_vs_bestcover"]["per_slide"]),
+          ("Detect., local-var. (10\\%)", det09["rows"]["0.10"]["value_greedy_detect_vs_bestcover"]["per_slide"]),
+          ("Detect., local-var. (20\\%)", det09["rows"]["0.20"]["value_greedy_detect_vs_bestcover"]["per_slide"]),
           ("Detect., rounds of 5 (10\\%)", bat13["partA_batched"]["5"]["detect_margin"]["per_slide"])]
 tissues = ["prostate", "kidney", "lung", "colon"]
 rows = []
@@ -259,13 +259,13 @@ fig, axes = plt.subplots(1, 3, figsize=(7.0, 2.35), constrained_layout=True)
 ax = axes[0]
 xs5 = [float(b) * 100 for b in BUD05]; xs9 = [float(b) * 100 for b in BUD09]
 band(ax, xs5, [facts[f"er_{b}"] for b in BUD05], C1, "error-reduction $-$ best non-adapt.", "o")
-band(ax, xs9, [facts[f"value_greedy_recon_vs_bestcover_{b}"] for b in BUD09], C2, "value-cond. $-$ best coverage", "s", 1.06)
+band(ax, xs9, [facts[f"value_greedy_recon_vs_bestcover_{b}"] for b in BUD09], C2, "local-variance $-$ best coverage", "s", 1.06)
 ax.axhline(0, color=GREY, lw=0.8, ls="--"); ax.set_xscale("log"); ax.set_xticks(xs5); ax.set_xticklabels([f"{x:g}" for x in xs5])
 ax.set_xlabel("budget (% of regions)"); ax.set_ylabel(r"$\Delta$ PCC (top-50 genes)"); ax.set_title("(a) Reconstruction", loc="left", fontsize=8.5)
 ax.set_ylim(-0.235, 0.075)
 ax.legend(fontsize=6.5, loc="upper left", handlelength=1.6)
 ax = axes[1]
-band(ax, xs9, [facts[f"value_greedy_detect_vs_bestcover_{b}"] for b in BUD09], C2, "value-cond. (adaptive)", "s")
+band(ax, xs9, [facts[f"value_greedy_detect_vs_bestcover_{b}"] for b in BUD09], C2, "local-variance (adaptive)", "s")
 band(ax, xs9, [facts[f"scr2st_detect_{b}"] for b in BUD09], C3, "diversity (non-adaptive)", "^", 1.06)
 ax.axhline(0, color=GREY, lw=0.8, ls="--"); ax.set_xscale("log"); ax.set_xticks(xs9); ax.set_xticklabels([f"{x:g}" for x in xs9])
 ax.set_xlabel("budget (% of regions)"); ax.set_ylabel(r"$\Delta$ ROI recall vs best coverage"); ax.set_title("(b) ROI detection", loc="left", fontsize=8.5)
@@ -299,7 +299,7 @@ ax.set_ylabel(r"$\Delta$ PCC vs best coverage"); ax.set_title("(a) Synthetic rec
 ax.legend(fontsize=6.5, loc="lower right")
 ax = axes[1]
 al = [str(a) for a in dc["alphas"]]
-for key, col, lab, mk in [("value_greedy_vs_bestcover", C2, "value-cond.", "s"), ("greedy_ig_vs_bestcover", C1, "error-reduction", "o")]:
+for key, col, lab, mk in [("value_greedy_vs_bestcover", C2, "local-variance", "s"), ("greedy_ig_vs_bestcover", C1, "error-reduction", "o")]:
     m = [dc["rows"][a][key] for a in al]
     mean = [r["mean"] for r in m]
     ax.errorbar([float(a) for a in al], mean, yerr=[[r["mean"] - r["ci95"][0] for r in m], [r["ci95"][1] - r["mean"] for r in m]],

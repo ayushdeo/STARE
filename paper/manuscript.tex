@@ -2,6 +2,7 @@
 
 % NeurIPS style, preprint (arXiv) mode. nonatbib lets us load natbib with numeric citations.
 \usepackage[preprint,nonatbib]{neurips_2023}
+\makeatletter\renewcommand{\@noticestring}{Preprint.}\makeatother
 
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
@@ -18,8 +19,8 @@
 
 \graphicspath{{./}}
 
-\title{Evaluating Adaptive Region Acquisition for\\
-Spatial Transcriptomics Reconstruction}
+\title{Where to Measure Next?\\
+Evaluating Feedback-Driven Region Selection for Spatial Transcriptomics}
 
 \author{%
   Ayush Deo \\
@@ -30,260 +31,285 @@ Spatial Transcriptomics Reconstruction}
 \maketitle
 
 \begin{abstract}
-Region-based spatial transcriptomics measures only part of a tissue section, and several recent methods choose
-each next region from the expression already measured. We asked whether this feedback helps, for two objectives
-that reward different choices: reconstructing expression across the section and capturing regions of high
-molecular heterogeneity. In a retrospective simulator built from 22 human HEST-1k slides (18 studies, four
-tissues), we held the image encoder and imputer fixed and compared value-conditioned policies with non-adaptive
-placement in three analysis stages, each registered before its experiments, with inference that resamples whole
-studies. For reconstruction, a policy designed to target the imputer's prediction error did worse than a
-non-adaptive rule chosen on held-out studies at every budget from 0.5\% to 20\% of regions. When a fixed coverage
-design spent half or more of the budget and feedback chose the rest, the deficit largely disappeared, but no
-hybrid improved on the coverage design after correction: from 2\% upward, all were within 0.007 PCC and 0.006
-recall of it. The measured values were informative, since the same policies did worse when shown permuted
-values, but that information mostly offset the cost of leaving the coverage design. For detection, informative
-feedback raised recall over permuted feedback by up to 0.063 without surviving correction, an advantage over a
-fixed MI-greedy design did not hold against the non-adaptive rule chosen for detection, and a non-adaptive
-diversity sampler performed about as well. A semi-synthetic control did not establish that the protocol could
-detect a reconstruction gain. Within this retrospective setting, with computationally defined regions of interest
-and spot-sized units, the tested feedback policies offered no supported advantage over well-chosen non-adaptive
-placement.
+Spatial transcriptomics is expensive enough that many studies profile only selected regions of a tissue section,
+and recent methods choose each next region from the expression already measured. Whether this feedback improves
+on a fixed design has not been tested against baselines that a practitioner could deploy. We built a retrospective
+acquisition simulator from 22 human HEST-1k slides spanning 18 studies and four tissues, held the image encoder and
+imputer fixed, and registered each of three analysis stages before running it, with inference at the level of
+studies. \textbf{RQ1:} for whole-section reconstruction, a feedback policy designed to target the imputer's error
+performed worse than a non-adaptive design chosen on held-out studies at every budget from 0.5\% to 20\% of
+regions, by up to 0.092 in Pearson correlation; a semi-synthetic control could not show that the protocol would
+detect a reconstruction gain. \textbf{RQ2:} for capturing molecularly heterogeneous regions, informative feedback
+raised recall over permuted feedback by up to 0.063, but no margin survived correction for multiple comparisons
+and a non-adaptive diversity sampler performed about as well. \textbf{RQ3:} when a fixed coverage design spent
+half or more of the budget and feedback chose the rest, no hybrid outperformed the coverage design; from 2\%
+upward all were within 0.007 in correlation and 0.006 in recall, although at 2--10\% gains of about 0.02 and 0.03
+would probably have been detected. Feedback carried information, since permuted values made the same policies worse,
+but it mainly offset the cost of departing from coverage. \textbf{RQ4} (exploratory): revealing regions in
+batches of five neither eroded nor established a detection advantage. For developers of adaptive acquisition
+methods, these results set a bar: compare against a fixed design chosen for the same objective and against the
+method fed uninformative values. For experimentalists working at these budgets, a well-chosen fixed design was
+sufficient.
 \end{abstract}
 
 \section{Introduction}
 
-Whole-transcriptome spatial assays are expensive, and region-of-interest platforms such as GeoMx
-DSP~\citep{merritt2020geomx} profile only part of a section. The rest can be predicted afterwards, usually from
-co-registered hematoxylin and eosin (H\&E) images~\citep{jaume2024hest,xie2023bleep}. Which regions are
-measured therefore shapes two outcomes: how well the unmeasured tissue can be reconstructed, and whether
-biologically distinct regions are measured at all.
+Spatial transcriptomics measures gene expression without dissociating tissue, so expression can be read in its
+histological context~\citep{stahl2016visualization,rao2021exploring,moses2022museum}. Whole-transcriptome assays
+remain costly, and region-of-interest platforms such as GeoMx DSP~\citep{merritt2020geomx} profile only selected
+regions of a section. Expression elsewhere can be predicted from the co-registered hematoxylin and eosin (H\&E)
+image~\citep{xie2023bleep,jaume2024hest}. Which regions are measured therefore determines both how well the
+unmeasured tissue can be reconstructed and whether distinct tissue compartments are measured at all.
 
-Recent methods choose regions sequentially. SOFisher~\citep{li2026sofisher} trains a reinforcement-learning
-policy that moves fields of view toward regions enriched for a target signal, using the expression measured so
-far. SCR$^2$-ST~\citep{zhu2025scr2st} also uses reinforcement learning, choosing sampling locations for
-expression prediction with a reward dominated by coverage of a single-cell reference. S2-omics~\citep{yuan2025s2omics}
-instead selects regions from histology before any measurement, aiming to capture molecular heterogeneity, and its
-preprint argues that waiting for measured expression between choices is impractical. These methods serve
-different goals. SOFisher and S2-omics try to capture particular regions, while reconstruction tries to predict
-expression everywhere.
+Choosing regions is an experimental-design problem, and recent methods solve it sequentially.
+SOFisher~\citep{li2026sofisher} uses reinforcement learning to move fields of view toward regions enriched for a
+target signal, and SCR$^2$-ST~\citep{zhu2025scr2st} learns sampling locations for expression prediction.
+S2-omics~\citep{yuan2025s2omics} takes the opposite approach and selects regions from histology alone, before any
+measurement. The appeal of sequential selection follows active learning~\citep{settles2009active}: each measurement
+can inform the next. Its cost is a measurement turnaround between choices. To our knowledge, no evaluation has
+isolated whether the feedback itself, rather than the selection rule built around it, is what helps.
 
-The two goals lead to different expectations about feedback. For reconstruction, Gaussian-process sensor
-placement suggests that feedback should matter little: with a fixed kernel, posterior variance depends on where
-measurements are taken and not on the values observed, so the best adaptive and non-adaptive designs
-coincide~\citep{krause2008near}. Detection has no comparable argument, because the targets are defined by the
-values themselves. Evaluating either goal also requires a fair baseline. A placement rule that could be chosen
-before profiling a new slide is the relevant competitor, not the best rule for that slide picked in hindsight.
+Theory gives different expectations for different goals. For reconstructing a Gaussian-process field with a
+known kernel, posterior variance depends only on where measurements are taken, so a design fixed in advance is
+as good as an adaptive one~\citep{krause2008near}; adaptive selection can gain only when the model's uncertainty
+depends on the observed values~\citep{golovin2011adaptive}. Imputers learned from images are not Gaussian
+processes with known kernels, so for reconstruction the question is empirical. Finding regions defined by their
+expression is closer to active search, where the targets can be located only by measuring and feedback is
+essential~\citep{garnett2012bayesian}.
 
-We therefore asked three questions with the image encoder and imputer held fixed:
-\textbf{Q1}, does conditioning region choice on measured expression improve whole-section reconstruction over a
-feasible non-adaptive rule?
-\textbf{Q2}, does informative feedback improve the capture of molecularly heterogeneous regions?
-A policy that abandons coverage could fail for reasons unrelated to feedback, so for both objectives we also
-asked whether feedback adds to a strong coverage design when it chooses only the remainder of the budget.
-\textbf{Q3}, an exploratory stress test, asked whether a detection advantage persists when measurements arrive
-in batches, as they do on real platforms.
-To separate the contribution of feedback from that of a selection rule, we compared each value-conditioned policy
-with the same policy given uninformative values. To learn whether a null result could have been otherwise, we ran
-synthetic and semi-synthetic positive controls.
+An evaluation that can separate these cases needs four features. The baseline must be a design that could be
+chosen before the target slide is profiled, because selecting the best design on the evaluation data biases the
+comparison~\citep{varma2006bias,cawley2010over}. Generalisation must be assessed across studies, not within
+them~\citep{bernau2014cross}, with slides from one study treated as dependent~\citep{field2007bootstrapping}. The
+contribution of feedback must be isolated by giving the same policy uninformative values, in the spirit of
+permutation tests for learning algorithms~\citep{ojala2010permutation}. Finally, null results need positive
+controls and power analysis to be interpretable~\citep{altman1995absence}.
 
-None of the tested value-conditioned policies improved reconstruction, and feedback layered on a coverage design
-changed neither objective by a detectable amount, although the measured values were informative. The
-semi-synthetic control did not establish that the protocol would detect a reconstruction gain if one existed.
-For detection, feedback produced positive but uncertain gains whose size depended on the comparator, and a
-non-adaptive diversity design matched them. The study contributes an evaluation rather than a method: a
-reproducible protocol on 22 human slides from 18 studies, analyses registered before each experimental stage, and
-the finding that the tested feedback policies offered no supported advantage over well-chosen non-adaptive
-placement for either objective.
+We built such an evaluation and asked four questions. \textbf{RQ1}: does conditioning region selection on
+measured expression improve whole-section reconstruction over a feasible non-adaptive design? \textbf{RQ2}: does
+it improve the capture of molecularly heterogeneous regions? \textbf{RQ3}: does feedback add to a strong coverage
+design when it allocates only the remainder of the budget? \textbf{RQ4}, an exploratory stress test: does a
+detection advantage persist when measurements arrive in batches? The study contributes an evaluation, not a
+method: a reproducible simulator on 22 human slides from 18 studies, analyses registered before each experimental
+stage, and evidence that the tested feedback policies offered no supported advantage over well-chosen fixed
+designs for either objective.
 
 \section{Related work}
 
-Expression has been predicted from H\&E with contrastive retrieval~\citep{xie2023bleep}, flow matching over
-spatial neighbourhoods~\citep{huang2025stflow}, diffusion~\citep{zhu2025stem}, and autoregressive
-generation~\citep{genar2025}, and benchmarked on HEST-1k~\citep{jaume2024hest}. We hold the predictor fixed and
-vary only the regions it receives. For deciding what to measure, gene-panel selectors fix a set of
-genes~\citep{covert2023persist,reconst2026}, and region selectors range from one-shot image
+\paragraph{Expression from histology.} Expression has been predicted from H\&E by contrastive
+retrieval~\citep{xie2023bleep}, flow matching over spatial neighbourhoods~\citep{huang2025stflow},
+diffusion~\citep{zhu2025stem}, and autoregressive generation~\citep{genar2025}, and benchmarked on
+HEST-1k~\citep{jaume2024hest}. These methods take the measured regions as given. We hold the predictor fixed and
+vary only the regions it receives.
+
+\paragraph{Choosing what to measure.} Pool-based active learning selects queries by uncertainty~\citep{lewis1994sequential},
+expected error reduction~\citep{roy2001toward}, or coverage of the input space~\citep{sener2018active}. Sensor
+placement offers the matching non-adaptive designs: variance- and mutual-information-greedy selection, which are
+near-optimal for Gaussian-process reconstruction~\citep{krause2008near}. Adaptive submodularity characterises when
+sequential choices can beat a fixed set~\citep{golovin2011adaptive}, and active search addresses the related goal
+of collecting positives~\citep{garnett2012bayesian}. Batch acquisition reduces the information available to each
+choice~\citep{kirsch2019batchbald}, and global optimisation commonly begins with a space-filling design before
+switching to adaptive queries~\citep{jones1998efficient}. Active feature acquisition casts measurement as a
+sequential policy~\citep{yin2020afa}.
+
+\paragraph{Design in spatial omics.} Gene-panel selectors fix which genes to
+measure~\citep{covert2023persist,reconst2026}. Region selectors range from one-shot image
 rankers~\citep{spatialfinder2026} and histology-based heterogeneity selection~\citep{yuan2025s2omics} to
-sequential reinforcement-learning samplers~\citep{li2026sofisher,zhu2025scr2st}. Active feature acquisition
-casts measurement as a sequential policy~\citep{yin2020afa}. Variance- and mutual-information-greedy placement
-are near-optimal for reconstructing a Gaussian-process field~\citep{krause2008near} and serve here as non-adaptive
-baselines.
+sequential reinforcement-learning samplers~\citep{li2026sofisher,zhu2025scr2st}. Our evaluation includes
+reimplementations of these objectives and a native run of SOFisher.
 
 \section{Methods}
 \label{sec:methods}
 
-\subsection{Slides and acquisition unit}
-We used 22 human HEST-1k slides~\citep{jaume2024hest}: prostate (6), kidney (4), lung (6), and colon (6), of which
-7 are Visium HD and 15 standard Visium (Appendix~\ref{app:slides}). Selection rules were fixed before any result
-on these slides: human tissue, whole-transcriptome assay, at least 1{,}000 spots under tissue, a source image of
-at most 0.6\,$\mu$m/px so that image inputs are comparable, one slide per specimen, and at most two slides per
-study to limit dependence. The slides come from 18 HEST studies, which we treat as the independent units.
+\subsection{Acquisition simulator}
+A slide is a set of regions, each with an image embedding, spatial coordinates, and measured expression. A
+policy reveals regions one at a time until a budget, a fixed fraction of the slide's regions, is spent; each
+revealed region exposes its measured expression to the policy. The simulator is retrospective, as in pool-based
+active-learning evaluation~\citep{settles2009active}: every region has been measured, so any selection can be
+scored against ground truth. For RQ4, regions are revealed in rounds, and within a round the policy can use only
+measurements available at its start. Stage 1 also tested contiguous blocks of 7 regions around a chosen seed,
+approximating field-of-view acquisition. Budgets range from 0.5\% of regions (9 to 45 regions depending on slide
+size, comparable to ROI-based profiling) to 20\%.
 
-A region is one native spot. Visium spots are 55\,$\mu$m wide on a 100\,$\mu$m pitch; the Visium HD slides, as
-distributed by HEST, have a median spacing of 128\,$\mu$m on our slides. We used the spot because HEST provides
-expression and an image patch at that unit, and because a fixed square grid would pool different numbers of
-spots on slides with different pixel sizes. Slides contain 1{,}766 to 9{,}080 regions. The image input is the
-HEST 224\,px patch at 0.5\,$\mu$m/px centred on each spot, embedded with frozen UNI2-h~\citep{chen2024uni}.
-Expression is log1p-transformed, and genes detected in fewer than 10\% of regions are removed.
+\subsection{Slides and preprocessing}
+We used 22 human HEST-1k slides~\citep{jaume2024hest} from prostate (6), kidney (4), lung (6), and colon (6), of
+which 7 are Visium HD~\citep{oliveira2025visiumhd} and 15 standard Visium~\citep{stahl2016visualization}
+(Appendix~\ref{app:slides}). The tissues are those used to evaluate the one-shot ranker we compare
+against~\citep{spatialfinder2026}. Selection rules were fixed before any result on these slides: human tissue,
+whole-transcriptome assay, at least 1{,}000 spots under tissue, a source image of at most 0.6\,$\mu$m/px so that
+image patches are not substantially upsampled, one slide per specimen, and at most two slides per study. The
+slides come from 18 studies, which serve as the independent units of inference.
+
+A region is one native spot, the unit at which HEST provides both expression and an image patch. Visium spots are
+55\,$\mu$m wide on a 100\,$\mu$m pitch; the HD pseudo-spots distributed by HEST have a median spacing of
+128\,$\mu$m on our slides. Slides contain 1{,}766 to 9{,}080 regions. Each region's image input is the HEST
+224\,px patch at 0.5\,$\mu$m/px, embedded with the frozen pathology foundation model UNI2-h~\citep{chen2024uni}.
+Following the HEST benchmark, expression is log1p-transformed and genes detected in fewer than 10\% of regions are
+removed~\citep{jaume2024hest}.
 
 \subsection{Objectives}
-A policy reveals regions up to a budget, given as a fraction of the slide's regions (0.5\% to 20\%), and each
-revealed region exposes its measured expression. For \emph{reconstruction} (Q1), a fixed imputer predicts the
-unprofiled regions and we score the per-gene Pearson correlation over those regions, averaged over the 50 most
-variable genes (PCC), the HEST-Benchmark target~\citep{jaume2024hest}. For \emph{detection} (Q2, Q3), regions of
-interest (ROIs) are the 20\% of regions with the highest local molecular heterogeneity, the variance of
-top-50-gene expression across a region's 8 nearest spatial neighbours, following the heterogeneity objective of
-S2-omics~\citep{yuan2025s2omics}. We score recall, the fraction of ROIs that were profiled. These ROIs are
-computational; they are not annotated regions of biological interest. Gene sets and ROIs come from ground truth and
-are used only for scoring.
+\emph{Reconstruction} (RQ1, RQ3): a fixed imputer predicts the unprofiled regions, scored by the per-gene Pearson
+correlation over those regions averaged over the 50 most variable genes (PCC), the HEST benchmark
+target~\citep{jaume2024hest}. \emph{Detection} (RQ2--RQ4): regions of interest (ROIs) are the 20\% of regions with
+the highest local molecular heterogeneity, the variance of top-50-gene expression across each region's 8 nearest
+spatial neighbours, after the heterogeneity objective of S2-omics~\citep{yuan2025s2omics}. The ROI fraction equals
+the largest budget, so a perfect policy could capture every ROI. We score recall, the fraction of ROIs profiled.
+Gene sets and ROIs are computed from ground truth and used only for scoring.
 
 \subsection{Imputer}
-The imputer (graphflow) maps image principal components through 512 random Fourier features, fits a ridge
-regression to the profiled regions, and runs 20 steps of message passing on a fixed 8-nearest-neighbour graph in
-image and spatial features, holding profiled regions at their measured values. One fixed imputer serves every
-policy, so differences between policies reflect selection alone. Its predictions depend on the measured values,
-but its uncertainty, one minus the graph influence that reaches a region from profiled nodes, depends only on which
-regions have been profiled. A $k$-nearest-neighbour and a regression-kriging imputer were run on an earlier slide
-set (Appendix~\ref{app:imputers}).
+One imputer serves every policy, so differences between policies reflect selection alone. It maps image principal
+components through random Fourier features~\citep{rahimi2007random}, fits a ridge regression to the profiled
+regions, and propagates the resulting predictions over a fixed 8-nearest-neighbour graph in image and spatial
+features while holding profiled regions at their measured values, as in harmonic label
+propagation~\citep{zhu2003semi}. This is a light analogue of neighbourhood-aware predictors such as
+STFlow~\citep{huang2025stflow}, cheap enough to refit after every measurement. Its predictions depend on the
+measured values. Its uncertainty, one minus the graph influence that reaches a region from profiled nodes, depends
+only on which regions are profiled. A $k$-nearest-neighbour imputer and a regression-kriging
+imputer~\citep{hengl2007regression} were evaluated on an earlier slide set (Appendix~\ref{app:imputers}).
+Hyperparameters of the imputer and policies were fixed before the registered analysis in which each was first
+used and were not tuned on its outcomes; those of the imputer were set during development on one prostate slide
+(Appendix~\ref{app:repro}).
 
 \subsection{Policies}
-\emph{Non-adaptive rules}: random, farthest-point in space (grid), $k$-means on image embeddings with medoids, a
-reimplementation of a one-shot image ranker~\citep{spatialfinder2026}, and variance-greedy and
-mutual-information (MI)-greedy placement with an RBF kernel on image and coordinate
-features~\citep{krause2008near}. \emph{Sequential fixed designs}: error-reduction picks the region whose 15 nearest
-unprofiled neighbours (in the imputer's feature space) have the largest summed uncertainty, and
-maximum-uncertainty picks the most uncertain region. Under graphflow neither depends on measured values (for error-reduction we confirmed
-on a test slide that permuted values yield identical selections), so they are fixed designs computed one region at a
-time. \emph{Value-conditioned policies}: the \emph{residual} policy keeps the error-reduction form
-but replaces the uncertainty with an estimate of the imputer's actual error. It takes the leave-one-out residual
-of the image ridge model at each profiled region, averages it over each unprofiled region's 10 nearest profiled
-neighbours, and multiplies by one minus the graph influence, so it targets reconstruction error through the
-measured values. The \emph{local-variance} policy scores a candidate by the kernel-weighted variance of measured
-expression around it plus 0.5 times its distance to the nearest profiled region; it seeks heterogeneous areas and
-is the detection policy. \emph{Competitor objectives}: a non-adaptive diversity sampler (farthest-point in image
-and space, after the coverage-dominated reward of SCR$^2$-ST~\citep{zhu2025scr2st}) and an adaptive ROI-seeking
-sampler after SOFisher~\citep{li2026sofisher}. These reimplement stated objectives and are not the authors'
-trained models.
+\emph{Non-adaptive designs.} Random; farthest-point selection in space (grid), a greedy $k$-centre
+cover~\citep{gonzalez1985clustering}; $k$-means~\citep{lloyd1982least} on image embeddings, taking the region
+nearest each centroid; a reimplementation of a one-shot image ranker~\citep{spatialfinder2026}; and variance- and
+mutual-information (MI)-greedy placement~\citep{krause2008near} with an RBF kernel on image and coordinate
+features and a median-heuristic lengthscale~\citep{garreau2017large}.
 
-To isolate feedback, each value-conditioned policy was also run with \emph{permuted} feedback, in which it sees
-the expression of a randomly chosen other region whenever it profiles a region, and with \emph{constant} feedback,
-in which every region appears to have the slide's mean expression. The selection rule is unchanged; only the
-information in the values is removed. Under permuted feedback, for example, the residual policy's leave-one-out
-ridge model is fitted to the permuted values it is shown. The imputer and the scores always use the true values.
-Stage 2 used one permutation (seed 2021); stage 3 ran two per configuration (seeds 1 and 2) and averaged them, and
-repeated the stage-2 ablations with further seeds (1--4 for local-variance, 1--2 for the residual policy).
+\emph{Sequential fixed designs.} Error-reduction~\citep{roy2001toward} picks the region whose 15 nearest
+unprofiled neighbours in the imputer's feature space carry the most uncertainty, and maximum-uncertainty picks the
+most uncertain region~\citep{lewis1994sequential}. Because the imputer's uncertainty does not depend on measured
+values, both are fixed designs computed one region at a time; for error-reduction we confirmed that permuted values
+leave its selections unchanged.
 
-\emph{Coverage plus feedback.} A hybrid takes its first $\lceil fn\rceil$ regions, for a budget of $n$ regions and
-$f\in\{0.5,0.8\}$, from a fixed coverage rule, and the rest from a feedback policy that conditions on everything
-measured so far: the residual policy for reconstruction and local-variance for detection. The coverage rules
-select in a fixed order, so the first phase is exactly the prefix of the rule's own full-budget selection, which we
-verified for all four rules at both fractions and two budgets. A hybrid and its coverage rule therefore differ only
-in how the last $1-f$ of the budget is spent.
+\emph{Value-conditioned policies.} The \emph{residual} policy keeps the error-reduction form but replaces the
+uncertainty with an estimate of the imputer's actual error. It computes the leave-one-out residual of the image
+ridge model at each profiled region from the hat matrix~\citep{hastie2009elements}, averages it over each unprofiled
+region's 10 nearest profiled neighbours, and multiplies by one minus the graph influence. The
+\emph{local-variance} policy, our detection policy, scores a candidate by the kernel-weighted variance of measured
+expression around it plus 0.5 times its distance to the nearest profiled region, an exploitation term for
+heterogeneity balanced by an exploration term as in active search~\citep{garnett2012bayesian}.
+
+\emph{Competitor objectives.} A diversity sampler applies farthest-point selection in joint image and spatial
+features, the coverage criterion of core-set active learning~\citep{sener2018active}, standing in for the
+coverage-dominated reward of SCR$^2$-ST~\citep{zhu2025scr2st}. An adaptive ROI-seeking sampler follows the reward
+of SOFisher~\citep{li2026sofisher}. Both reimplement stated objectives, not the authors' trained models.
+
+\emph{Hybrids} (RQ3). A hybrid takes its first $\lceil fn\rceil$ regions, for a budget of $n$ regions and
+$f\in\{0.5,0.8\}$, from a fixed coverage design and the rest from a feedback policy: the residual policy for
+reconstruction and local-variance for detection. This mirrors the space-filling start of adaptive global
+optimisation~\citep{jones1998efficient}. Because the coverage designs select in a fixed order, the first phase is
+exactly the prefix of the design's own selection (verified for all four designs at both fractions), so a hybrid
+and its coverage design differ only in how the last $1-f$ of the budget is spent.
+
+\subsection{Feedback ablations}
+Each value-conditioned policy and hybrid was also run with uninformative feedback while its selection rule was
+left unchanged. Under \emph{permuted} feedback, profiling a region reveals the expression of a randomly chosen
+other region, so the residual policy's leave-one-out model, for example, is fitted to permuted values. Under
+\emph{constant} feedback, every region appears to have the slide's mean expression. The imputer and the scores
+always use the true values. A policy that gains from feedback should outperform its own permuted version, the logic
+of permutation tests for whether a learner exploits real structure~\citep{ojala2010permutation}. Stage 2 used one
+permutation; stage 3 used two per configuration and repeated the stage-2 ablations with up to four further seeds.
 
 \subsection{Comparators}
-The primary comparator is a \emph{feasible} rule chosen without the target slide. For each held-out study, we
-select the non-adaptive rule (grid, $k$-means, variance-greedy, MI-greedy, or one-shot) with the best mean score on
-the other 17 studies at that budget and objective, and apply it to the held-out slides. It selected $k$-means for
-reconstruction at 0.5--1\% and MI-greedy at 2--20\% (with $k$-means for 4 of 18 studies at 2\%), and for detection
-variance-greedy for most studies at 2--10\% and the one-shot ranker at 20\% (Appendix~\ref{app:comparators}). The per-slide best rule,
-which uses each slide's outcome, is kept only as a hindsight benchmark. Stage 3 compared each hybrid with one rule
-fixed for all slides: the rule the feasible procedure chose for most held-out studies at that budget and
-objective. These rules were chosen on stage-2 results from the same slides, which favours the baseline. The
-stage-1 batched experiments (Q3) used the per-slide best of $k$-means, grid, and MI-greedy; stage 3 repeated them
-against the fixed detection rule.
+The primary stage-2 comparator is a \emph{feasible} design chosen without the target slide. For each held-out
+study, the non-adaptive design (grid, $k$-means, variance-greedy, MI-greedy, or one-shot) with the best mean score
+on the other 17 studies at that budget and objective is applied to the held-out slides, a leave-one-study-out
+form of cross-study validation~\citep{bernau2014cross}. The best design for each slide chosen in hindsight is
+reported only as a benchmark, since selecting on the evaluation data inflates the
+comparator~\citep{varma2006bias,cawley2010over}. Stage 3 compared each hybrid with a single design fixed for all
+slides at each budget and objective: the design the feasible procedure chose for most held-out studies. Those
+designs were chosen on stage-2 results from the same slides, which favours the baseline.
 
-\subsection{Statistical analysis}
-Each margin is a per-slide difference between two policies. We report its mean, a 95\% percentile bootstrap CI
-that resamples whole studies (5{,}000 resamples), and an exact two-sided sign-flip test that flips whole studies
-(all $2^{18}$ sign patterns). The CIs are not adjusted for multiplicity; $p_H$ denotes Holm-adjusted
-$p$-values~\citep{holm1979simple}. We also report the minimum detectable effect: the smallest true mean margin
-that the test would detect with 80\% power, estimated by resampling studies around the observed dispersion. For a
-registered family of $m$ margins we compute it at $\alpha=0.05/m$ (MDE$_H$), a conservative bound for the Holm
-decision rule; values at an unadjusted $\alpha=0.05$ are descriptive only.
+\subsection{Statistical analysis and registration}
+Each margin is a per-slide difference between two policies. We report its mean with a 95\% percentile bootstrap
+interval~\citep{efron1993introduction} that resamples whole studies~\citep{field2007bootstrapping,cameron2008bootstrap}
+(5{,}000 resamples), and an exact two-sided sign-flip test over the $2^{18}$ study-level sign
+patterns~\citep{winkler2014permutation}. Intervals are not adjusted for multiplicity; $p_H$ denotes $p$-values
+adjusted by Holm's procedure within a registered family~\citep{holm1979simple}. To make null results
+interpretable~\citep{altman1995absence}, we report the minimum detectable effect~\citep{bloom1995minimum}: the
+smallest true mean margin detected with 80\% power~\citep{cohen1988statistical}, estimated by simulation that
+resamples studies around the observed dispersion~\citep{arnold2011simulation}. For a family of $m$ margins we
+compute it at $\alpha=0.05/m$ (MDE$_H$), a conservative bound for the Holm decision.
 
-The sign-flip test treats the study margins as exchangeable. This holds for a fixed comparator but not exactly
-for the feasible one, which is chosen for each study from the other 17, so the 18 margins share the selection
-step. We therefore checked the stage-2 inference post hoc with a bootstrap that repeats the selection inside every
-resample and with a single fixed comparator (Appendix~\ref{app:sensitivity}). Stage 3 used fixed comparators only.
+The sign-flip test assumes exchangeable study margins. This holds for a fixed comparator but not exactly for the
+feasible one, whose selection for each study uses the other 17. Following the principle that model selection must
+be repeated inside resampling~\citep{varma2006bias}, we checked the stage-2 results post hoc with a bootstrap that
+repeats the selection in every replicate and with a single fixed comparator (Appendix~\ref{app:sensitivity}).
 
-The analyses were registered in the repository in three stages, each before its experiments were run and after the
-previous stage's results were known. Stage 1 compared policies with per-slide best rules in a family of 24 margins
-(Appendix~\ref{app:stage1}); the first batched and contiguous experiments for Q3 come from this stage. Stage 2
-introduced the feasible comparator, the residual policy, and the feedback ablations, with a primary family of 18
-margins: residual minus feasible for reconstruction at six budgets (Q1), and for detection at four budgets,
-local-variance minus its permuted-feedback version, minus the feasible rule, and minus the diversity sampler (Q2).
-Stage 3 added the hybrids. Its primary family of 20 margins was each hybrid minus the same coverage rule run for the
-whole budget, for both fractions, at six budgets for reconstruction and four for detection. Its secondary family of
-24 compared each hybrid with its permuted-feedback version and, for local-variance in rounds of 5 at 10 and 20\%,
-compared the policy with the fixed detection rule and with permuted feedback. In every stage the decision rule was to claim a benefit only for a
-positive margin with $p_H<0.05$ and to report any other outcome as not established. Results are labelled
-confirmatory (registered primary), secondary (registered, Holm within the secondary family), descriptive, or post
-hoc.
+Analyses were registered in the repository in three stages~\citep{nosek2018preregistration}, each before its
+experiments and after the previous stage's results were known.\footnote{The repository plans label RQ4 as Q3 and
+record stage 3 as iteration 11 of \texttt{docs/ITERATION\_LOG.md}.} Stage 1 compared policies with hindsight
+benchmarks in a family of 24 margins, including the first batched experiments (Appendix~\ref{app:stage1}).
+Stage 2 introduced the feasible comparator, the residual policy, and the feedback ablations, with a primary family
+of 18 margins: residual minus feasible at six budgets (RQ1), and at four budgets local-variance minus its permuted
+version, minus the feasible design, and minus the diversity sampler (RQ2). Stage 3 tested the hybrids, with a
+primary family of 20 margins, each hybrid minus the same coverage design run for the whole budget (RQ3), and a
+secondary family of 24 that compared hybrids with their permuted versions and repeated the batched experiments
+with the fixed detection design and permuted controls (RQ4). In every stage a benefit was to be claimed only for a
+positive margin with $p_H<0.05$. Results are labelled confirmatory (registered primary), secondary (registered,
+Holm within the secondary family), descriptive, or post hoc.
 
 \subsection{Positive controls}
-A null result is informative only if the protocol could have registered an effect. We used two controls. In
-synthetic slides of $20\times20$ regions with image-unpredictable, spatially clustered structure (8 slides per
-setting, 10\% budget, $k$-NN imputer), we varied the correlation length of the hidden structure and the amplitude
-$\alpha$ with which ROIs appear in measured expression (descriptive). On the 22 real slides we added 20 genes
-carrying three hotspots (radius 5\% of the slide diagonal) that the image cannot predict, scaled so that each
-gene's standard deviation is $\alpha$ times the median of the slide's top-50 genes, with $\alpha\in\{0,1,2\}$.
-Before running it, we set the criterion that the control succeeds if the residual policy beats the feasible rule
-with a CI excluding zero at $\alpha=2$.
+A null result is informative only if the protocol could have registered an effect. In synthetic slides of
+$20\times20$ regions with spatially clustered structure that the image cannot predict (8 slides per setting, 10\%
+budget, $k$-NN imputer), we varied the correlation length of the hidden structure and the amplitude $\alpha$ with
+which ROIs appear in measured expression. On the 22 real slides we injected 20 genes carrying three spatial
+hotspots of radius 5\% of the slide diagonal, in the manner of simulated spatially variable
+genes~\citep{svensson2018spatialde}, with standard deviation $\alpha\in\{0,1,2\}$ times the median of the slide's
+top-50 genes. Because the image cannot predict the hotspots, only measured values reveal them. Before running this
+control we set its success criterion: the residual policy beats the feasible design with an interval excluding
+zero at $\alpha=2$.
 
 \section{Results}
 
 \subsection{Positive controls}
-The synthetic controls showed that the simulator can register an effect of feedback on detection. The
-local-variance policy's recall margin over coverage rose with ROI amplitude, from $-0.045$ at $\alpha=0$ to
-$+0.052$ (95\% CI $+0.033$ to $+0.071$) at $\alpha=4$ and $+0.101$ ($+0.065$ to $+0.135$) at $\alpha=8$, positive
-on all 8 slides at both amplitudes (Figure~\ref{fig:controls}b). Reconstruction behaved differently. A
-non-deployable ordering by true local difficulty stayed below coverage at every correlation length, by $0.105$ and
-$0.066$ PCC at the two shortest lengths and $0.013$ to $0.020$ at the longer ones (Figure~\ref{fig:controls}a).
+The simulator registered an effect of feedback on detection. In synthetic slides, the local-variance policy's recall
+margin over coverage rose with ROI amplitude, from $-0.045$ at $\alpha=0$ to $+0.052$ (95\% CI $+0.033$ to $+0.071$)
+at $\alpha=4$ and $+0.101$ ($+0.065$ to $+0.135$) at $\alpha=8$, positive on all 8 slides at both amplitudes
+(Figure~\ref{fig:controls}b). Reconstruction behaved differently: even an ordering by true local difficulty, which no
+policy could deploy, stayed below coverage at every correlation length, by $0.105$ and $0.066$ PCC at the two
+shortest and $0.013$ to $0.020$ at the longer ones (Figure~\ref{fig:controls}a).
 
-The semi-synthetic control on real slides did not meet its criterion. At $\alpha=1$ and $2$ all 20 injected genes
-entered the evaluation set on every slide, yet the residual policy remained below the feasible rule:
-$-0.021$ ($-0.030$ to $-0.012$) at 5\% and $-0.011$ ($-0.019$ to $-0.004$) at 10\% for $\alpha=2$, close to its
-deficits without injection ($-0.015$ and $-0.007$; Figure~\ref{fig:main}c, Appendix~\ref{app:spike}). Feedback still
-helped relative to permuted values, by $+0.001$ to $+0.013$. The protocol can therefore register a large detection
-effect, but we could not show that it would register a reconstruction gain, and the Q1 results below should be read
-as statements about the tested policies.
+The semi-synthetic control failed its criterion. At $\alpha=1$ and $2$, all 20 injected genes entered the evaluation
+set on every slide, yet at $\alpha=2$ the residual policy remained below the feasible design, by $0.021$ ($0.012$ to
+$0.030$) PCC at 5\% and $0.011$ ($0.004$ to $0.019$) at 10\%, close to its deficits without injection ($0.015$ and
+$0.007$; Figure~\ref{fig:main}c, Appendix~\ref{app:spike}). Feedback still helped relative to permuted values, by
+$+0.001$ to $+0.013$. The protocol can thus register a large detection effect, but not demonstrably a
+reconstruction gain, and the RQ1 results below concern the tested policies.
 
 \begin{figure}[t]
 \centering
 \includegraphics[width=0.85\textwidth]{fig_controls.pdf}
 \caption{Synthetic controls (8 slides per point, 10\% budget, mean and 95\% bootstrap CI over slides).
-(a) Reconstruction margin over the best coverage rule versus the correlation length of the hidden structure, for
+(a) Reconstruction margin over the best coverage design versus the correlation length of the hidden structure, for
 an ordering by true local difficulty and for error-reduction. (b) Detection-recall margin versus ROI amplitude.}
 \label{fig:controls}
 \end{figure}
 
-\subsection{Q1: Reconstruction}
-No value-conditioned policy outperformed the feasible rule (Tables~\ref{tab:q1abs} and~\ref{tab:q1},
-Figure~\ref{fig:main}a). The residual policy was below it at every budget, by $0.092$ PCC at 0.5\%, $0.057$ at 1\%,
-$0.025$ at 2\%, $0.016$ at 5\%, $0.007$ at 10\%, and $0.002$ at 20\%. The deficit was significant at 0.5, 1, 5, and
-10\% ($p_H\le0.010$). Under the registered rule, Q1 has no benefit to report. The local-variance policy, which seeks
-heterogeneous areas, was further below, by $0.119$ to $0.163$ PCC (secondary, $p_H\le0.001$). Treating the
-comparator's selection as part of the inference does not change this: a bootstrap that repeats the
-leave-one-study-out choice inside each resample gave intervals below zero at every budget (post hoc;
+\subsection{RQ1: Reconstruction}
+No value-conditioned policy outperformed the feasible design (Tables~\ref{tab:q1abs} and~\ref{tab:q1},
+Figure~\ref{fig:main}a). The residual policy fell below it at every budget, by $0.092$ PCC at 0.5\%, $0.057$ at 1\%,
+$0.025$ at 2\%, $0.016$ at 5\%, $0.007$ at 10\%, and $0.002$ at 20\%, significantly so at 0.5, 1, 5, and 10\%
+($p_H\le0.010$). The local-variance policy was further below, by $0.119$ to $0.163$ (secondary, $p_H\le0.001$).
+Bootstrap intervals that repeat the comparator's selection in each replicate excluded zero at every budget (post hoc;
 Appendix~\ref{app:sensitivity}).
 
-The feedback ablation shows that measured values did carry information for reconstruction. Given informative
-rather than permuted values, the residual policy improved by $+0.031$, $+0.039$, and $+0.030$ PCC at 0.5--2\%
-(secondary; $p_H$ 0.056, 0.002, and 0.014), with no difference at 10--20\%. Feedback thus moved the residual policy
-toward the feasible rule without closing the gap. The policy's error-reduction structure is the likely reason. The
-sequential fixed design with the same structure but value-independent uncertainty trailed the feasible rule by
-similar amounts at low budgets ($-0.107$, $-0.067$, and $-0.024$ at 0.5--2\%; post hoc), and both converged to it as
-the budget grew. At 20\% the maximum-uncertainty design was $+0.003$ PCC above the feasible rule (95\% CI $+0.002$ to
-$+0.004$, $p=0.0007$, post hoc), a small advantage of a fixed design that involves no feedback.
-
-The hindsight benchmark changed the size of these deficits but not their direction. The per-slide best rule exceeded
-the feasible rule by $0.016$ to $0.021$ PCC at budgets of 2\% or less and by at most $0.002$ above that
-(Appendix~\ref{app:comparators}). Section~\ref{sec:hybrid} asks whether the same feedback helps when it does not
-replace coverage.
+The measured values nonetheless carried information. With informative rather than permuted feedback, the residual
+policy gained $0.031$, $0.039$, and $0.030$ PCC at 0.5--2\% (secondary, Appendix~\ref{app:secondary}; $p_H$ 0.056, 0.002, 0.014), with no
+difference at 10--20\%. Feedback moved the policy toward the feasible design without closing the gap. The
+error-reduction design, which shares the residual policy's structure but uses value-independent uncertainty, trailed
+the feasible design by similar amounts ($0.107$, $0.067$, and $0.024$ at 0.5--2\%; post hoc), and both converged on
+it as the budget grew. The only design to exceed the feasible design was maximum-uncertainty, by $0.003$ PCC at 20\%
+(95\% CI $0.002$ to $0.004$, $p=0.0007$, post hoc), a fixed design that uses no feedback. The hindsight benchmark
+exceeded the feasible design by $0.016$ to $0.021$ PCC at budgets up to 2\% and by at most $0.002$ above
+(Appendix~\ref{app:comparators}).
 
 \begin{table}[t]
 \centering
 \caption{Reconstruction accuracy (PCC over the top-50 genes on unprofiled regions), mean over 22 slides. ``Feasible''
-is the non-adaptive rule chosen on the other studies; ``per-slide best'' uses each slide's outcome. ``Residual,
+is the non-adaptive design chosen on the other studies; ``per-slide best'' is chosen in hindsight. ``Residual,
 perm.'' is the residual policy given permuted feedback.}
 \label{tab:q1abs}
 \resizebox{\textwidth}{!}{\input{generated/r2_q1_abs.tex}}
@@ -291,9 +317,9 @@ perm.'' is the residual policy given permuted feedback.}
 
 \begin{table}[t]
 \centering
-\caption{Reconstruction margins (PCC), 22 slides, 18 study clusters. $\Delta$ is the mean per-slide difference with
-an unadjusted 95\% CI that resamples studies. $p_H$: Holm-adjusted within the stage-2 primary or secondary family;
-$p$: unadjusted (post hoc).}
+\caption{Reconstruction margins (PCC), 22 slides, 18 studies. $\Delta$: mean per-slide difference with an
+unadjusted 95\% CI resampling studies. $p_H$: Holm-adjusted within the stage-2 primary or secondary family; $p$:
+unadjusted (post hoc).}
 \label{tab:q1}
 \resizebox{\textwidth}{!}{\input{generated/r2_q1_margins.tex}}
 \end{table}
@@ -301,53 +327,48 @@ $p$: unadjusted (post hoc).}
 \begin{figure}[t]
 \centering
 \includegraphics[width=\textwidth]{fig_r2.pdf}
-\caption{Margins over 22 slides, mean and unadjusted 95\% CI resampling studies. (a) Reconstruction margin over the
-feasible rule. (b) Detection-recall margin of the local-variance policy over its permuted-feedback version, the
-feasible rule, and the diversity sampler. (c) Spiked positive control: residual policy minus feasible rule by spike
-amplitude.}
+\caption{Stage-2 margins over 22 slides, mean and unadjusted 95\% CI resampling studies. (a) Reconstruction margin
+over the feasible design. (b) Detection-recall margin of the local-variance policy over its permuted-feedback
+version, the feasible design, and the diversity sampler. (c) Spiked control: residual policy minus feasible design
+by spike amplitude.}
 \label{fig:main}
 \end{figure}
 
-\subsection{Q2: Detection}
-Informative feedback raised the local-variance policy's recall over permuted feedback by $+0.005$, $+0.017$,
-$+0.029$, and $+0.063$ at 2, 5, 10, and 20\% (Table~\ref{tab:q2}, Figure~\ref{fig:main}b). The unadjusted CIs exclude
-zero at 5--20\%, but none survived adjustment ($p_H\ge0.29$). Each estimate also lies below the family-wise MDE
-at its budget (0.015, 0.035, 0.066, and 0.112), so the experiment could miss effects of this size. The margin over
-the feasible rule was smaller ($+0.006$ to $+0.026$, $p_H\ge0.25$), and the margin over the diversity sampler was
-close to zero ($+0.001$ to $+0.012$, $p_H=1.000$).
+\subsection{RQ2: Detection}
+Informative feedback raised the local-variance policy's recall over permuted feedback by $0.005$, $0.017$, $0.029$,
+and $0.063$ at 2, 5, 10, and 20\% (Table~\ref{tab:q2}, Figure~\ref{fig:main}b). The unadjusted intervals excluded
+zero at 5--20\%, but no margin survived adjustment ($p_H\ge0.29$), and each estimate lay below its family-wise MDE
+(0.015, 0.035, 0.066, 0.112). The margin over the feasible design was smaller ($0.006$ to $0.026$, $p_H\ge0.25$),
+and the margin over the diversity sampler was close to zero ($0.001$ to $0.012$, $p_H=1.000$).
 
-How large the detection advantage looks depends on the comparator. Against MI-greedy fixed for every slide, for
-which the sign-flip test is valid as specified, the local-variance policy gained $+0.043$ and $+0.078$ recall at 10
-and 20\% ($p_H=0.043$ for both, Holm over the 18 analogous margins; post hoc). MI-greedy, however, is a design for
-reconstruction and the weakest detection rule in the pool at 5--20\% (0.200 recall at 20\%, against 0.247 for
-variance-greedy and 0.252 for the one-shot ranker), and the bootstrap that repeats the feasible selection gave
-intervals that include zero at every budget (Appendix~\ref{app:sensitivity}). Feedback-driven detection thus beat
-a coverage design aimed at the other objective, but not the non-adaptive rule chosen for detection.
+The absolute recalls locate the feedback effect (Table~\ref{tab:q2abs}). At 20\%, the policy recovered 0.278 of the
+ROIs with informative feedback but only 0.215 with permuted and 0.204 with constant values, below the feasible
+design (0.252); the diversity sampler reached 0.266 without feedback. Part of the feedback effect therefore
+recovers ground that the selection rule loses on its own. The margin over constant feedback at 20\% was the only
+significant detection effect of feedback ($+0.074$, $p_H=0.038$, secondary).
 
-The absolute recalls show why the feedback margin exceeds the margin over the feasible rule
-(Table~\ref{tab:q2abs}). Without informative feedback the local-variance policy fell below the feasible rule
-(0.215 with permuted and 0.204 with constant values, against 0.252 at 20\%), and informative feedback lifted it to
-0.278. Part of the feedback effect therefore recovers ground the selection rule loses, rather than adding to what a
-good non-adaptive design achieves. The diversity sampler reached 0.266 without any feedback. Against the
-exploration-only variant, feedback was significant at 20\% ($+0.074$, $p_H=0.038$, secondary). The ROI-seeking
-sampler did not improve recall over coverage in stage 1 (Appendix~\ref{app:stage1}). Because that port was not
-the trained SOFisher, we also ran SOFisher natively on its own mouse cortex data. Its evaluation reward for captured
-target regions rose from a median of $-238$ early in training to $+147$ late (descriptive;
-Appendix~\ref{app:sofisher}). The port's result on our slides is therefore not a test of SOFisher. SCR$^2$-ST could
-not be run natively because its processed training data are not public.
+The apparent advantage also depends on the comparator. Against MI-greedy fixed for every slide, the local-variance
+policy gained $0.043$ and $0.078$ recall at 10 and 20\% ($p_H=0.043$ for both; post hoc). MI-greedy, however, is a
+reconstruction design and the weakest detection design in the pool at 5--20\% (0.200 recall at 20\%, against 0.247
+for variance-greedy and 0.252 for the one-shot ranker), and selection-aware intervals against the feasible design
+included zero at every budget (Appendix~\ref{app:sensitivity}). The ROI-seeking port did not improve on coverage in
+stage 1 (Appendix~\ref{app:stage1}). Because the port is not the trained SOFisher, we also ran SOFisher natively on
+its mouse cortex data, where its reward for captured target regions rose from a median of $-238$ early in training
+to $+147$ late (descriptive; Appendix~\ref{app:sofisher}); the port's result is therefore not a test of SOFisher.
+SCR$^2$-ST could not be run natively because its processed training data are not public.
 
 \begin{table}[t]
 \centering
 \caption{Detection margins (ROI recall) of the local-variance policy, 22 slides. $\Delta$ with unadjusted 95\% CI
-resampling studies; $p_H$ Holm-adjusted over the 18 stage-2 primary margins; MDE$_H$ is the minimum detectable
-effect at 80\% power and $\alpha=0.05/18$.}
+resampling studies; $p_H$ Holm-adjusted over the 18 stage-2 primary margins; MDE$_H$ at 80\% power and
+$\alpha=0.05/18$.}
 \label{tab:q2}
 \resizebox{\textwidth}{!}{\input{generated/r2_q2_margins.tex}}
 \end{table}
 
 \begin{table}[t]
 \centering
-\caption{ROI-detection recall, mean over 22 slides. ``Observed'', ``permuted'', and ``constant'' are the
+\caption{ROI-detection recall, mean over 22 slides. ``Observed'', ``permuted'', and ``constant'' denote the
 local-variance policy with informative, permuted, and constant feedback. The oracle profiles regions in order of
 true heterogeneity and bounds recall from above.}
 \label{tab:q2abs}
@@ -355,35 +376,31 @@ true heterogeneity and bounds recall from above.}
 \input{generated/r2_q2_abs.tex}
 \end{table}
 
-\subsection{Feedback on top of a coverage design}
-\label{sec:hybrid}
-The residual and local-variance policies replace coverage with feedback from the first region. The hybrids test
-the more favourable arrangement, in which a strong fixed design spends most of the budget and feedback chooses only
-the remainder (Table~\ref{tab:s3}, Figure~\ref{fig:s3}). For reconstruction, the hybrids recovered most of the
-residual policy's deficit, yet none improved on the coverage rule. With coverage for half the budget the hybrid
-was still below $k$-means at 0.5\%, by $0.036$ PCC ($p_H=0.006$), and from 2\% upward every hybrid was within
-$0.007$ PCC of MI-greedy with no margin significant. For detection, every hybrid margin lay between $-0.003$ and
-$+0.006$ recall ($p_H\ge0.76$). These nulls are tight at most budgets. At 2--10\% the family-wise MDEs were 0.004 to
-0.017 PCC and 0.004 to 0.026 recall, so a hybrid gain larger than about 0.02 PCC or 0.03 recall would probably have
-been detected there. At 20\% the detection bound widens to 0.035--0.068.
+\subsection{RQ3: Feedback on top of a coverage design}
+No hybrid outperformed its coverage design (Table~\ref{tab:s3}, Figure~\ref{fig:s3}). For reconstruction, the
+hybrids recovered most of the residual policy's deficit, but the half-coverage hybrid remained below $k$-means at
+0.5\%, by $0.036$ PCC ($p_H=0.006$), and from 2\% upward every hybrid was within $0.007$ PCC of MI-greedy with no
+significant margin. For detection, every hybrid margin lay between $-0.003$ and $+0.006$ recall ($p_H\ge0.76$).
+These nulls are tight: at 2--10\% the family-wise MDEs were 0.004 to 0.017 PCC and 0.004 to 0.026 recall, so gains
+above about 0.02 PCC or 0.03 recall would probably have been detected. At 20\% the detection bound widens to
+0.035--0.068.
 
-The feedback was not empty. Shown permuted rather than real values, the hybrids did worse at 2\%, by $0.016$ and
-$0.007$ PCC for the two reconstruction hybrids and $0.007$ recall for the half-coverage detection hybrid
-(secondary, $p_H\le0.027$). For that detection hybrid the difference grew to $0.014$--$0.035$ at 5--20\% without
-surviving correction, while for reconstruction at 10--20\% the permuted versions were marginally ahead, by at most
-$0.003$ PCC ($p_H\ge0.12$; Appendix~\ref{app:stage3}). The absolute values show where the information went
-(Table~\ref{tab:s3abs}). With permuted values, the feedback phase lost ground relative to continuing the coverage
-rule, for example from 0.127 to 0.110 recall at 10\%, and real values brought the hybrid back to about the level of
-the rule (0.133). Feedback thus mostly repaired the cost of leaving the coverage design rather than adding to it.
-In detection, the local-variance policy run alone (0.137 recall at 10\%, 0.278 at 20\%) was ahead of both hybrids
-at every budget (descriptive), so giving part of the budget to the detection rule did not help it.
+Feedback within the hybrids was informative. With permuted values the hybrids did worse at 2\%, by $0.016$ and
+$0.007$ PCC for the two reconstruction hybrids and $0.007$ recall for the half-coverage detection hybrid (secondary,
+$p_H\le0.027$). For that detection hybrid the difference grew to $0.014$--$0.035$ at 5--20\% without surviving
+correction; for reconstruction at 10--20\% the permuted versions were marginally ahead, by at most $0.003$ PCC
+($p_H\ge0.12$; Appendix~\ref{app:stage3}). The absolute scores show what the information bought
+(Table~\ref{tab:s3abs}). With permuted values the feedback phase lost ground relative to continuing the coverage
+design, for example from 0.127 to 0.110 recall at 10\%, and real values restored the hybrid to about the level of
+the design (0.133). In detection, the local-variance policy run alone (0.137 at 10\%, 0.278 at 20\%) scored above
+both hybrids at every budget (descriptive).
 
 \begin{table}[t]
 \centering
-\caption{Stage-3 primary margins: hybrid minus the same fixed coverage rule run for the whole budget, 22 slides. The
-hybrid takes the first 50\% or 80\% of regions from the rule and the rest from the feedback policy. $\Delta$ with
-unadjusted 95\% CI resampling studies; $p_H$ Holm-adjusted over the 20 primary margins; MDE$_H$ at 80\% power and
-$\alpha=0.05/20$.}
+\caption{Stage-3 primary margins: hybrid minus the same fixed coverage design run for the whole budget, 22 slides.
+The hybrid takes the first 50\% or 80\% of regions from the design and the rest from the feedback policy. $\Delta$
+with unadjusted 95\% CI resampling studies; $p_H$ Holm-adjusted over the 20 primary margins; MDE$_H$ at 80\% power
+and $\alpha=0.05/20$.}
 \label{tab:s3}
 \resizebox{\textwidth}{!}{\input{generated/s3_primary.tex}}
 \end{table}
@@ -391,28 +408,23 @@ $\alpha=0.05/20$.}
 \begin{figure}[t]
 \centering
 \includegraphics[width=0.88\textwidth]{fig_s3.pdf}
-\caption{Hybrid minus the same fixed coverage rule, 22 slides, mean and unadjusted 95\% CI resampling studies.
+\caption{Hybrid minus the same fixed coverage design, 22 slides, mean and unadjusted 95\% CI resampling studies.
 ``Observed'' hybrids receive real feedback (primary); the permuted series is the half-coverage hybrid given
-permuted feedback, averaged over two seeds (descriptive). Fixed rules as in Table~\ref{tab:s3}.}
+permuted feedback, averaged over two seeds (descriptive). Fixed designs as in Table~\ref{tab:s3}.}
 \label{fig:s3}
 \end{figure}
 
-\subsection{Q3: Batched and contiguous acquisition (exploratory)}
-Real platforms rarely let a policy see each measurement before choosing the next region. We treat Q3 as an
-exploratory stress test, because Q2 established no advantage for batching to erode. In stage 1, regions were
-revealed at 10\% budget in rounds of 1, 5, or 25, or in one round, with the policy using only measurements
-available at the start of each round, and separately in contiguous blocks of 7 regions around a chosen seed.
-Against the per-slide best coverage rule, the local-variance policy's margins were $+0.021$, $+0.034$, and
-$+0.011$ for rounds of 1, 5, and 25 and $+0.024$ for blocks, none with $p_H<0.05$ (Appendix~\ref{app:stage1}).
-With a single round the policy has no measurements and falls back to its starting rule, the regions nearest the
-slide centroid, so the resulting margin of $-0.051$ ($p_H=0.008$) reflects that rule more than the value of
-adaptivity. Reconstruction margins were negative in every setting.
+\subsection{RQ4: Batched and contiguous acquisition (exploratory)}
+In stage 1, at 10\% budget, the local-variance policy's detection margins over the hindsight benchmark were
+$+0.021$, $+0.034$, and $+0.011$ for rounds of 1, 5, and 25 regions and $+0.024$ for contiguous blocks, none with
+$p_H<0.05$ (Appendix~\ref{app:stage1}). With a single round the policy has no measurements and falls back to its
+starting rule, the regions nearest the slide centroid; the resulting margin of $-0.051$ ($p_H=0.008$) reflects that
+rule rather than adaptivity. Reconstruction margins were negative in every setting.
 
-Stage 3 repeated rounds of 5 at 10 and 20\% against the fixed detection rule and with permuted feedback
-(Table~\ref{tab:batched}). Batching did not hurt the policy: in rounds of 5 it captured 0.150 and 0.288 of the
-ROIs, slightly more than when choosing one region at a time (0.137 and 0.278). Its margins over the fixed rule
-($+0.023$ and $+0.035$) and over permuted feedback ($+0.050$ and $+0.084$) did not survive correction
-($p_H\ge0.11$). Batched acquisition thus left the detection signal of Q2 intact but did not establish it.
+In stage 3, rounds of 5 regions did not reduce recall: the policy captured 0.150 and 0.288 of ROIs at 10 and 20\%,
+slightly more than when choosing one region at a time (0.137 and 0.278; Table~\ref{tab:batched}). Its margins over
+the fixed detection design ($+0.023$, $+0.035$) and over permuted feedback ($+0.050$, $+0.084$) did not survive
+correction ($p_H\ge0.11$).
 
 \begin{table}[t]
 \centering
@@ -424,80 +436,70 @@ over the 24 stage-3 secondary margins; permuted values averaged over two seeds.}
 \end{table}
 
 \subsection{Robustness}
-The registered stage-2 feedback ablations rest on one permutation. Repeating them with further seeds
-(descriptive; Appendix~\ref{app:stage3}) left the conclusions unchanged. Across seeds the mean margin had a standard
-deviation of at most 0.007 PCC and 0.013 recall, and the seed-averaged detection margins ($+0.005$, $+0.017$,
-$+0.033$, and $+0.074$ at 2--20\%) were close to the registered ones and below their family-wise MDEs. For
-reconstruction, the registered seed gave the largest of the three margins at 0.5\% ($+0.031$, against $+0.024$ and
-$+0.016$) and was within the range of the others at higher budgets.
+\emph{Permutation seeds.} Repeating the stage-2 ablations with further seeds (descriptive; Appendix~\ref{app:stage3})
+did not change any conclusion. Across seeds the mean margin varied with a standard deviation of at most 0.007 PCC
+and 0.013 recall. The seed-averaged detection margins ($+0.005$, $+0.017$, $+0.033$, $+0.074$ at 2--20\%) stayed
+below their family-wise MDEs, and for reconstruction the registered seed gave the largest of three margins at 0.5\%
+($+0.031$, against $+0.024$ and $+0.016$).
 
-Selecting the evaluation genes from the full slide uses information that a prospective experiment would lack.
-Selecting them from a random 15\% reference subset changed the stage-1 reconstruction margins by at most 0.003, and
-scoring all filtered genes left them negative ($-0.033$ to $-0.079$; Appendix~\ref{app:hvg}). In an exploratory
-split, the stage-1 detection margins were larger on the Visium HD slides than on Visium ($+0.048$ against $+0.008$
-at 10\%), but with 5 HD studies the smallest attainable $p$ is 0.0625, and platform cannot be separated from study
-(Appendix~\ref{app:split}).
+\emph{Evaluation genes.} Choosing the top-50 genes from the whole slide uses information a prospective study would
+lack. Choosing them from a random 15\% reference subset changed the stage-1 reconstruction margins by at most
+0.003, and scoring all filtered genes left them negative ($-0.033$ to $-0.079$; Appendix~\ref{app:hvg}).
+
+\emph{Platform.} In an exploratory split, stage-1 detection margins were larger on Visium HD than on Visium
+($+0.048$ against $+0.008$ at 10\%), but with five HD studies the smallest attainable $p$ is 0.0625, and platform is
+confounded with study (Appendix~\ref{app:split}).
 
 \section{Discussion}
 
-The results support a narrower conclusion than a general verdict on adaptive acquisition. For reconstruction, the
-tested value-conditioned policies, including one designed to target the imputer's prediction error, did not improve
-on a non-adaptive rule chosen on other studies at any budget from 0.5\% to 20\%, whether the comparator was
-selected across studies or fixed. The ablations and hybrids separate two parts of this outcome. Measured values
-carried usable information: real feedback beat permuted feedback by up to 0.039 PCC when it drove the whole
-selection and by up to 0.026 when it chose only the remainder. That information, however, mainly compensated for
-leaving a coverage design. A policy that replaced coverage with feedback stayed behind $k$-means and MI-greedy at
-low budgets, and one that kept coverage for most of the budget only matched it. This is what the sensor-placement
-view predicts, since for reconstruction where measurements are placed should matter more than what they return,
-but our evaluation does not test that view directly, and the failed semi-synthetic control prevents us from
-claiming that useful value-conditioned reconstruction is impossible.
+\paragraph{Reconstruction.} The measured values were informative, yet using them did not help. Real feedback beat
+permuted feedback by up to 0.039 PCC when it drove the whole selection and by up to 0.026 when it chose only the
+remainder, but in both cases the gain mainly offset the cost of departing from a coverage design. This pattern is
+what sensor-placement theory leads one to expect when uncertainty depends on locations alone~\citep{krause2008near}.
+Our imputer's uncertainty has this property while its predictions do not, so any benefit of feedback had to come
+through the predictions. The evaluation does not test the theory, and the failed semi-synthetic control means
+we cannot exclude value-conditioned policies that would help; it shows that the obvious ones do not.
 
-For detection, the answer depends on the baseline. Feedback raised recall over permuted feedback, and the
-local-variance policy beat MI-greedy at 10--20\% (post hoc), but MI-greedy is a design for the other objective. Against the
-non-adaptive rule chosen for detection, or against the diversity sampler, the margins were small and uncertain, and
-hybrids that spent part of the budget on the detection rule stayed within 0.006 recall of it. Settling whether
-feedback adds to the best non-adaptive detection design would need more independent studies than the 18 used here,
-especially at 20\%, where the detectable effects are largest.
+\paragraph{Detection.} Here the answer depends on the baseline. Feedback-driven selection outperformed a design
+built for reconstruction (MI-greedy, post hoc) and, at the largest budget, its own constant-feedback version. Such
+gains are what active-search reasoning predicts~\citep{garnett2012bayesian}, and the synthetic control confirmed
+that the simulator can show them. Against a design chosen for detection or a diversity sampler, the margins were
+small and uncertain, and giving the detection design a coverage phase within the policy did not help. The diversity sampler's near-parity suggests that, on these
+slides, heterogeneous regions are spread widely enough that broad coverage finds many of them. Resolving a
+difference of the size observed would need more independent studies than the 18 used here, especially at 20\%.
 
-For practice at the scale tested, a non-adaptive rule chosen on other slides was a sufficient baseline. For
-reconstruction, no value-conditioned policy or hybrid exceeded $k$-means at very low budgets or MI-greedy above them
-after correction; the largest hybrid margin was $+0.007$ PCC at 2\% ($p_H=0.36$), and only a fixed design,
-maximum-uncertainty, exceeded MI-greedy, by 0.003 PCC at 20\% (post hoc). For computationally defined ROIs, a
-detection-oriented rule or a diversity design was about as good as feedback, without waiting for measurements
-between rounds. Adaptive acquisition methods should be compared with such baselines on the objective they are
-meant to serve, and with a version of themselves that receives uninformative values.
+\paragraph{Implications.} For developers of adaptive acquisition, two comparisons should be standard: a fixed
+design chosen on other data for the same objective, and the method itself fed uninformative values. Neither
+comparison requires new data, and together they separate the value of feedback from the value of a good selection
+rule. Inference should treat studies, not slides, as the unit. For experimentalists working at budgets of 0.5--20\%
+of regions, a fixed design was sufficient: $k$-means at the smallest budgets and MI-greedy above them for
+reconstruction, and variance-greedy, a one-shot ranker, or a diversity design for heterogeneity. Fixed designs also
+avoid the measurement turnaround that sequential selection requires.
 
-\paragraph{Limitations.}
-The simulator is retrospective: a revealed region returns its measured expression without added noise, batch
-effects, or turnaround time, conditions that if anything favour feedback. The ROIs are the 20\% of regions with the
-highest local-variance score, not annotated structures. High local variance can mark tissue boundaries, mixtures of
-cell types, or technical noise as well as regions a biologist would target, such as tumour margins or immune
-niches, so the detection results concern computational heterogeneity and do not show whether feedback helps find a
-particular biological target. The acquisition unit is a spot or HD pseudo-spot, smaller than ROIs on platforms
-such as GeoMx, and the HD and Visium units differ in spacing. The batch and block simulations approximate but do
-not validate any particular platform. The 22-slide results use one imputer, and the $k$-NN and kriging comparisons
-rest on 5 slides. The competitor samplers were reimplementations of objectives; SOFisher was run natively only on
-its own data and SCR$^2$-ST not at all. The registered tests of the stage-2 feedback ablations use one permutation,
-with further seeds only descriptive, and the stage-3 fixed rules were chosen on stage-2 results from the same
-slides, which favours the baselines. The feasible comparator,
-the residual policy, the feedback ablations, and the hybrids were added after earlier results were known, although
-each was registered before its experiments. Budgets above 20\% were not tested.
+\paragraph{Limitations.} The simulator is retrospective: a revealed region returns its measured expression without
+added noise, batch effects, or delay, conditions that if anything favour feedback. The ROIs are the 20\% of regions
+with the highest local-variance score, not annotated structures. High local variance can mark tissue boundaries,
+mixtures of cell types, or technical noise as well as targets such as tumour margins or immune niches, so the
+detection results concern computational heterogeneity and do not show whether feedback helps find a particular
+biological target. The acquisition unit is a spot or HD pseudo-spot, smaller than GeoMx ROIs, and the two units
+differ in spacing. The batch and block simulations approximate but do not validate any platform. The 22-slide
+results use one imputer; the $k$-NN and kriging comparisons rest on five slides. The competitor samplers
+reimplement objectives; SOFisher was run natively only on its own data and SCR$^2$-ST not at all. The registered
+stage-2 ablation tests use one permutation, with further seeds descriptive. The feasible comparator, the residual
+policy, the ablations, and the hybrids were added after earlier results were known, although each was registered
+before its experiments. Budgets above 20\% were not tested.
 
 \section{Conclusion}
 
-Q1: across 22 human slides from 18 studies, the tested value-conditioned policies did not improve whole-section
-reconstruction over a feasible non-adaptive rule at any budget from 0.5\% to 20\%, and feedback layered on a
-coverage design did not improve on that design. Feedback was informative relative to permuted values but mostly
-offset the cost of departing from coverage, and a semi-synthetic control did not establish that the protocol could
-detect a reconstruction gain. Q2: whether feedback improves the detection of computationally defined heterogeneous
-regions remains unresolved. It helped against a reconstruction-oriented design (post hoc), but no margin over the
-non-adaptive rule chosen for detection or over a diversity sampler survived correction. Q3: in exploratory
-batched and contiguous settings no detection advantage was established, and revealing regions in rounds of 5 did
-not reduce recall. Within this retrospective, spot-level setting, the tested feedback policies offered no
-supported advantage over well-chosen non-adaptive placement.
+Across 22 human slides from 18 studies, conditioning region selection on measured expression did not improve
+whole-section reconstruction over a well-chosen fixed design, whether feedback drove the whole selection or only
+its remainder. For capturing heterogeneous regions, feedback helped relative to a design built for the other
+objective, but not detectably relative to a design built for detection. The value
+of feedback in region selection is therefore an empirical question for each objective, and it should be answered
+against feasible, objective-matched baselines and with uninformative-feedback controls.
 
 \paragraph{Reproducibility.}
-Code, configuration, result files, both registered analysis plans, and the scripts that regenerate every table and
+Code, configuration, result files, the registered analysis plans, and the scripts that regenerate every table and
 figure are available at \url{https://github.com/ayushdeo/STARE}.
 
 \appendix
@@ -525,17 +527,60 @@ detection, four budgets) differ between the two analyses by a median of 0.015 (m
 two by less than 0.005 and one detection margin from $-0.050$ to $+0.015$. With seven slides the smallest attainable
 exact $p$-value is 0.016, so no earlier margin could have survived correction for 24 comparisons.
 
-\section{Stage-1 confirmatory results}
-\label{app:stage1}
+\section{Configuration and implementation checks}
+\label{app:repro}
 
-Stage 1 compared policies with the per-slide best rule (hindsight). Table~\ref{tab:stage1} gives its 24-margin primary
-family except the batched and contiguous settings, which are in Table~\ref{tab:realism}; Table~\ref{tab:stage1abs}
-gives absolute recall, including the ROI-seeking sampler.
+All values are fixed in the released \texttt{config.py}. The imputer's hyperparameters were set during development
+on one prostate slide (TENX174, one of the 22) before any registered analysis and were not changed afterwards; the
+policies' hyperparameters were fixed before the stage in which each policy first appears.
+
+Seeds: global 2021; random policy $\{0,\dots,4\}$; the stage-2 permutation uses the global seed, and stage 3 uses
+seeds 1 and 2 (1--4 for the repeated local-variance ablation). Imputer: image PCA 64, random Fourier features 512
+(median-heuristic bandwidth), ridge 10, graph $k=8$, 20 propagation steps, step size 0.5. $k$-NN imputer: $k=10$,
+joint image and space features. Kriging: image PCA 64, ridge 10, residual $k=10$. Placement kernels: feature PCA 64,
+median-heuristic lengthscale, noise $10^{-2}$. Error-reduction and residual policies: neighbourhood 15; the residual
+policy uses the 256 genes with the highest variance among profiled regions and 10 profiled neighbours.
+Local-variance: spatial kernel width 0.1 of the slide diagonal, exploration weight 0.5. Hybrids: coverage fraction
+$f\in\{0.5,0.8\}$, rounded up. Batched stage-3 runs: rounds of 5. Spiked control: 20 genes, 3 hotspots, radius 0.05
+of the diagonal, noise 0.1 of the reference standard deviation. Statistics: 5{,}000 bootstrap resamples; exact
+sign-flip enumeration over studies; MDE from 300 study resamples with 3{,}000 sign flips each, on a grid of 51
+effect sizes.
+
+The code for the larger slides replaces dense distance computations with sparse and incremental ones; a 132-run check
+(11 policies, 3 imputers, 2 slide sizes, 2 budgets) reproduced the original code's selections and scores exactly. In
+the stage-2 run, the five non-adaptive designs reproduced the stage-1 per-slide scores exactly, and the
+local-variance and diversity policies reproduced their stage-1 means. A caching error interrupted the first stage-2
+run. For the results saved before it, a stale cache entry could only have produced a crash, and the error was fixed
+before any result was analysed.
+
+\section{Imputer comparison on the earlier slide set}
+\label{app:imputers}
+
+The $k$-NN and kriging imputers were run only on the earlier slide set. Table~\ref{tab:imputers} reports
+error-reduction minus the per-slide best non-adaptive design on the five human slides from that run, whose regions
+held one pseudo-spot each, with the number of slides on which the margin was positive. With five slides these values
+are descriptive.
 
 \begin{table}[H]
 \centering
-\caption{Stage-1 primary margins (hindsight comparators). Error-reduction is compared with the per-slide best of five
-non-adaptive rules, local-variance with the per-slide best of $k$-means, grid, and MI-greedy. Unadjusted 95\% CIs
+\caption{Error-reduction minus per-slide best non-adaptive design (PCC), mean over 5 human Visium HD slides
+(positive/total).}
+\label{tab:imputers}
+\small
+\input{generated/tab_imputers_legacy.tex}
+\end{table}
+
+\section{Stage-1 results}
+\label{app:stage1}
+
+Stage 1 compared policies with the per-slide best design (hindsight). Table~\ref{tab:stage1} gives its 24-margin
+primary family except the batched and contiguous settings, which are in Table~\ref{tab:realism};
+Table~\ref{tab:stage1abs} gives absolute recall, including the ROI-seeking sampler.
+
+\begin{table}[H]
+\centering
+\caption{Stage-1 primary margins (hindsight benchmarks). Error-reduction is compared with the per-slide best of five
+non-adaptive designs, local-variance with the per-slide best of $k$-means, grid, and MI-greedy. Unadjusted 95\% CIs
 resampling studies; $p_H$ Holm-adjusted over the 24 stage-1 primary margins.}
 \label{tab:stage1}
 \resizebox{\textwidth}{!}{\input{generated/tab_primary.tex}}
@@ -543,7 +588,7 @@ resampling studies; $p_H$ Holm-adjusted over the 24 stage-1 primary margins.}
 
 \begin{table}[H]
 \centering
-\caption{Stage-1 local-variance policy minus the per-slide best coverage rule (hindsight) at 10\% budget under
+\caption{Stage-1 local-variance policy minus the per-slide best coverage design (hindsight) at 10\% budget under
 batched and contiguous acquisition. $\Delta$ with unadjusted 95\% CI resampling studies; $p_H$ Holm-adjusted over the
 24 stage-1 primary margins.}
 \label{tab:realism}
@@ -562,10 +607,14 @@ SCR$^2$-ST (diversity, non-adaptive) and SOFisher (ROI-seeking, adaptive). $^\as
 \section{Feasible comparator choices and the hindsight gap}
 \label{app:comparators}
 
+The feasible procedure selected $k$-means for reconstruction at 0.5--1\% and MI-greedy at 2--20\% (with $k$-means for
+4 of 18 studies at 2\%), and for detection variance-greedy for most studies at 2--10\% and the one-shot ranker at
+20\% (Table~\ref{tab:loso}).
+
 \begin{table}[H]
 \centering
-\caption{Rules chosen on the other studies (number of held-out studies, of 18) and the difference between the
-per-slide best rule and the feasible rule for reconstruction (unadjusted 95\% CI resampling studies).}
+\caption{Designs chosen on the other studies (number of held-out studies, of 18) and the difference between the
+per-slide best design and the feasible design for reconstruction (unadjusted 95\% CI resampling studies).}
 \label{tab:loso}
 \resizebox{\textwidth}{!}{\input{generated/r2_loso.tex}}
 \end{table}
@@ -577,16 +626,16 @@ The feasible comparator for each held-out study is chosen from the other 17, so 
 selection step, which the study-level tests in the main text do not account for. Two post hoc checks address this
 (Table~\ref{tab:sensitivity}). The selection-aware bootstrap resamples studies with replacement and repeats the
 leave-one-study-out choice inside each replicate, excluding copies of the held-out study from its own selection, so
-its interval reflects uncertainty in which rule is chosen. The fixed-comparator analysis replaces the feasible rule
-with MI-greedy on every slide, for which the sign-flip test is valid as specified, with Holm over the 18 analogous
-margins (the feedback and diversity margins do not involve the comparator and are unchanged). For reconstruction
-both checks agree with the main analysis. For detection the selection-aware intervals include zero at every budget,
-whereas the fixed MI-greedy margins exclude it at 10--20\%; MI-greedy has the lowest detection recall in the pool at
-5--20\%.
+its interval reflects uncertainty in which design is chosen. The fixed-comparator analysis replaces the feasible
+design with MI-greedy on every slide, for which the sign-flip test is valid as specified, with Holm over the 18
+analogous margins (the feedback and diversity margins do not involve the comparator and are unchanged). For
+reconstruction both checks agree with the main analysis. For detection the selection-aware intervals include zero at
+every budget, whereas the fixed MI-greedy margins exclude it at 10--20\%; MI-greedy has the lowest detection recall
+in the pool at 5--20\%.
 
 \begin{table}[H]
 \centering
-\caption{Stage-2 primary margins against the feasible rule with selection-aware 95\% bootstrap intervals, and
+\caption{Stage-2 primary margins against the feasible design with selection-aware 95\% bootstrap intervals, and
 against MI-greedy fixed for every slide (unadjusted 95\% CI resampling studies, unadjusted and Holm-adjusted
 sign-flip $p$). Post hoc.}
 \label{tab:sensitivity}
@@ -606,14 +655,26 @@ secondary family.}
 \input{generated/r2_secondary.tex}
 \end{table}
 
+\section{Spiked positive control}
+\label{app:spike}
+
+\begin{table}[H]
+\centering
+\caption{Semi-synthetic control on the 22 slides: residual policy (and its permuted-feedback version) minus the
+feasible design, by spike amplitude and budget (PCC; unadjusted 95\% CIs resampling studies). The registered success
+criterion was a positive margin with a CI excluding zero at $\alpha=2$.}
+\label{tab:spike}
+\resizebox{\textwidth}{!}{\input{generated/r2_spike.tex}}
+\end{table}
+
 \section{Stage-3 absolute values, secondary family, and permutation seeds}
 \label{app:stage3}
 
 \begin{table}[H]
 \centering
-\caption{Stage-3 mean scores over 22 slides: the fixed coverage rule, the hybrids with observed and permuted feedback
-(two seeds averaged), and the feedback policy run alone for the whole budget (residual policy for reconstruction,
-local-variance for detection; stage-2 runs). Fixed rules as in Table~\ref{tab:s3}.}
+\caption{Stage-3 mean scores over 22 slides: the fixed coverage design, the hybrids with observed and permuted
+feedback (two seeds averaged), and the feedback policy run alone for the whole budget (residual policy for
+reconstruction, local-variance for detection; stage-2 runs). Fixed designs as in Table~\ref{tab:s3}.}
 \label{tab:s3abs}
 \small
 \input{generated/s3_abs.tex}
@@ -637,30 +698,6 @@ with an unadjusted 95\% CI resampling studies.}
 \resizebox{\textwidth}{!}{\input{generated/s3_seeds.tex}}
 \end{table}
 
-\section{Spiked positive control}
-\label{app:spike}
-
-\begin{table}[H]
-\centering
-\caption{Semi-synthetic control on the 22 slides: residual policy (and its permuted-feedback version) minus the
-feasible rule, by spike amplitude and budget (PCC; unadjusted 95\% CIs resampling studies). The registered success
-criterion was a positive margin with a CI excluding zero at $\alpha=2$.}
-\label{tab:spike}
-\resizebox{\textwidth}{!}{\input{generated/r2_spike.tex}}
-\end{table}
-
-\section{Platform and tissue splits}
-\label{app:split}
-
-The platform split is exploratory and the per-tissue means are descriptive; both use stage-1 margins.
-
-\begin{table}[H]
-\centering
-\caption{Selected stage-1 margins by platform (unadjusted study-level sign-flip $p$) and by tissue (mean).}
-\label{tab:split}
-\resizebox{\textwidth}{!}{\input{generated/tab_split.tex}}
-\end{table}
-
 \section{Gene-set sensitivity}
 \label{app:hvg}
 
@@ -673,21 +710,16 @@ unadjusted 95\% CIs resampling studies (secondary).}
 \input{generated/tab_hvg.tex}
 \end{table}
 
-\section{Imputer comparison on the earlier slide set}
-\label{app:imputers}
+\section{Platform and tissue splits}
+\label{app:split}
 
-The $k$-NN and kriging imputers were run only on the earlier slide set. Table~\ref{tab:imputers} reports
-error-reduction minus the per-slide best non-adaptive rule on the five human slides from that run, whose regions held
-one pseudo-spot each, with the number of slides on which the margin was positive. With five slides these values are
-descriptive.
+The platform split is exploratory and the per-tissue means are descriptive; both use stage-1 margins.
 
 \begin{table}[H]
 \centering
-\caption{Error-reduction minus per-slide best non-adaptive rule (PCC), mean over 5 human Visium HD slides
-(positive/total).}
-\label{tab:imputers}
-\small
-\input{generated/tab_imputers_legacy.tex}
+\caption{Selected stage-1 margins by platform (unadjusted study-level sign-flip $p$) and by tissue (mean).}
+\label{tab:split}
+\resizebox{\textwidth}{!}{\input{generated/tab_split.tex}}
 \end{table}
 
 \section{Native SOFisher run}
@@ -705,28 +737,6 @@ rewards near $-1.7\times10^5$, so the figure shows rolling medians.
 \caption{SOFisher evaluation reward during training (rolling median), native run.}
 \label{fig:sofisher}
 \end{figure}
-
-\section{Configuration and implementation checks}
-\label{app:repro}
-
-All values are fixed in the released \texttt{config.py}. Seeds: global 2021; random policy $\{0,\dots,4\}$; the
-stage-2 permutation for feedback ablation uses the global seed, and stage 3 uses seeds 1 and 2 (1--4 for the
-repeated local-variance ablation). Hybrids: coverage
-fraction $f\in\{0.5,0.8\}$ of the budget, rounded up. Batched stage-3 runs: rounds of 5 regions. Graphflow: image PCA 64, random Fourier features 512
-(median-heuristic bandwidth), ridge 10, graph $k=8$, 20 steps, step size 0.5. $k$-NN imputer: $k=10$, joint image and
-space features. Kriging: image PCA 64, ridge 10, residual $k=10$. Placement: feature PCA 64, median-heuristic
-lengthscale, noise $10^{-2}$. Error-reduction and residual: neighbourhood 15; the residual policy uses the 256 genes
-with the highest variance among profiled regions and 10 profiled neighbours. Local-variance: spatial kernel width 0.1 of
-the slide diagonal, exploration weight 0.5. Spiked control: 20 genes, 3 hotspots, radius 0.05 of the diagonal, noise
-0.1 of the reference standard deviation. Statistics: 5{,}000 bootstrap resamples; exact sign-flip enumeration over
-study clusters; MDE from 300 study resamples with 3{,}000 sign flips each, on a grid of 51 effect sizes.
-
-The code for the larger slides replaces dense distance computations with sparse and incremental ones; a 132-run check
-(11 policies, 3 imputers, 2 slide sizes, 2 budgets) reproduced the original code's selections and scores exactly. In
-the stage-2 run, the five non-adaptive rules reproduced the stage-1 per-slide scores exactly, and the local-variance and
-diversity policies reproduced their stage-1 means. A caching error interrupted the first stage-2 run. For the
-results saved before it, a stale cache entry could only have produced a crash, and the error was fixed before any
-result was analysed.
 
 \clearpage
 \bibliographystyle{plainnat}

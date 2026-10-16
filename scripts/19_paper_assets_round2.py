@@ -132,7 +132,7 @@ for b in DET:
                 f"{num(f['mean'])} {ci(f['ci95_unadjusted'])} & {pf(f['p_holm'])} & "
                 f"{num(d['mean'])} {ci(d['ci95_unadjusted'])} & {pf(d['p_holm'])} \\\\")
 write("r2_q2_margins.tex", [r"\begin{tabular}{lcccccccc}", r"\toprule",
-      r" & \multicolumn{3}{c}{value-cond. $-$ permuted feedback} & \multicolumn{2}{c}{value-cond. $-$ feasible} & \multicolumn{2}{c}{value-cond. $-$ diversity} \\",
+      r" & \multicolumn{3}{c}{local-var. $-$ permuted feedback} & \multicolumn{2}{c}{local-var. $-$ feasible} & \multicolumn{2}{c}{local-var. $-$ diversity} \\",
       r"\cmidrule(lr){2-4}\cmidrule(lr){5-6}\cmidrule(lr){7-8}",
       r"Budget & $\Delta$ [95\% CI] & $p_H$ & MDE$_H$ & $\Delta$ [95\% CI] & $p_H$ & $\Delta$ [95\% CI] & $p_H$ \\", r"\midrule",
       *rows, r"\bottomrule", r"\end{tabular}"])
@@ -183,7 +183,7 @@ write("r2_loso.tex", [r"\begin{tabular}{llll}", r"\toprule",
 rows = []
 for r in S["secondary"]:
     name = (r["margin"].replace("residual_guided_perm", "residual, perm.").replace("residual_guided", "residual")
-            .replace("value_greedy_const", "value-cond., constant").replace("value_greedy", "value-cond.")
+            .replace("value_greedy_const", "local-var., constant").replace("value_greedy", "local-var.")
             .replace("LOSO_recon", "feasible").replace("best_NA hindsight", "per-slide best").replace(" - ", " $-$ "))
     rows.append(f"{name} & {pct(r['budget'])} & {num(r['mean'])} {ci(r['ci95_unadjusted'])} & {pf(r['p_holm'])} \\\\")
 write("r2_secondary.tex", [r"\begin{tabular}{llcc}", r"\toprule", r"Margin & Budget & $\Delta$ [95\% CI] & $p_H$ \\",
@@ -218,7 +218,7 @@ series(ax, [(x * 100, m, c) for x, m, c in fig_b["div"]], C3, "vs diversity samp
 ax.axhline(0, color=GREY, lw=0.8, ls="--"); ax.set_xscale("log")
 xt = [2, 5, 10, 20]; ax.set_xticks(xt); ax.set_xticklabels([f"{x:g}" for x in xt])
 ax.xaxis.set_minor_locator(matplotlib.ticker.NullLocator())
-ax.set_xlabel("budget (% of regions)"); ax.set_ylabel(r"$\Delta$ ROI recall of value-cond.")
+ax.set_xlabel("budget (% of regions)"); ax.set_ylabel(r"$\Delta$ ROI recall of local-variance")
 ax.set_title("(b) ROI detection", loc="left", fontsize=8.5); ax.legend(fontsize=6.3, loc="upper left")
 ax = ax3[2]
 series(ax, fig_c["0.050"], C1, "5% budget", "o")
