@@ -32,8 +32,8 @@ All read only the committed `results/*.json`; no data download is needed.
 ## Compile
 natbib numeric citations with `plainnat`. Overleaf: upload the files above (with the `generated/`
 folder) and recompile. Locally: `pdflatex manuscript && bibtex manuscript && pdflatex manuscript &&
-pdflatex manuscript`, or `tectonic -X compile manuscript.tex`. Verified on 2026-10-15 with Tectonic
-0.17: 18 pages (main text ends on page 10), no overfull boxes, no undefined references.
+pdflatex manuscript`, or `tectonic -X compile manuscript.tex`. Verified on 2026-10-16 with Tectonic
+0.17: 19 pages (main text ends on page 10), no overfull boxes, no undefined references.
 
 ## arXiv tarball
 After one clean compile (which produces `manuscript.bbl`):

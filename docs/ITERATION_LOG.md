@@ -386,6 +386,9 @@ confirmatory answer.
   f 0.5 +0.007). Permuted feedback drops the hybrid below the fixed rule; real feedback restores it (e.g. detection
   10%: fixed 0.127, permuted 0.110, observed 0.133). Rounds of 5: local-variance - fixed +0.023 / +0.035, - permuted
   +0.050 / +0.084 at 10 / 20% (p_H >= 0.11). Rounds of 5 recall 0.150 / 0.288 vs one-at-a-time 0.137 / 0.278.
-- Seed variation (descriptive) not yet computed: rerun part S to completion, then scripts 22 and 23.
+- Seed variation (part S completed 2026-10-16; H and R cells unchanged on re-push): across-seed SD of mean margins
+  <= 0.007 PCC (residual) and <= 0.013 recall (local-variance). Seed-averaged local-variance - permuted: +0.005/+0.017/
+  +0.033/+0.074 at 2-20% (registered seed 2021: +0.005/+0.017/+0.029/+0.063), all below the Holm-level MDEs.
+  Residual - permuted at 0.5%: 2021 +0.031 vs seeds 1, 2 +0.024, +0.016. Descriptive only; conclusions unchanged.
 - Manuscript revised: stage 3 as section "Feedback on top of a coverage design"; Q3 exploratory; Holm-level MDEs;
   post hoc feasible-comparator inference in an appendix; scope of computational ROIs in Limitations.

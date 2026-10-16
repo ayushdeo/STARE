@@ -475,6 +475,194 @@
    "mde80_family_bound": 0.146
   }
  },
+ "seeds_residual_guided_0.005": {
+  "per_seed_mean": {
+   "2021": 0.0307,
+   "1": 0.0238,
+   "2": 0.0157
+  },
+  "across_seed_sd": 0.0075,
+  "seed_averaged": {
+   "mean": 0.0234,
+   "ci95_unadjusted": [
+    0.0079,
+    0.0424
+   ],
+   "p": 0.01153564453125,
+   "n_pos": 12,
+   "n": 22
+  }
+ },
+ "seeds_residual_guided_0.010": {
+  "per_seed_mean": {
+   "2021": 0.039,
+   "1": 0.0396,
+   "2": 0.0296
+  },
+  "across_seed_sd": 0.0056,
+  "seed_averaged": {
+   "mean": 0.0361,
+   "ci95_unadjusted": [
+    0.0196,
+    0.0553
+   ],
+   "p": 0.00026702880859375,
+   "n_pos": 18,
+   "n": 22
+  }
+ },
+ "seeds_residual_guided_0.020": {
+  "per_seed_mean": {
+   "2021": 0.0305,
+   "1": 0.0233,
+   "2": 0.0247
+  },
+  "across_seed_sd": 0.0038,
+  "seed_averaged": {
+   "mean": 0.0262,
+   "ci95_unadjusted": [
+    0.0134,
+    0.0409
+   ],
+   "p": 0.00048828125,
+   "n_pos": 18,
+   "n": 22
+  }
+ },
+ "seeds_residual_guided_0.050": {
+  "per_seed_mean": {
+   "2021": 0.0093,
+   "1": 0.0098,
+   "2": 0.0122
+  },
+  "across_seed_sd": 0.0016,
+  "seed_averaged": {
+   "mean": 0.0104,
+   "ci95_unadjusted": [
+    0.0022,
+    0.019
+   ],
+   "p": 0.03067779541015625,
+   "n_pos": 18,
+   "n": 22
+  }
+ },
+ "seeds_residual_guided_0.100": {
+  "per_seed_mean": {
+   "2021": 0.001,
+   "1": 0.0,
+   "2": 0.0033
+  },
+  "across_seed_sd": 0.0017,
+  "seed_averaged": {
+   "mean": 0.0014,
+   "ci95_unadjusted": [
+    -0.0018,
+    0.0052
+   ],
+   "p": 0.5166473388671875,
+   "n_pos": 11,
+   "n": 22
+  }
+ },
+ "seeds_residual_guided_0.200": {
+  "per_seed_mean": {
+   "2021": -0.0005,
+   "1": -0.0014,
+   "2": 0.0008
+  },
+  "across_seed_sd": 0.0011,
+  "seed_averaged": {
+   "mean": -0.0004,
+   "ci95_unadjusted": [
+    -0.002,
+    0.0013
+   ],
+   "p": 0.6836090087890625,
+   "n_pos": 6,
+   "n": 22
+  }
+ },
+ "seeds_value_greedy_0.020": {
+  "per_seed_mean": {
+   "2021": 0.0052,
+   "1": 0.003,
+   "2": 0.0032,
+   "3": 0.0058,
+   "4": 0.0068
+  },
+  "across_seed_sd": 0.0017,
+  "seed_averaged": {
+   "mean": 0.0048,
+   "ci95_unadjusted": [
+    -0.0,
+    0.0096
+   ],
+   "p": 0.10045623779296875,
+   "n_pos": 10,
+   "n": 22
+  }
+ },
+ "seeds_value_greedy_0.050": {
+  "per_seed_mean": {
+   "2021": 0.0168,
+   "1": 0.0111,
+   "2": 0.0156,
+   "3": 0.0198,
+   "4": 0.0217
+  },
+  "across_seed_sd": 0.0041,
+  "seed_averaged": {
+   "mean": 0.017,
+   "ci95_unadjusted": [
+    0.0048,
+    0.0301
+   ],
+   "p": 0.0229644775390625,
+   "n_pos": 14,
+   "n": 22
+  }
+ },
+ "seeds_value_greedy_0.100": {
+  "per_seed_mean": {
+   "2021": 0.0295,
+   "1": 0.025,
+   "2": 0.0341,
+   "3": 0.0354,
+   "4": 0.0423
+  },
+  "across_seed_sd": 0.0065,
+  "seed_averaged": {
+   "mean": 0.0333,
+   "ci95_unadjusted": [
+    0.0119,
+    0.0555
+   ],
+   "p": 0.0112152099609375,
+   "n_pos": 13,
+   "n": 22
+  }
+ },
+ "seeds_value_greedy_0.200": {
+  "per_seed_mean": {
+   "2021": 0.0633,
+   "1": 0.0752,
+   "2": 0.0831,
+   "3": 0.0602,
+   "4": 0.0904
+  },
+  "across_seed_sd": 0.0128,
+  "seed_averaged": {
+   "mean": 0.0745,
+   "ci95_unadjusted": [
+    0.0313,
+    0.118
+   ],
+   "p": 0.0059051513671875,
+   "n_pos": 16,
+   "n": 22
+  }
+ },
  "sens_Q1_0.005": {
   "q": "Q1",
   "margin": "residual - comparator (PCC)",

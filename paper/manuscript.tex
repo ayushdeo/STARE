@@ -169,7 +169,8 @@ the expression of a randomly chosen other region whenever it profiles a region, 
 in which every region appears to have the slide's mean expression. The selection rule is unchanged; only the
 information in the values is removed. Under permuted feedback, for example, the residual policy's leave-one-out
 ridge model is fitted to the permuted values it is shown. The imputer and the scores always use the true values.
-Stage 2 used one permutation (seed 2021); stage 3 ran two per configuration (seeds 1 and 2) and averaged them.
+Stage 2 used one permutation (seed 2021); stage 3 ran two per configuration (seeds 1 and 2) and averaged them, and
+repeated the stage-2 ablations with further seeds (1--4 for local-variance, 1--2 for the residual policy).
 
 \emph{Coverage plus feedback.} A hybrid takes its first $\lceil fn\rceil$ regions, for a budget of $n$ regions and
 $f\in\{0.5,0.8\}$, from a fixed coverage rule, and the rest from a feedback policy that conditions on everything
@@ -423,6 +424,13 @@ over the 24 stage-3 secondary margins; permuted values averaged over two seeds.}
 \end{table}
 
 \subsection{Robustness}
+The registered stage-2 feedback ablations rest on one permutation. Repeating them with further seeds
+(descriptive; Appendix~\ref{app:stage3}) left the conclusions unchanged. Across seeds the mean margin had a standard
+deviation of at most 0.007 PCC and 0.013 recall, and the seed-averaged detection margins ($+0.005$, $+0.017$,
+$+0.033$, and $+0.074$ at 2--20\%) were close to the registered ones and below their family-wise MDEs. For
+reconstruction, the registered seed gave the largest of the three margins at 0.5\% ($+0.031$, against $+0.024$ and
+$+0.016$) and was within the range of the others at higher budgets.
+
 Selecting the evaluation genes from the full slide uses information that a prospective experiment would lack.
 Selecting them from a random 15\% reference subset changed the stage-1 reconstruction margins by at most 0.003, and
 scoring all filtered genes left them negative ($-0.033$ to $-0.079$; Appendix~\ref{app:hvg}). In an exploratory
@@ -469,8 +477,9 @@ particular biological target. The acquisition unit is a spot or HD pseudo-spot, 
 such as GeoMx, and the HD and Visium units differ in spacing. The batch and block simulations approximate but do
 not validate any particular platform. The 22-slide results use one imputer, and the $k$-NN and kriging comparisons
 rest on 5 slides. The competitor samplers were reimplementations of objectives; SOFisher was run natively only on
-its own data and SCR$^2$-ST not at all. The stage-2 feedback ablations used one permutation, and the stage-3 fixed
-rules were chosen on stage-2 results from the same slides, which favours the baselines. The feasible comparator,
+its own data and SCR$^2$-ST not at all. The registered tests of the stage-2 feedback ablations use one permutation,
+with further seeds only descriptive, and the stage-3 fixed rules were chosen on stage-2 results from the same
+slides, which favours the baselines. The feasible comparator,
 the residual policy, the feedback ablations, and the hybrids were added after earlier results were known, although
 each was registered before its experiments. Budgets above 20\% were not tested.
 
@@ -597,7 +606,7 @@ secondary family.}
 \input{generated/r2_secondary.tex}
 \end{table}
 
-\section{Stage-3 absolute values and secondary family}
+\section{Stage-3 absolute values, secondary family, and permutation seeds}
 \label{app:stage3}
 
 \begin{table}[H]
@@ -617,6 +626,15 @@ local-variance for detection; stage-2 runs). Fixed rules as in Table~\ref{tab:s3
 \label{tab:s3secondary}
 \small
 \input{generated/s3_secondary.tex}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Stage-2 feedback ablations repeated over permutation seeds, 22 slides (descriptive). Seed 2021 is the
+registered stage-2 run. SD is across the seed means; the seed-averaged margin uses the mean of the permuted runs,
+with an unadjusted 95\% CI resampling studies.}
+\label{tab:seeds}
+\resizebox{\textwidth}{!}{\input{generated/s3_seeds.tex}}
 \end{table}
 
 \section{Spiked positive control}
@@ -692,7 +710,8 @@ rewards near $-1.7\times10^5$, so the figure shows rolling medians.
 \label{app:repro}
 
 All values are fixed in the released \texttt{config.py}. Seeds: global 2021; random policy $\{0,\dots,4\}$; the
-stage-2 permutation for feedback ablation uses the global seed, and stage 3 uses seeds 1 and 2. Hybrids: coverage
+stage-2 permutation for feedback ablation uses the global seed, and stage 3 uses seeds 1 and 2 (1--4 for the
+repeated local-variance ablation). Hybrids: coverage
 fraction $f\in\{0.5,0.8\}$ of the budget, rounded up. Batched stage-3 runs: rounds of 5 regions. Graphflow: image PCA 64, random Fourier features 512
 (median-heuristic bandwidth), ridge 10, graph $k=8$, 20 steps, step size 0.5. $k$-NN imputer: $k=10$, joint image and
 space features. Kriging: image PCA 64, ridge 10, residual $k=10$. Placement: feature PCA 64, median-heuristic

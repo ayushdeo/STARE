@@ -144,6 +144,27 @@ write("s3_batched.tex", [r"\begin{tabular}{llcccccccc}", r"\toprule",
       r"Budget & fixed rule & fixed & one at a time & rounds of 5 & rounds of 5, perm. & $\Delta$ [95\% CI] & $p_H$ & $\Delta$ [95\% CI] & $p_H$ \\",
       r"\midrule", *rows, r"\bottomrule", r"\end{tabular}"])
 
+# ---------------------------------------------------------------- permutation-seed variation (descriptive, appendix)
+SV = SUM["seed_variation"]
+if "status" not in SV:
+    rows = []
+    for pol, lab, buds in (("residual_guided", "Reconstruction (PCC): residual $-$ permuted", BUD),
+                           ("value_greedy", "Detection (ROI recall): local-variance $-$ permuted", DET)):
+        if pol == "value_greedy":
+            rows.append(r"\midrule")
+        rows.append(rf"\multicolumn{{8}}{{l}}{{\emph{{{lab}}}}} \\")
+        for b in buds:
+            d = SV[f"{pol} - permuted, {b}"]
+            ps = d["per_seed_mean"]
+            facts[f"seeds_{pol}_{b}"] = d
+            cells = [num(ps[k]) if k in ps else "--" for k in ("2021", "1", "2", "3", "4")]
+            sa = d["seed_averaged"]
+            rows.append(f"{pct(b)} & " + " & ".join(cells) + f" & {d['across_seed_sd']:.3f} & {num(sa['mean'])} {ci(sa['ci95_unadjusted'])} \\\\")
+    write("s3_seeds.tex", [r"\begin{tabular}{lccccccc}", r"\toprule",
+          r" & \multicolumn{5}{c}{mean margin by permutation seed} & & \\", r"\cmidrule(lr){2-6}",
+          r"Budget & 2021 (stage 2) & 1 & 2 & 3 & 4 & SD & seed-averaged $\Delta$ [95\% CI] \\", r"\midrule",
+          *rows, r"\bottomrule", r"\end{tabular}"])
+
 # ---------------------------------------------------------------- stage-2 inference sensitivity (appendix)
 rows = []
 for q, lab in (("Q1", "Reconstruction (PCC): residual policy"), ("Q2", "Detection (ROI recall): local-variance policy")):
