@@ -42,3 +42,4 @@ paper/*.aux
 paper/*.bbl
 paper/arxiv_submission.tar.gz
 paper/*.out
+paper/arxiv_upload/

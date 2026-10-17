@@ -7,9 +7,12 @@ cd paper && tectonic --keep-intermediates manuscript.tex && cd ..
 python scripts/24_arxiv_package.py
 ```
 
-The script writes `paper/arxiv_submission.tar.gz` (27 files: `manuscript.tex`, `manuscript.bbl`,
-`neurips_2023.sty`, 20 generated tables, 4 figure PDFs) and test-compiles it in an empty folder. arXiv does not run
-BibTeX, so the `.bbl` is shipped and `references.bib` is not.
+The script writes `paper/arxiv_submission.tar.gz` and the same files unpacked in `paper/arxiv_upload/` (27 files:
+`manuscript.tex`, `manuscript.bbl`, `neurips_2023.sty`, 20 generated tables, 4 figure PDFs); upload either one.
+In the uploaded copy only: TeX comments are removed (arXiv archives the source permanently), and
+`ibliography{references}` is replaced by `\input{manuscript.bbl}`, so arXiv never needs BibTeX or the `.bib`.
+The script then compiles the package in an empty folder and checks that its text is identical to
+`paper/manuscript.pdf`, citations included. The figure PDFs carry no author or path metadata.
 
 ## Form fields
 

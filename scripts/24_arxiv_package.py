@@ -5,7 +5,8 @@ Collects exactly the files manuscript.tex needs (the .tex, its .bbl, the style f
 \\includegraphics figure) into paper/arxiv_submission.tar.gz, then extracts it into a fresh temporary folder and
 compiles it there (tectonic, if found on PATH or via --tectonic) to confirm the package is self-contained.
 
-arXiv does not run BibTeX, so paper/manuscript.bbl must be current: compile the paper once (e.g. `tectonic
+arXiv does not run BibTeX, so the packaged manuscript.tex reads paper/manuscript.bbl directly (\\input instead of
+\\bibliography) and the .bbl must be current: compile the paper once (e.g. `tectonic
 --keep-intermediates manuscript.tex`) before running this script. The script refuses to package a .bbl older than
 references.bib or manuscript.tex.
 
@@ -26,6 +27,31 @@ def needed_files(tex: str):
     return out
 
 
+def strip_comments(text: str):
+    """Remove TeX comments. A whole-line comment is dropped; an inline one keeps its '%' so that a line-end '%'
+    still suppresses the space it suppressed before. An escaped '\\%' is not a comment."""
+    out, n = [], 0
+    for line in text.splitlines():
+        m = re.search(r"(?<!\\)%", line)
+        if m is None:
+            out.append(line)
+            continue
+        n += 1
+        if line[:m.start()].strip() == "":
+            continue
+        out.append(line[:m.start() + 1])
+    return "\n".join(out) + "\n", n
+
+
+def pdf_text(path: Path) -> str:
+    try:
+        import pymupdf
+    except ImportError:
+        return ""
+    with pymupdf.open(path) as d:
+        return "\n".join(p.get_text() for p in d)
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--tectonic", default=shutil.which("tectonic"))
@@ -40,13 +66,32 @@ def main():
         if (PAPER / src).stat().st_mtime > bbl:
             sys.exit(f"manuscript.bbl is older than {src}; recompile the paper first")
     out = PAPER / "arxiv_submission.tar.gz"
+    folder = PAPER / "arxiv_upload"                 # the same files unpacked, for a folder-based upload
+    if folder.exists():
+        shutil.rmtree(folder)
+    removed = []
     with tarfile.open(out, "w:gz") as tf:
         for f in files:
-            tf.add(PAPER / f, arcname=f)
+            dst = folder / f
+            dst.parent.mkdir(parents=True, exist_ok=True)
+            if f.endswith(".tex"):                  # arXiv archives the source: drop the author's own TeX comments
+                text, n = strip_comments((PAPER / f).read_text(encoding="utf-8"))
+                if f == "manuscript.tex":           # read the shipped .bbl directly, so no BibTeX run is ever needed
+                    bib = "\\bibliography{references}"
+                    assert text.count(bib) == 1, "expected one \\bibliography command"
+                    text = text.replace(bib, "\\input{manuscript.bbl}")
+                dst.write_text(text, encoding="utf-8")
+                if n:
+                    removed.append((f, n))
+            else:                                   # style file, .bbl, and figures are shipped unchanged
+                shutil.copy2(PAPER / f, dst)
+            tf.add(dst, arcname=f)
     size = out.stat().st_size / 1024
-    print(f"[write] {out} ({len(files)} files, {size:.0f} KiB)")
+    print(f"[write] {out} ({len(files)} files, {size:.0f} KiB); unpacked copy in {folder}")
     for f in files:
         print("   ", f)
+    for f, n in removed:
+        print(f"    stripped {n} comment(s) from {f}")
     if not args.tectonic:
         print("tectonic not found: skipped the clean-room compile")
         return
@@ -63,6 +108,12 @@ def main():
         bad = [l for l in bad if "BibTeX" not in l]
         ok = ok and n_items == n_src and n_src > 0
         print(f"clean-room compile: {'OK' if ok else 'FAILED'} ({n_items}/{n_src} bibliography entries)")
+        # stripping comments must not change the typeset paper
+        a, b = pdf_text(Path(d) / "manuscript.pdf"), pdf_text(PAPER / "manuscript.pdf")
+        if a and b:
+            same = a == b
+            ok = ok and same
+            print(f"text identical to paper/manuscript.pdf: {same}")
         for l in bad:
             print("   ", l)
         if not ok:
