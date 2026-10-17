@@ -95,8 +95,8 @@ greedy heuristics on a kNN imputer is futile; the theory says so.
   at any budget under any imputer we tested, up to the STFlow-class limit. -> Paper = the theory-backed
   negative characterization (docs/PAPER_OUTLINE.md), now with cross-slide CIs as the key evidence.
 
-## Iteration 4 — reviewer response: reconstruction-vs-detection split  [OURS, 2026-09-24]
-Reviewer (weak reject) correctly flagged: (a) missing adaptive prior work (SOFisher Nat Commun 2026,
+## Iteration 4 — revision: reconstruction-vs-detection split  [OURS, 2026-09-24]
+A critical read of the seven-slide draft flagged: (a) missing adaptive prior work (SOFisher Nat Commun 2026,
 SCR2-ST MIDL 2026, S2-omics Nat Cell Biol 2025 — all verified real); (b) our "closed-loop" selection
 was not actually value-conditioned (graphflow uncertainty = 1-influence is location-only) and the
 ablation swapped the whole rule; (c) no positive control; (d) oracle comparator; (e) n=7; (f) one metric.
@@ -128,15 +128,15 @@ ablation swapped the whole rule; (c) no positive control; (d) oracle comparator;
    near-zero / negative PCC, which means it is an unfaithful port (SpatialFinder reports high rho on
    its own task) — do not trust the head-to-head until the native repro matches.
 
-## Iteration 5 — HVG-leakage sensitivity (reviewer point 8)  [OURS: results/hvg_sensitivity.json, 7 slides]
-Reviewer: top-50 HVG selected from the full slide leaks eval-target info. Re-scored value_greedy vs best
+## Iteration 5 — HVG-leakage sensitivity (revision point 8)  [OURS: results/hvg_sensitivity.json, 7 slides]
+Concern: top-50 HVG selected from the full slide leaks eval-target info. Re-scored value_greedy vs best
 coverage under three gene sets. The reconstruction margin stays negative with CI excluding 0 under ALL:
 slide_hvg (leaky) -0.081/-0.067/-0.065/-0.074; ref_hvg (prospective pilot, no leak) -0.080/-0.067/-0.066/
 -0.075 (~identical to slide_hvg); all_genes (no selection, zero leak) -0.027/-0.025/-0.029/-0.043 @2/5/10/20%.
 Conclusion: full-slide HVG selection does NOT drive the result; the leak is immaterial. Imputer fits on
 profiled regions and the policy conditions on measured values, so the HVG target was the only leak -> closed.
 
-## Iteration 6 — batched/contiguous acquisition (reviewer point 7)  [OURS: results/batched_contiguous.json, 7 slides]
+## Iteration 6 — batched/contiguous acquisition (revision point 7)  [OURS: results/batched_contiguous.json, 7 slides]
 Physical-realism constraints. value_greedy vs best coverage, reconstruction PCC + detection recall, CIs.
 - RECONSTRUCTION null is ROBUST: margin significantly negative at every round_size (-0.065/-0.062/-0.058
   @ rs=1/5/25; -0.119 one-shot) and under contiguous ROIs (-0.017*). Adaptivity never helps reconstruction.
@@ -148,7 +148,7 @@ Physical-realism constraints. value_greedy vs best coverage, reconstruction PCC 
   distinguishable from strong coverage at n=7 (point estimates remain small-positive; low power possible).
   This tempers the "adaptivity helps detection" half and reinforces the overall limited practical value.
 
-## Iteration 7 — expanded slide set: PRE-REGISTERED plan (reviewer point 5)  [written 2026-10-06, BEFORE any expanded result]
+## Iteration 7 — expanded slide set: PRE-REGISTERED plan (revision point 5)  [written 2026-10-06, BEFORE any expanded result]
 Audit of the HEST metadata (public v1.1 CSV; gated v1.3 on the 4070) found problems that had to be fixed
 before expanding:
 - **Unit scale.** The loader assumed 0.5 um/px; HEST WSIs are 0.17-3.2 um/px (HD slides ~0.274). The legacy
@@ -239,8 +239,8 @@ reconstruction over strong non-adaptive placement (worse at low budgets, equival
 does not survive multiplicity correction, is concentrated in Visium HD slides, and is matched by a non-adaptive
 diversity design.
 
-## Iteration 9 — reviewer round 2 (major revision): PRE-REGISTERED plan  [written 2026-10-10, BEFORE scripts/17 is run]
-Reviewer concerns: (1) "best non-adaptive" is a per-slide hindsight maximum, not a deployable rule; (2) under
+## Iteration 9 — revision round 2: PRE-REGISTERED plan  [written 2026-10-10, BEFORE scripts/17 is run]
+Concerns: (1) "best non-adaptive" is a per-slide hindsight maximum, not a deployable rule; (2) under
 graphflow, error-reduction / max-uncertainty are sequential FIXED designs (value-independent), and the
 value-conditioned policy seeks local variance, not reconstruction error; (3) controls do not establish sensitivity
 for reconstruction or power for small detection effects; (4) detection needs a direct value-conditioned vs
@@ -302,7 +302,7 @@ conclusion.
   region counts (TENX174, ZEN48; 2,385) had not been reached. Saved results are therefore unaffected and the run
   is resumed, not restarted.
 
-## Iteration 10 — reviewer round 2 RESULTS  [4070 run c4d3326; analysed 2026-10-12 with scripts/18 as pre-registered]
+## Iteration 10 — revision round 2 RESULTS  [4070 run c4d3326; analysed 2026-10-12 with scripts/18 as pre-registered]
 Data check: all 22 slides x 6 budgets (Part A) and 22 x 3 alpha x 2 budgets (Part B) complete; the five non-adaptive
 policies reproduce script 05 per-slide PCC exactly (max |diff| 0), value-conditioned and diversity reproduce 09/10.
 All 20 spiked genes entered the top-50 on every slide at alpha = 1 and 2.
@@ -337,8 +337,8 @@ sensitivity to reconstruction gains is not established.
 - Q2: unresolved. Feedback-ablation estimates are positive and grow with budget but are not significant after
   correction and lie below the MDE; no advantage over the non-adaptive diversity design was found.
 
-## Iteration 11 — reviewer round 3: stage-3 PRE-REGISTERED plan  [written 2026-10-12, BEFORE scripts/21 is run]
-Reviewer points: (1) coverage-plus-feedback hybrid untested; (2) LOSO comparator couples the study margins through
+## Iteration 11 — revision round 3: stage-3 PRE-REGISTERED plan  [written 2026-10-12, BEFORE scripts/21 is run]
+Points: (1) coverage-plus-feedback hybrid untested; (2) LOSO comparator couples the study margins through
 rule selection; (3) one permutation seed; clarify what the residual policy fits; (4) MDE quoted at unadjusted alpha;
 (5) Q3 uses stage-1 hindsight comparator without feedback control; (6) scope. Fixes: Table 1 caption (local-variance
 WAS run at 0.5-1% in stage 2), appendix float placement, precise wording for the feedback received.

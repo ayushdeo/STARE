@@ -1,5 +1,5 @@
 """
-Curated expansion of the slide set for statistical power (revision, reviewer point 5; RUN ON 4070).
+Curated expansion of the slide set for statistical power (revision point 5; RUN ON 4070).
 
 v1 of this script ranked raw metadata matches and suggested slides that must NOT be used: a mouse
 kidney (TENX146), a specimen duplicate (TENX128 == TENX155, identical WSI dimensions), serial sections

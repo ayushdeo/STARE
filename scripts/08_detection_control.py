@@ -1,5 +1,5 @@
 """
-Detection positive-control (revision, reviewer point 1: prove the simulator CAN express adaptivity).
+Detection positive-control (revision point 1: prove the simulator CAN express adaptivity).
 
 Companion to 07_positive_control.py. Same synthetic slides with hidden, image-unpredictable, spatially
 clustered ROI structure, but scored on a DETECTION objective instead of reconstruction: did the policy's

@@ -1,5 +1,5 @@
 """
-HEST-1k sample metadata: pixel size, species, specimen identity (revision, reviewer point 5).
+HEST-1k sample metadata: pixel size, species, specimen identity (revision point 5).
 
 Two facts from the metadata drive the expanded slide set:
 

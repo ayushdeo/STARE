@@ -1,5 +1,5 @@
 """
-Coverage-plus-feedback hybrid (reviewer round 3, point 1).
+Coverage-plus-feedback hybrid (revision round 3, point 1).
 
 The first ceil(frac x budget) regions come from a fixed non-adaptive coverage rule; the remaining regions are
 chosen by a feedback policy that conditions on everything measured so far. Because the coverage rules used here

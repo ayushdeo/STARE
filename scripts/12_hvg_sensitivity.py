@@ -1,5 +1,5 @@
 """
-HVG-leakage sensitivity (revision, reviewer point 8; RUN ON 4070).
+HVG-leakage sensitivity (revision point 8; RUN ON 4070).
 
 Concern: the top-50 HVGs are selected from each COMPLETE slide, which is unavailable in a prospective
 partially-observed setting -- the evaluation target leaks full-slide information. We test whether the

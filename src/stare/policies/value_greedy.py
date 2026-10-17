@@ -1,7 +1,7 @@
 """
-Value-conditioned acquisition policy (revision, reviewer point 2 + positive control).
+Value-conditioned acquisition policy (revision point 2 + positive control).
 
-The reviewer correctly noted that our earlier "closed-loop" policies did not actually condition the
+A critique of the draft correctly noted that our earlier "closed-loop" policies did not actually condition the
 SELECTION on the measured expression VALUES: the graphflow uncertainty (1 - graph influence) depends
 only on WHICH regions are profiled, not on their values, and the image-only ablation swapped the whole
 selection rule rather than toggling measured values. This policy makes the dependence on measured

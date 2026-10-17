@@ -1,5 +1,5 @@
 """
-Batched + contiguous acquisition (revision, reviewer point 7: physical realism; RUN ON 4070).
+Batched + contiguous acquisition (revision point 7: physical realism; RUN ON 4070).
 
 Real ROI/FOV platforms do not reveal one scattered region at a time: acquisition happens in a few lab
 ROUNDS, and each ROI is a spatially CONTIGUOUS block. We test whether the findings survive these

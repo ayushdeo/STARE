@@ -1,5 +1,5 @@
 """
-Inference checks for the stage-2 feasible comparator (reviewer round 3, point 2; local, existing data only).
+Inference checks for the stage-2 feasible comparator (revision round 3, point 2; local, existing data only).
 
 The feasible comparator is chosen per held-out study from the other 17 studies, so the 18 study margins share the
 selection step. Two checks:
@@ -82,7 +82,7 @@ def main():
     holm = stats.holm(pv)
     for r, h in zip(rows, holm):
         r["vs_mi_greedy"]["p_holm18"] = h
-    out = {"status": "post hoc sensitivity of stage-2 inference (reviewer round 3, point 2)", "rows": rows}
+    out = {"status": "post hoc sensitivity of stage-2 inference (revision round 3, point 2)", "rows": rows}
     (RES / "stage2_sensitivity.json").write_text(json.dumps(out, indent=2), encoding="utf-8")
     print(f"[write] {RES / 'stage2_sensitivity.json'}")
     for r in rows:

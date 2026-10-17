@@ -26,9 +26,10 @@ def make_slide(R=200, G=60, seed=0):
 @pytest.mark.parametrize("name", list(REGISTRY))
 def test_policy_runs_end_to_end(name):
     slide = make_slide()
-    imp = KNNImputer(k=10)
+    # the residual policy reads the graph imputer's influence, so it is tested with that imputer
+    imp = build_imputer("graphflow") if name == "residual_guided" else KNNImputer(k=10)
     sim = AcquisitionSimulator(slide, imp, budget_fraction=0.10)
-    kw = {"imputer": imp} if name in ("greedy_ig",) else {}
+    kw = {"imputer": imp} if name in ("greedy_ig", "residual_guided") else {}
     policy = build_policy(name, **kw)
     state = sim.reset()
     steps = 0

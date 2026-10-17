@@ -29,15 +29,13 @@ Spatial transcriptomics is costly, so many studies profile only selected regions
 
 20 pages, 4 figures, 20 tables. Code, results, and registered analysis plans: https://github.com/ayushdeo/STARE
 
-**Categories** (proposed): primary cs.LG; cross-lists q-bio.QM, q-bio.GN.
+**Categories**: primary cs.LG; cross-lists q-bio.QM, q-bio.GN.
 
-**License**: to be chosen by the author (see below).
+**License**: arXiv.org perpetual, non-exclusive license (the default; compatible with later journal submission).
 
 ## Before submitting
 
-- [ ] Repository is public and its README matches the paper (the paper's Reproducibility paragraph links it).
+- [x] Repository is public, MIT-licensed, and its README matches the paper (the paper's Reproducibility paragraph links it).
 - [ ] Category endorsement: first-time submitters may need an endorser for the primary category.
-- [ ] License chosen. The default arXiv non-exclusive license is the most compatible with later journal submission;
-      CC BY 4.0 allows the widest reuse. Check the target journal's preprint policy before choosing.
 - [ ] The arXiv preview PDF matches `paper/manuscript.pdf` (20 pages; references 1-50 resolved).
 - [ ] After posting: add the arXiv identifier to the repository README's Citation section.

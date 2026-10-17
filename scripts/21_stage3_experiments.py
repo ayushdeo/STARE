@@ -1,5 +1,5 @@
 """
-Stage-3 experiments (reviewer round 3; RUN ON 4070). Registered in docs/ITERATION_LOG.md (iteration 11) before
+Stage-3 experiments (revision round 3; RUN ON 4070). Registered in docs/ITERATION_LOG.md (iteration 11) before
 this script was run; analysed by scripts/22_stage3_analysis.py.
 
 Part H (hybrids, point 1): the first ceil(f x budget) regions come from a FIXED coverage rule, the rest from a

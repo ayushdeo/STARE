@@ -10,6 +10,8 @@ tqdm>=4.66
 # --- data / spatial ---
 hest                      # HEST-1k library (loading, patching, alignment)
 datasets>=2.19            # HuggingFace (HEST hosting)
+huggingface_hub           # gated HEST / UNI2-h downloads
+h5py                      # HEST patch files
 # --- imaging / encoders ---
 timm>=1.0                 # UNI/UNI2-h backbone
 pillow>=10.0

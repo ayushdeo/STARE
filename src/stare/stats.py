@@ -9,7 +9,7 @@ CI over slides, the sign split, and an exact two-sided sign-test p-value. Kept d
 Small-n caveat baked into the reporting: with ~7 slides a bootstrap CI is wide and the sign test is
 weak — that is the honest state of the evidence, not a defect to paper over.
 
-Revision (reviewer point 5): slides from the same study / patient are not independent, and many
+Revision (revision point 5): slides from the same study / patient are not independent, and many
 margins are tested at once. Passing `clusters` (study per slide) and `strata` (tissue per slide) to
 `paired_margin_summary` adds a cluster bootstrap CI, a cluster-level sign-flip (randomization) test,
 and tissue-stratified estimates; `holm` adjusts a family of p-values. The slide-level fields are kept

@@ -1,4 +1,4 @@
-# Expanded slide set — 4070 runbook (reviewer point 5)
+# Expanded slide set — 4070 runbook (revision point 5)
 
 The analysis plan is pre-registered in `docs/ITERATION_LOG.md` (iteration 7), committed before any
 expanded result. Do not change the primary family or decision rules after seeing results.

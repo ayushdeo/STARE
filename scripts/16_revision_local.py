@@ -1,7 +1,7 @@
 """
-Revision analyses on existing results (reviewer round 2; local, no data needed).
+Revision analyses on existing results (revision round 2; local, no data needed).
 
-1. Feasible reconstruction comparators (reviewer concern 1). The "best non-adaptive" comparator is the
+1. Feasible reconstruction comparators (revision concern 1). The "best non-adaptive" comparator is the
    per-slide maximum, chosen with hindsight on that slide's outcome. Two comparators that could be chosen
    before profiling a new slide:
      * LOSO: for each held-out study, the non-adaptive policy with the highest mean PCC on the OTHER studies

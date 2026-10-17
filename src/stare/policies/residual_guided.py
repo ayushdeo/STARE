@@ -1,6 +1,6 @@
 """
 Residual-guided error reduction: a value-conditioned policy aligned with reconstruction error
-(revision round 2, reviewer concern 2).
+(revision round 2, concern 2).
 
 The error-reduction policy sums the imputer's uncertainty over a candidate's unprofiled neighbourhood. Under
 graphflow that uncertainty (1 - graph influence) depends only on WHICH regions are profiled, so the policy is a

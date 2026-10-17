@@ -1,5 +1,5 @@
 """
-Feedback ablation (revision round 2, reviewer concern 4): run a policy unchanged, but let it see measured
+Feedback ablation (revision round 2, concern 4): run a policy unchanged, but let it see measured
 values that carry no information about the regions it measured.
 
   mode="permute":  the policy sees the expression of a randomly chosen OTHER region for every region it

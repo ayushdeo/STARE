@@ -1,5 +1,5 @@
 """
-Revision experiments, round 2 (reviewer major revision; RUN ON 4070). Pre-registered in docs/ITERATION_LOG.md
+Revision experiments, round 2 (revision round 2; RUN ON 4070). Pre-registered in docs/ITERATION_LOG.md
 (iteration 9) before this script was run.
 
 Part A (real slides, all budgets): every policy is run once per (slide, budget) and BOTH metrics are stored per

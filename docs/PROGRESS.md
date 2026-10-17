@@ -1,4 +1,4 @@
-# STARE — Progress & Positioning (reviewer-facing regroup)
+# STARE — Progress & Positioning (status regroup)
 
 Last updated: 2026-09-08. Companion to `SOURCE_OF_TRUTH.md` (spec), `KNOWLEDGE_BASE.md` (paper notes),
 `lit_review/REALITY_CHECK.md` (problem-exists evidence). This file is the honest "where we are"
@@ -14,7 +14,7 @@ fixed measurement budget on a tissue slide, sequentially decide *which regions t
 conditioned on H&E morphology **and on the expression already measured** — to minimize
 whole-transcriptome reconstruction error.
 
-## 2. Why a reviewer should care (motivation — all [LIT])
+## 2. Why this matters (motivation — all [LIT])
 - **Targeted ST is budget-limited by physics, not choice.** Imaging platforms cap panels (~1,000
   genes; Xenium ≤5,000) [scGIST, Genome Biol 2024; HEST-1k, NeurIPS 2024]. Region-based platforms
   (GeoMx DSP) require a pathologist to *manually* select a budget-limited set of ROIs to profile
@@ -73,7 +73,7 @@ closed loop can only earn its complexity when the imputer's uncertainty **depend
 — i.e. a **non-stationary / learned** imputer (STFlow/SpaIM), the same precondition AFA-RL identifies
 [AFA-RL]. Hand-tuning greedy heuristics on a stationary kNN imputer is provably futile.
 
-## 6. The one existential question we must answer honestly (the reviewer's kill-shot)
+## 6. The one existential question we must answer honestly (the decisive objection)
 > **Does the closed loop earn its complexity, or is coverage-based one-shot selection already optimal
 > for reconstruction?**
 
@@ -113,7 +113,7 @@ predicts. The disciplined move is to **replicate established frameworks/methods*
 (`no_image`==`no_spatial`==`ours` under error_reduction); add the variance/MI-greedy placement
 baselines; do the Tier-1 SpatialFinder repro.
 
-## 8. Reviewer caveats we must own up front (not hide)
+## 8. Caveats we must own up front (not hide)
 1. **In-silico, not wet-lab.** We simulate acquisition by masking Visium HD; real GeoMx ROI acquisition
    differs (assay noise, ROI shape). Justified by field practice (PERSIST masks to simulate FISH; HEST
    is the standard benchmark), but we state it and, ideally, validate the top policy on a held-out

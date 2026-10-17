@@ -1,5 +1,5 @@
 """
-Multiplicity-adjusted, cluster-aware summary of every paired margin (revision, reviewer point 5).
+Multiplicity-adjusted, cluster-aware summary of every paired margin (revision point 5).
 
 Walks the experiment JSONs (05 graphflow, 09, 10, 12, 13), collects every paired-margin summary
 (any dict with mean / ci95 / per_slide), and reports for each: n slides, n study clusters, mean,

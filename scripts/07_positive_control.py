@@ -1,5 +1,5 @@
 """
-Positive control + adaptivity boundary (revision, reviewer points 1, 2, 10).
+Positive control + adaptivity boundary (revision points 1, 2, 10).
 
 Question: can our simulator/metric register an adaptivity advantage when one exists, and where is the
 boundary? We build synthetic slides with image-unpredictable, spatially clustered structure whose

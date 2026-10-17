@@ -77,6 +77,11 @@ The experiments were run on a laptop with an NVIDIA RTX 4070. Slide embeddings a
 `cache/` (not committed); experiment scripts checkpoint and resume. All hyperparameters and seeds are fixed in
 `src/stare/config.py`.
 
+## License
+
+Code is released under the MIT License (`LICENSE`). Third-party material is listed in
+`THIRD_PARTY_NOTICES.md`.
+
 ## Citation
 
 If you use this code, please cite the preprint (citation details will be added once it is posted).

@@ -1,6 +1,6 @@
-# Revision Plan — stress-test reframe (response to reviewer)
+# Revision Plan — stress-test reframe (response to critique)
 
-The reviewer's verdict (weak reject, 4/10 novelty) is largely correct. We are taking the "stronger,
+The critique's verdict (low novelty as framed) is largely correct. We are taking the "stronger,
 genuinely publishable" path: reframe from a flat negative result into a **stress test and boundary
 study** of adaptive spatial-transcriptomics acquisition. New claim target:
 
@@ -16,9 +16,9 @@ Verified prior work that must be engaged (all real, checked 2026-09):
 
 ---
 
-## Reviewer point -> action -> where it runs
+## Critique point -> action -> where it runs
 
-| # | Reviewer point | Action | Runs |
+| # | Critique point | Action | Runs |
 |---|---|---|---|
 | 1 | Missing adaptive prior work; "non-adaptive" claim false | Rewrite related work; cite SOFisher/SCR2-ST/S2-omics; position our angle (matched strong baseline + matched imputer) | local (writing) |
 | 1b | Benchmark the adaptive competitors | Port SOFisher and SCR2-ST policies into our simulator; run vs MI-greedy under matched imputer | **4070** |
