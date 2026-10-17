@@ -31,25 +31,24 @@ Evaluating Feedback-Driven Region Selection for Spatial Transcriptomics}
 \maketitle
 
 \begin{abstract}
-Spatial transcriptomics is expensive enough that many studies profile only selected regions of a tissue section,
-and recent methods choose each next region from the expression already measured. Whether this feedback improves
-on a fixed design has not been tested against baselines that a practitioner could deploy. We built a retrospective
-acquisition simulator from 22 human HEST-1k slides spanning 18 studies and four tissues, held the image encoder and
-imputer fixed, and registered each of three analysis stages before running it, with inference at the level of
-studies. \textbf{RQ1:} for whole-section reconstruction, a feedback policy designed to target the imputer's error
-performed worse than a non-adaptive design chosen on held-out studies at every budget from 0.5\% to 20\% of
-regions, by up to 0.092 in Pearson correlation; a semi-synthetic control could not show that the protocol would
-detect a reconstruction gain. \textbf{RQ2:} for capturing molecularly heterogeneous regions, informative feedback
-raised recall over permuted feedback by up to 0.063, but no margin survived correction for multiple comparisons
-and a non-adaptive diversity sampler performed about as well. \textbf{RQ3:} when a fixed coverage design spent
-half or more of the budget and feedback chose the rest, no hybrid outperformed the coverage design; from 2\%
-upward all were within 0.007 in correlation and 0.006 in recall, although at 2--10\% gains of about 0.02 and 0.03
-would probably have been detected. Feedback carried information, since permuted values made the same policies worse,
-but it mainly offset the cost of departing from coverage. \textbf{RQ4} (exploratory): revealing regions in
-batches of five neither eroded nor established a detection advantage. For developers of adaptive acquisition
-methods, these results set a bar: compare against a fixed design chosen for the same objective and against the
-method fed uninformative values. For experimentalists working at these budgets, a well-chosen fixed design was
-sufficient.
+Spatial transcriptomics is costly, so many studies profile only selected regions of a section, and recent methods
+choose each next region from expression already measured. Benchmarks of active spot selection for
+training predictors across patients report inconsistent gains over random sampling; we ask instead whether, within
+a slide, measured feedback improves selection over a fixed design matched to the objective. We built a
+retrospective simulator from 22 human HEST-1k slides (18 studies, four tissues), fixed the image encoder and
+imputer, registered three analysis stages in advance, and drew inference at the study level.
+\textbf{RQ1:} for whole-section reconstruction, a feedback policy targeting the imputer's error was worse than a
+non-adaptive design chosen on held-out studies at every budget from 0.5\% to 20\%, by up to 0.092
+Pearson correlation; a semi-synthetic control did not establish sensitivity to reconstruction gains.
+\textbf{RQ2:} for capturing heterogeneous regions, informative feedback raised recall over permuted feedback by up
+to 0.063, but no margin survived multiplicity correction, and a diversity sampler did about as well. \textbf{RQ3:} when a coverage design spent half or more of the budget and feedback the rest, no hybrid beat
+the coverage design; from 2\% upward all were within 0.007 correlation and 0.006 recall, although gains near 0.02
+and 0.03 would probably have been detected at 2--10\%. Feedback was informative (permuted values made the same
+policies worse) but mainly offset the cost of leaving coverage. \textbf{RQ4} (exploratory): batches of five neither
+eroded nor established a detection advantage. Method developers should compare adaptive selection with
+objective-matched fixed designs and with itself fed uninformative values. For experimentalists, within simulated
+spot-level budgets, one imputer, and computational endpoints, no tested feedback policy outperformed a well-chosen
+fixed design.
 \end{abstract}
 
 \section{Introduction}
@@ -63,11 +62,14 @@ unmeasured tissue can be reconstructed and whether distinct tissue compartments 
 
 Choosing regions is an experimental-design problem, and recent methods solve it sequentially.
 SOFisher~\citep{li2026sofisher} uses reinforcement learning to move fields of view toward regions enriched for a
-target signal, and SCR$^2$-ST~\citep{zhu2025scr2st} learns sampling locations for expression prediction.
+target signal, and SCR$^2$-ST~\citep{zhu2026scr2st} learns sampling locations for expression prediction.
 S2-omics~\citep{yuan2025s2omics} takes the opposite approach and selects regions from histology alone, before any
 measurement. The appeal of sequential selection follows active learning~\citep{settles2009active}: each measurement
-can inform the next. Its cost is a measurement turnaround between choices. To our knowledge, no evaluation has
-isolated whether the feedback itself, rather than the selection rule built around it, is what helps.
+can inform the next. Its cost is a measurement turnaround between choices. A recent benchmark of active spot
+selection for training expression predictors found inconsistent gains over random sampling at small
+budgets~\citep{zhu2026benchmarking}, but addressed a different decision (Section~\ref{sec:related}). We are not
+aware of an evaluation that compares feedback-driven region selection within a slide against fixed designs matched
+to the objective while ablating the measured feedback itself.
 
 Theory gives different expectations for different goals. For reconstructing a Gaussian-process field with a
 known kernel, posterior variance depends only on where measurements are taken, so a design fixed in advance is
@@ -95,6 +97,7 @@ stage, and evidence that the tested feedback policies offered no supported advan
 designs for either objective.
 
 \section{Related work}
+\label{sec:related}
 
 \paragraph{Expression from histology.} Expression has been predicted from H\&E by contrastive
 retrieval~\citep{xie2023bleep}, flow matching over spatial neighbourhoods~\citep{huang2025stflow},
@@ -115,8 +118,15 @@ sequential policy~\citep{yin2020afa}.
 \paragraph{Design in spatial omics.} Gene-panel selectors fix which genes to
 measure~\citep{covert2023persist,reconst2026}. Region selectors range from one-shot image
 rankers~\citep{spatialfinder2026} and histology-based heterogeneity selection~\citep{yuan2025s2omics} to
-sequential reinforcement-learning samplers~\citep{li2026sofisher,zhu2025scr2st}. Our evaluation includes
-reimplementations of these objectives and a native run of SOFisher.
+sequential reinforcement-learning samplers~\citep{li2026sofisher,zhu2026scr2st}. Our evaluation includes
+reimplementations of these objectives and a native run of SOFisher. The closest evaluation is a retrospective
+benchmark of active spot selection on breast and skin cancer cohorts~\citep{zhu2026benchmarking}, which compared
+uncertainty- and diversity-based strategies with random sampling and found that active strategies did not
+consistently win at small budgets. Its question differs from ours in three ways. It selects spots to train a
+morphology-to-expression predictor that is evaluated on held-out patients, whereas we select regions within a
+slide for a fixed imputer. Its baseline is random sampling, whereas ours are non-adaptive designs chosen for each
+objective. It compares selection strategies, whereas we hold each strategy fixed and remove the information in the
+measured values.
 
 \section{Methods}
 \label{sec:methods}
@@ -193,7 +203,7 @@ heterogeneity balanced by an exploration term as in active search~\citep{garnett
 
 \emph{Competitor objectives.} A diversity sampler applies farthest-point selection in joint image and spatial
 features, the coverage criterion of core-set active learning~\citep{sener2018active}, standing in for the
-coverage-dominated reward of SCR$^2$-ST~\citep{zhu2025scr2st}. An adaptive ROI-seeking sampler follows the reward
+coverage-dominated reward of SCR$^2$-ST~\citep{zhu2026scr2st}. An adaptive ROI-seeking sampler follows the reward
 of SOFisher~\citep{li2026sofisher}. Both reimplement stated objectives, not the authors' trained models.
 
 \emph{Hybrids} (RQ3). A hybrid takes its first $\lceil fn\rceil$ regions, for a budget of $n$ regions and
@@ -471,10 +481,14 @@ difference of the size observed would need more independent studies than the 18 
 \paragraph{Implications.} For developers of adaptive acquisition, two comparisons should be standard: a fixed
 design chosen on other data for the same objective, and the method itself fed uninformative values. Neither
 comparison requires new data, and together they separate the value of feedback from the value of a good selection
-rule. Inference should treat studies, not slides, as the unit. For experimentalists working at budgets of 0.5--20\%
-of regions, a fixed design was sufficient: $k$-means at the smallest budgets and MI-greedy above them for
-reconstruction, and variance-greedy, a one-shot ranker, or a diversity design for heterogeneity. Fixed designs also
-avoid the measurement turnaround that sequential selection requires.
+rule. Inference should treat studies, not slides, as the unit. For experimentalists, our evidence is confined to
+simulated spot-level acquisition at 0.5--20\% of regions, one imputer, and computationally defined endpoints. Within
+those limits, no tested feedback policy outperformed a fixed design: $k$-means at the smallest budgets and MI-greedy
+above them for reconstruction, and variance-greedy, a one-shot ranker, or a diversity design for heterogeneity.
+Fixed designs also avoid the measurement turnaround that sequential selection requires. Whether this holds for
+ROI-scale acquisition, other predictors, or annotated biological targets would need prospective or annotated data.
+Our findings are consistent with the benchmark's result for predictor training~\citep{zhu2026benchmarking}, although
+the two studies address different decisions.
 
 \paragraph{Limitations.} The simulator is retrospective: a revealed region returns its measured expression without
 added noise, batch effects, or delay, conditions that if anything favour feedback. The ROIs are the 20\% of regions

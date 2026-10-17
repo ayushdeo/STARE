@@ -37,11 +37,10 @@ pdflatex manuscript`, or `tectonic -X compile manuscript.tex`. Verified on 2026-
 0.17: 20 pages (main text ends on page 10), no overfull boxes, no undefined references.
 
 ## arXiv tarball
-After one clean compile (which produces `manuscript.bbl`):
-```bash
-tar czf arxiv_submission.tar.gz manuscript.tex manuscript.bbl neurips_2023.sty generated/*.tex fig_controls.pdf fig_r2.pdf fig_s3.pdf fig_sofisher_native.pdf
-```
-Suggested categories: cs.LG, cross-list q-bio.GN and q-bio.QM.
+After one compile that keeps intermediates (which produces `manuscript.bbl`), run
+`python scripts/24_arxiv_package.py` from the repository root. It packages exactly the files the paper uses into
+`arxiv_submission.tar.gz` and test-compiles them in an empty folder. Form fields (title, abstract within the
+1,920-character limit, comments, categories) are in [`ARXIV_SUBMISSION.md`](ARXIV_SUBMISSION.md).
 
 ## Pre-submission checklist
 - [ ] Compiles on Overleaf with the `generated/` folder present.
