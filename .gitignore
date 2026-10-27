@@ -43,3 +43,4 @@ paper/*.bbl
 paper/arxiv_submission.tar.gz
 paper/*.out
 paper/arxiv_upload/
+paper/tmlr_supplementary.zip

@@ -21,7 +21,7 @@ PAPER = Path(__file__).resolve().parents[1] / "paper"
 def needed_files(tex: str):
     inputs = re.findall(r"\\input\{([^}]+)\}", tex)
     figs = re.findall(r"\\includegraphics(?:\[[^\]]*\])?\{([^}]+)\}", tex)
-    out = ["manuscript.tex", "manuscript.bbl", "neurips_2023.sty"]
+    out = ["manuscript.tex", "manuscript.bbl", "tmlr.sty", "fancyhdr.sty"]
     out += [p if p.endswith(".tex") else p + ".tex" for p in inputs]
     out += figs
     return out
@@ -43,6 +43,19 @@ def strip_comments(text: str):
     return "\n".join(out) + "\n", n
 
 
+REVIEW_ONLY = ("Under review as submission to TMLR", "Anonymous authors", "Paper under double-blind review")
+
+
+def body_words(text: str, tex: str):
+    """Words of the typeset paper without the lines that differ between review and preprint builds: the review
+    header, the anonymous-author block, and the author block of the preprint."""
+    m = re.search(r"\\author\{(.*?)\}\s*\n\s*\n", tex, re.S) or re.search(r"\\author\{(.*?)\n\\def", tex, re.S)
+    author = re.sub(r"\\[a-zA-Z]+|[{}\\%]", " ", m.group(1)).split() if m else []
+    lines = [l for l in text.splitlines() if l.strip() not in REVIEW_ONLY]
+    words = " ".join(lines).split()
+    return [w for w in words if w not in set(author)]
+
+
 def pdf_text(path: Path) -> str:
     try:
         import pymupdf
@@ -57,6 +70,8 @@ def main():
     ap.add_argument("--tectonic", default=shutil.which("tectonic"))
     args = ap.parse_args()
     tex = (PAPER / "manuscript.tex").read_text(encoding="utf-8")
+    if "CONTACT-EMAIL" in tex:              # the preprint shows the author block, so the placeholder would be published
+        sys.exit("replace CONTACT-EMAIL in manuscript.tex's \\author block before building a preprint")
     files = needed_files(tex)
     missing = [f for f in files if not (PAPER / f).exists()]
     if missing:
@@ -80,6 +95,8 @@ def main():
                     bib = "\\bibliography{references}"
                     assert text.count(bib) == 1, "expected one \\bibliography command"
                     text = text.replace(bib, "\\input{manuscript.bbl}")
+                    # a preprint carries the author names and no TMLR review header
+                    text = text.replace("\\usepackage{tmlr}", "\\usepackage[preprint]{tmlr}")
                 dst.write_text(text, encoding="utf-8")
                 if n:
                     removed.append((f, n))
@@ -111,9 +128,9 @@ def main():
         # stripping comments must not change the typeset paper
         a, b = pdf_text(Path(d) / "manuscript.pdf"), pdf_text(PAPER / "manuscript.pdf")
         if a and b:
-            same = a == b
+            same = body_words(a, tex) == body_words(b, tex)
             ok = ok and same
-            print(f"text identical to paper/manuscript.pdf: {same}")
+            print(f"body text identical to paper/manuscript.pdf (author/review lines aside): {same}")
         for l in bad:
             print("   ", l)
         if not ok:

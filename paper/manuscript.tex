@@ -1,44 +1,47 @@
-\documentclass{article}
+\documentclass[10pt]{article}
 
-% NeurIPS style, preprint (arXiv) mode. nonatbib lets us load natbib with numeric citations.
-\usepackage[preprint,nonatbib]{neurips_2023}
-\makeatletter\renewcommand{\@noticestring}{Preprint.}\makeatother
+% TMLR style. Submission: \usepackage{tmlr} (anonymous). Camera-ready: [accepted]. Preprint: [preprint].
+\usepackage{tmlr}
 
 \usepackage[utf8]{inputenc}
-\usepackage[T1]{fontenc}
-\usepackage[numbers,sort&compress]{natbib}
 \usepackage{amsmath,amssymb}
 \usepackage{graphicx}
 \usepackage{booktabs}
 \usepackage{float}
 \usepackage{microtype}
 \usepackage{xcolor}
-\definecolor{linkblue}{rgb}{0.0,0.0,0.6}
 \usepackage{hyperref}
+\usepackage{url}
+\definecolor{linkblue}{rgb}{0.0,0.0,0.6}
 \hypersetup{colorlinks=true,allcolors=linkblue}
 
 \graphicspath{{./}}
+% scale a table down to the line width if it is wider, never up
+\newcommand{\fittable}[1]{\resizebox{\ifdim\width>\linewidth\linewidth\else\width\fi}{!}{#1}}
 
-\title{Where to Measure Next?\\
-Evaluating Feedback-Driven Region Selection for Spatial Transcriptomics}
+\title{Where to Measure Next? Evaluating Feedback-Driven\\Region Selection for Spatial Transcriptomics}
 
-\author{%
-  Ayush Deo \\
-  University of Southern California \\
-}
+% Hidden by tmlr.sty unless the [accepted] or [preprint] option is used.
+% Camera-ready only: replace CONTACT-EMAIL with the address to publish.
+\author{\name Ayush Deo \email CONTACT-EMAIL \\
+      \addr University of Southern California}
+
+\def\month{MM}
+\def\year{YYYY}
+\def\openreview{\url{https://openreview.net/forum?id=XXXX}}
 
 \begin{document}
 \maketitle
 
 \begin{abstract}
 Spatial transcriptomics is costly, so many studies profile only selected regions of a section, and recent methods
-choose each next region from expression already measured. Benchmarks of active spot selection for
-training predictors across patients report inconsistent gains over random sampling; we ask instead whether, within
+choose each next region from expression already measured. A recent benchmark of active spot selection for
+training predictors across patients reported inconsistent gains over random sampling; we ask instead whether, within
 a slide, measured feedback improves selection over a fixed design matched to the objective. We built a
 retrospective simulator from 22 human HEST-1k slides (18 studies, four tissues), fixed the image encoder and
 imputer, registered three analysis stages in advance, and drew inference at the study level.
 \textbf{RQ1:} for whole-section reconstruction, a feedback policy targeting the imputer's error was worse than a
-non-adaptive design chosen on held-out studies at every budget from 0.5\% to 20\%, by up to 0.092
+non-adaptive design chosen on held-out studies at every budget (0.5--20\%), by up to 0.092
 Pearson correlation; a semi-synthetic control did not establish sensitivity to reconstruction gains.
 \textbf{RQ2:} for capturing heterogeneous regions, informative feedback raised recall over permuted feedback by up
 to 0.063, but no margin survived multiplicity correction, and a diversity sampler did about as well. \textbf{RQ3:} when a coverage design spent half or more of the budget and feedback the rest, no hybrid beat
@@ -62,9 +65,9 @@ unmeasured tissue can be reconstructed and whether distinct tissue compartments 
 
 Choosing regions is an experimental-design problem, and recent methods solve it sequentially.
 SOFisher~\citep{li2026sofisher} uses reinforcement learning to move fields of view toward regions enriched for a
-target signal, and SCR$^2$-ST~\citep{zhu2026scr2st} learns sampling locations for expression prediction.
-S2-omics~\citep{yuan2025s2omics} takes the opposite approach and selects regions from histology alone, before any
-measurement. The appeal of sequential selection follows active learning~\citep{settles2009active}: each measurement
+target signal, and SCR$^2$-ST~\citep{zhu2026scr2st} learns where to sample spots to build training sets for
+expression prediction. S2-omics~\citep{yuan2025s2omics} takes the opposite approach and selects regions from
+histology alone, before any measurement. The appeal of sequential selection follows active learning~\citep{settles2009active}: each measurement
 can inform the next. Its cost is a measurement turnaround between choices. A recent benchmark of active spot
 selection for training expression predictors found inconsistent gains over random sampling at small
 budgets~\citep{zhu2026benchmarking}, but addressed a different decision (Section~\ref{sec:related}). We are not
@@ -72,12 +75,11 @@ aware of an evaluation that compares feedback-driven region selection within a s
 to the objective while ablating the measured feedback itself.
 
 Theory gives different expectations for different goals. For reconstructing a Gaussian-process field with a
-known kernel, posterior variance depends only on where measurements are taken, so a design fixed in advance is
-as good as an adaptive one~\citep{krause2008near}; adaptive selection can gain only when the model's uncertainty
-depends on the observed values~\citep{golovin2011adaptive}. Imputers learned from images are not Gaussian
-processes with known kernels, so for reconstruction the question is empirical. Finding regions defined by their
-expression is closer to active search, where the targets can be located only by measuring and feedback is
-essential~\citep{garnett2012bayesian}.
+known kernel, posterior variance does not depend on the observed values, so a design fixed before any measurement
+is as good as a sequential one; when the model's parameters are uncertain, sequential designs can do
+better~\citep{krause2008near}. Imputers learned from images are not Gaussian processes with known kernels, so for
+reconstruction the question is empirical. Finding regions defined by their expression is closer to active search,
+in which each choice exploits the labels already observed to locate further targets~\citep{garnett2012bayesian}.
 
 An evaluation that can separate these cases needs four features. The baseline must be a design that could be
 chosen before the target slide is profiled, because selecting the best design on the evaluation data biases the
@@ -108,16 +110,17 @@ vary only the regions it receives.
 \paragraph{Choosing what to measure.} Pool-based active learning selects queries by uncertainty~\citep{lewis1994sequential},
 expected error reduction~\citep{roy2001toward}, or coverage of the input space~\citep{sener2018active}. Sensor
 placement offers the matching non-adaptive designs: variance- and mutual-information-greedy selection, which are
-near-optimal for Gaussian-process reconstruction~\citep{krause2008near}. Adaptive submodularity characterises when
-sequential choices can beat a fixed set~\citep{golovin2011adaptive}, and active search addresses the related goal
-of collecting positives~\citep{garnett2012bayesian}. Batch acquisition reduces the information available to each
-choice~\citep{kirsch2019batchbald}, and global optimisation commonly begins with a space-filling design before
-switching to adaptive queries~\citep{jones1998efficient}. Active feature acquisition casts measurement as a
+near-optimal for Gaussian-process reconstruction~\citep{krause2008near}. Adaptive submodularity extends such
+guarantees to greedy policies that condition on observations~\citep{golovin2011adaptive}, and active search
+addresses the related goal of collecting positives~\citep{garnett2012bayesian}. In batch acquisition, the members
+of a batch are chosen without each other's labels~\citep{kirsch2019batchbald}, and global optimisation commonly
+begins with a space-filling design before switching to adaptive queries~\citep{jones1998efficient}. Active feature acquisition casts measurement as a
 sequential policy~\citep{yin2020afa}.
 
 \paragraph{Design in spatial omics.} Gene-panel selectors fix which genes to
-measure~\citep{covert2023persist,reconst2026}. Region selectors range from one-shot image
-rankers~\citep{spatialfinder2026} and histology-based heterogeneity selection~\citep{yuan2025s2omics} to
+measure~\citep{covert2023persist,reconst2026}. Region selectors range from image-based rankers such as SpatialFinder,
+which score regions from H\&E before any expression is measured~\citep{spatialfinder2026}, and histology-based heterogeneity
+selection~\citep{yuan2025s2omics} to
 sequential reinforcement-learning samplers~\citep{li2026sofisher,zhu2026scr2st}. Our evaluation includes
 reimplementations of these objectives and a native run of SOFisher. The closest evaluation is a retrospective
 benchmark of active spot selection on breast and skin cancer cohorts~\citep{zhu2026benchmarking}, which compared
@@ -144,7 +147,7 @@ size, comparable to ROI-based profiling) to 20\%.
 \subsection{Slides and preprocessing}
 We used 22 human HEST-1k slides~\citep{jaume2024hest} from prostate (6), kidney (4), lung (6), and colon (6), of
 which 7 are Visium HD~\citep{oliveira2025visiumhd} and 15 standard Visium~\citep{stahl2016visualization}
-(Appendix~\ref{app:slides}). The tissues are those used to evaluate the one-shot ranker we compare
+(Appendix~\ref{app:slides}). The tissues are the four used to evaluate the image-based ranker we compare
 against~\citep{spatialfinder2026}. Selection rules were fixed before any result on these slides: human tissue,
 whole-transcriptome assay, at least 1{,}000 spots under tissue, a source image of at most 0.6\,$\mu$m/px so that
 image patches are not substantially upsampled, one slide per specimen, and at most two slides per study. The
@@ -153,7 +156,8 @@ slides come from 18 studies, which serve as the independent units of inference.
 A region is one native spot, the unit at which HEST provides both expression and an image patch. Visium spots are
 55\,$\mu$m wide on a 100\,$\mu$m pitch; the HD pseudo-spots distributed by HEST have a median spacing of
 128\,$\mu$m on our slides. Slides contain 1{,}766 to 9{,}080 regions. Each region's image input is the HEST
-224\,px patch at 0.5\,$\mu$m/px, embedded with the frozen pathology foundation model UNI2-h~\citep{chen2024uni}.
+224\,px patch at 0.5\,$\mu$m/px~\citep{jaume2024hest}, embedded with UNI2-h, a later release of the pathology
+foundation model UNI~\citep{chen2024uni},\footnote{\url{https://huggingface.co/MahmoodLab/UNI2-h}} used frozen.
 Following the HEST benchmark, expression is log1p-transformed and genes detected in fewer than 10\% of regions are
 removed~\citep{jaume2024hest}.
 
@@ -161,8 +165,10 @@ removed~\citep{jaume2024hest}.
 \emph{Reconstruction} (RQ1, RQ3): a fixed imputer predicts the unprofiled regions, scored by the per-gene Pearson
 correlation over those regions averaged over the 50 most variable genes (PCC), the HEST benchmark
 target~\citep{jaume2024hest}. \emph{Detection} (RQ2--RQ4): regions of interest (ROIs) are the 20\% of regions with
-the highest local molecular heterogeneity, the variance of top-50-gene expression across each region's 8 nearest
-spatial neighbours, after the heterogeneity objective of S2-omics~\citep{yuan2025s2omics}. The ROI fraction equals
+the highest local molecular heterogeneity, which we define as the variance of top-50-gene expression across each
+region's 8 nearest spatial neighbours. The definition is ours; it is motivated by the goal of capturing molecular
+heterogeneity that drives S2-omics~\citep{yuan2025s2omics}, which itself selects regions from histology. The ROI
+fraction equals
 the largest budget, so a perfect policy could capture every ROI. We score recall, the fraction of ROIs profiled.
 Gene sets and ROIs are computed from ground truth and used only for scoring.
 
@@ -183,7 +189,9 @@ used and were not tuned on its outcomes; those of the imputer were set during de
 \subsection{Policies}
 \emph{Non-adaptive designs.} Random; farthest-point selection in space (grid), a greedy $k$-centre
 cover~\citep{gonzalez1985clustering}; $k$-means~\citep{lloyd1982least} on image embeddings, taking the region
-nearest each centroid; a reimplementation of a one-shot image ranker~\citep{spatialfinder2026}; and variance- and
+nearest each centroid; a one-shot ranker after SpatialFinder~\citep{spatialfinder2026}, which scores regions once
+from image embeddings by rare-cluster membership and distance to the cluster centroid, a simplification of its
+diversity score without the cell classifier or pathologist labelling (``one-shot'' below); and variance- and
 mutual-information (MI)-greedy placement~\citep{krause2008near} with an RBF kernel on image and coordinate
 features and a median-heuristic lengthscale~\citep{garreau2017large}.
 
@@ -202,9 +210,10 @@ expression around it plus 0.5 times its distance to the nearest profiled region,
 heterogeneity balanced by an exploration term as in active search~\citep{garnett2012bayesian}.
 
 \emph{Competitor objectives.} A diversity sampler applies farthest-point selection in joint image and spatial
-features, the coverage criterion of core-set active learning~\citep{sener2018active}, standing in for the
-coverage-dominated reward of SCR$^2$-ST~\citep{zhu2026scr2st}. An adaptive ROI-seeking sampler follows the reward
-of SOFisher~\citep{li2026sofisher}. Both reimplement stated objectives, not the authors' trained models.
+features, the coverage criterion of core-set active learning~\citep{sener2018active}. It approximates the coverage
+and diversity terms of the SCR$^2$-ST reward, which rewards covering single-cell states, cell-type diversity, and
+spatial spread~\citep{zhu2026scr2st}. An adaptive ROI-seeking sampler follows the reward of
+SOFisher~\citep{li2026sofisher}. Both reimplement stated objectives, not the authors' trained models.
 
 \emph{Hybrids} (RQ3). A hybrid takes its first $\lceil fn\rceil$ regions, for a budget of $n$ regions and
 $f\in\{0.5,0.8\}$, from a fixed coverage design and the rest from a feedback policy: the residual policy for
@@ -248,9 +257,10 @@ feasible one, whose selection for each study uses the other 17. Following the pr
 be repeated inside resampling~\citep{varma2006bias}, we checked the stage-2 results post hoc with a bootstrap that
 repeats the selection in every replicate and with a single fixed comparator (Appendix~\ref{app:sensitivity}).
 
-Analyses were registered in the repository in three stages~\citep{nosek2018preregistration}, each before its
-experiments and after the previous stage's results were known.\footnote{The repository plans label RQ4 as Q3 and
-record stage 3 as iteration 11 of \texttt{docs/ITERATION\_LOG.md}.} Stage 1 compared policies with hindsight
+Analyses were registered in the project's version-controlled repository in three
+stages~\citep{nosek2018preregistration}, each before its experiments and after the previous stage's results were
+known.\footnote{The plans are iterations 7, 9, and 11 of \texttt{docs/ITERATION\_LOG.md} in the supplementary
+material, which labels RQ4 as Q3.} Stage 1 compared policies with hindsight
 benchmarks in a family of 24 margins, including the first batched experiments (Appendix~\ref{app:stage1}).
 Stage 2 introduced the feasible comparator, the residual policy, and the feedback ablations, with a primary family
 of 18 margins: residual minus feasible at six budgets (RQ1), and at four budgets local-variance minus its permuted
@@ -322,7 +332,7 @@ exceeded the feasible design by $0.016$ to $0.021$ PCC at budgets up to 2\% and 
 is the non-adaptive design chosen on the other studies; ``per-slide best'' is chosen in hindsight. ``Residual,
 perm.'' is the residual policy given permuted feedback.}
 \label{tab:q1abs}
-\resizebox{\textwidth}{!}{\input{generated/r2_q1_abs.tex}}
+\fittable{\input{generated/r2_q1_abs.tex}}
 \end{table}
 
 \begin{table}[t]
@@ -331,7 +341,7 @@ perm.'' is the residual policy given permuted feedback.}
 unadjusted 95\% CI resampling studies. $p_H$: Holm-adjusted within the stage-2 primary or secondary family; $p$:
 unadjusted (post hoc).}
 \label{tab:q1}
-\resizebox{\textwidth}{!}{\input{generated/r2_q1_margins.tex}}
+\fittable{\input{generated/r2_q1_margins.tex}}
 \end{table}
 
 \begin{figure}[t]
@@ -365,7 +375,8 @@ included zero at every budget (Appendix~\ref{app:sensitivity}). The ROI-seeking 
 stage 1 (Appendix~\ref{app:stage1}). Because the port is not the trained SOFisher, we also ran SOFisher natively on
 its mouse cortex data, where its reward for captured target regions rose from a median of $-238$ early in training
 to $+147$ late (descriptive; Appendix~\ref{app:sofisher}); the port's result is therefore not a test of SOFisher.
-SCR$^2$-ST could not be run natively because its processed training data are not public.
+SCR$^2$-ST could not be run natively because its processed training data were not public when we ran our
+experiments.
 
 \begin{table}[t]
 \centering
@@ -373,7 +384,7 @@ SCR$^2$-ST could not be run natively because its processed training data are not
 resampling studies; $p_H$ Holm-adjusted over the 18 stage-2 primary margins; MDE$_H$ at 80\% power and
 $\alpha=0.05/18$.}
 \label{tab:q2}
-\resizebox{\textwidth}{!}{\input{generated/r2_q2_margins.tex}}
+\fittable{\input{generated/r2_q2_margins.tex}}
 \end{table}
 
 \begin{table}[t]
@@ -382,8 +393,7 @@ $\alpha=0.05/18$.}
 local-variance policy with informative, permuted, and constant feedback. The oracle profiles regions in order of
 true heterogeneity and bounds recall from above.}
 \label{tab:q2abs}
-\small
-\input{generated/r2_q2_abs.tex}
+\fittable{\small\input{generated/r2_q2_abs.tex}}
 \end{table}
 
 \subsection{RQ3: Feedback on top of a coverage design}
@@ -412,7 +422,7 @@ The hybrid takes the first 50\% or 80\% of regions from the design and the rest 
 with unadjusted 95\% CI resampling studies; $p_H$ Holm-adjusted over the 20 primary margins; MDE$_H$ at 80\% power
 and $\alpha=0.05/20$.}
 \label{tab:s3}
-\resizebox{\textwidth}{!}{\input{generated/s3_primary.tex}}
+\fittable{\input{generated/s3_primary.tex}}
 \end{table}
 
 \begin{figure}[t]
@@ -442,7 +452,7 @@ correction ($p_H\ge0.11$).
 at a time'' is the stage-2 sequential run. $\Delta$ with unadjusted 95\% CI resampling studies; $p_H$ Holm-adjusted
 over the 24 stage-3 secondary margins; permuted values averaged over two seeds.}
 \label{tab:batched}
-\resizebox{\textwidth}{!}{\input{generated/s3_batched.tex}}
+\fittable{\input{generated/s3_batched.tex}}
 \end{table}
 
 \subsection{Robustness}
@@ -484,7 +494,7 @@ comparison requires new data, and together they separate the value of feedback f
 rule. Inference should treat studies, not slides, as the unit. For experimentalists, our evidence is confined to
 simulated spot-level acquisition at 0.5--20\% of regions, one imputer, and computationally defined endpoints. Within
 those limits, no tested feedback policy outperformed a fixed design: $k$-means at the smallest budgets and MI-greedy
-above them for reconstruction, and variance-greedy, a one-shot ranker, or a diversity design for heterogeneity.
+above them for reconstruction, and variance-greedy, the one-shot ranker, or a diversity design for heterogeneity.
 Fixed designs also avoid the measurement turnaround that sequential selection requires. Whether this holds for
 ROI-scale acquisition, other predictors, or annotated biological targets would need prospective or annotated data.
 Our findings are consistent with the benchmark's result for predictor training~\citep{zhu2026benchmarking}, although
@@ -499,9 +509,11 @@ biological target. The acquisition unit is a spot or HD pseudo-spot, smaller tha
 differ in spacing. The batch and block simulations approximate but do not validate any platform. The 22-slide
 results use one imputer; the $k$-NN and kriging comparisons rest on five slides. The competitor samplers
 reimplement objectives; SOFisher was run natively only on its own data and SCR$^2$-ST not at all. The registered
-stage-2 ablation tests use one permutation, with further seeds descriptive. The feasible comparator, the residual
-policy, the ablations, and the hybrids were added after earlier results were known, although each was registered
-before its experiments. Budgets above 20\% were not tested.
+stage-2 ablation tests use one permutation, with further seeds descriptive. The analysis plans were registered in
+our own version-controlled repository rather than with an external registry, so their timing rests on commit
+records, which the supplementary material lists. The feasible comparator, the residual policy, the ablations, and
+the hybrids were added after earlier results were known, although each was registered before its experiments.
+Budgets above 20\% were not tested.
 
 \section{Conclusion}
 
@@ -513,9 +525,15 @@ of feedback in region selection is therefore an empirical question for each obje
 against feasible, objective-matched baselines and with uninformative-feedback controls.
 
 \paragraph{Reproducibility.}
-Code, configuration, result files, the registered analysis plans, and the scripts that regenerate every table and
-figure are available at \url{https://github.com/ayushdeo/STARE}.
+The supplementary material contains the code, configuration, result files, the registered analysis plans with
+their commit dates, and the scripts that regenerate every table and figure from the result files. A public
+repository will be linked on acceptance. HEST-1k and UNI2-h are available from their providers under their own
+access terms.
 
+\bibliographystyle{tmlr}
+\bibliography{references}
+
+\clearpage
 \appendix
 \raggedbottom
 
@@ -529,7 +547,7 @@ is the median nearest-neighbour spacing of regions.
 \centering
 \caption{The 22 slides (HEST-1k v1.3 metadata).}
 \label{tab:slides}
-\resizebox{\textwidth}{!}{\input{generated/tab_slides.tex}}
+\fittable{\input{generated/tab_slides.tex}}
 \end{table}
 
 \paragraph{Changes from an earlier seven-slide analysis.} An earlier analysis used seven Visium HD slides and
@@ -580,8 +598,7 @@ are descriptive.
 \caption{Error-reduction minus per-slide best non-adaptive design (PCC), mean over 5 human Visium HD slides
 (positive/total).}
 \label{tab:imputers}
-\small
-\input{generated/tab_imputers_legacy.tex}
+\fittable{\small\input{generated/tab_imputers_legacy.tex}}
 \end{table}
 
 \section{Stage-1 results}
@@ -597,7 +614,7 @@ Table~\ref{tab:stage1abs} gives absolute recall, including the ROI-seeking sampl
 non-adaptive designs, local-variance with the per-slide best of $k$-means, grid, and MI-greedy. Unadjusted 95\% CIs
 resampling studies; $p_H$ Holm-adjusted over the 24 stage-1 primary margins.}
 \label{tab:stage1}
-\resizebox{\textwidth}{!}{\input{generated/tab_primary.tex}}
+\fittable{\input{generated/tab_primary.tex}}
 \end{table}
 
 \begin{table}[H]
@@ -606,7 +623,7 @@ resampling studies; $p_H$ Holm-adjusted over the 24 stage-1 primary margins.}
 batched and contiguous acquisition. $\Delta$ with unadjusted 95\% CI resampling studies; $p_H$ Holm-adjusted over the
 24 stage-1 primary margins.}
 \label{tab:realism}
-\resizebox{\textwidth}{!}{\input{generated/tab_realism.tex}}
+\fittable{\input{generated/tab_realism.tex}}
 \end{table}
 
 \begin{table}[H]
@@ -614,8 +631,7 @@ batched and contiguous acquisition. $\Delta$ with unadjusted 95\% CI resampling 
 \caption{Stage-1 ROI-detection recall, mean over 22 slides. $^\dagger$Reimplementations of the stated objectives of
 SCR$^2$-ST (diversity, non-adaptive) and SOFisher (ROI-seeking, adaptive). $^\ast$Ground-truth ordering.}
 \label{tab:stage1abs}
-\small
-\input{generated/tab_detect_abs.tex}
+\fittable{\small\input{generated/tab_detect_abs.tex}}
 \end{table}
 
 \section{Feasible comparator choices and the hindsight gap}
@@ -630,7 +646,7 @@ The feasible procedure selected $k$-means for reconstruction at 0.5--1\% and MI-
 \caption{Designs chosen on the other studies (number of held-out studies, of 18) and the difference between the
 per-slide best design and the feasible design for reconstruction (unadjusted 95\% CI resampling studies).}
 \label{tab:loso}
-\resizebox{\textwidth}{!}{\input{generated/r2_loso.tex}}
+\fittable{\input{generated/r2_loso.tex}}
 \end{table}
 
 \section{Inference for the feasible comparator}
@@ -653,8 +669,7 @@ in the pool at 5--20\%.
 against MI-greedy fixed for every slide (unadjusted 95\% CI resampling studies, unadjusted and Holm-adjusted
 sign-flip $p$). Post hoc.}
 \label{tab:sensitivity}
-\small
-\input{generated/s2_sensitivity.tex}
+\fittable{\small\input{generated/s2_sensitivity.tex}}
 \end{table}
 
 \section{Stage-2 secondary family}
@@ -665,8 +680,7 @@ sign-flip $p$). Post hoc.}
 \caption{Stage-2 secondary margins, 22 slides. Unadjusted 95\% CIs resampling studies; $p_H$ Holm-adjusted over the
 secondary family.}
 \label{tab:secondary}
-\small
-\input{generated/r2_secondary.tex}
+\fittable{\small\input{generated/r2_secondary.tex}}
 \end{table}
 
 \section{Spiked positive control}
@@ -678,7 +692,7 @@ secondary family.}
 feasible design, by spike amplitude and budget (PCC; unadjusted 95\% CIs resampling studies). The registered success
 criterion was a positive margin with a CI excluding zero at $\alpha=2$.}
 \label{tab:spike}
-\resizebox{\textwidth}{!}{\input{generated/r2_spike.tex}}
+\fittable{\input{generated/r2_spike.tex}}
 \end{table}
 
 \section{Stage-3 absolute values, secondary family, and permutation seeds}
@@ -690,8 +704,7 @@ criterion was a positive margin with a CI excluding zero at $\alpha=2$.}
 feedback (two seeds averaged), and the feedback policy run alone for the whole budget (residual policy for
 reconstruction, local-variance for detection; stage-2 runs). Fixed designs as in Table~\ref{tab:s3}.}
 \label{tab:s3abs}
-\small
-\input{generated/s3_abs.tex}
+\fittable{\small\input{generated/s3_abs.tex}}
 \end{table}
 
 \begin{table}[H]
@@ -699,8 +712,7 @@ reconstruction, local-variance for detection; stage-2 runs). Fixed designs as in
 \caption{Stage-3 secondary margins, 22 slides. Unadjusted 95\% CIs resampling studies; $p_H$ Holm-adjusted over the
 24 secondary margins. Permuted values are averaged over two seeds.}
 \label{tab:s3secondary}
-\small
-\input{generated/s3_secondary.tex}
+\fittable{\small\input{generated/s3_secondary.tex}}
 \end{table}
 
 \begin{table}[H]
@@ -709,7 +721,7 @@ reconstruction, local-variance for detection; stage-2 runs). Fixed designs as in
 registered stage-2 run. SD is across the seed means; the seed-averaged margin uses the mean of the permuted runs,
 with an unadjusted 95\% CI resampling studies.}
 \label{tab:seeds}
-\resizebox{\textwidth}{!}{\input{generated/s3_seeds.tex}}
+\fittable{\input{generated/s3_seeds.tex}}
 \end{table}
 
 \section{Gene-set sensitivity}
@@ -720,8 +732,7 @@ with an unadjusted 95\% CI resampling studies.}
 \caption{Stage-1 local-variance minus best coverage reconstruction margin (PCC) under three gene sets, 22 slides,
 unadjusted 95\% CIs resampling studies (secondary).}
 \label{tab:hvg}
-\small
-\input{generated/tab_hvg.tex}
+\fittable{\small\input{generated/tab_hvg.tex}}
 \end{table}
 
 \section{Platform and tissue splits}
@@ -733,7 +744,7 @@ The platform split is exploratory and the per-tissue means are descriptive; both
 \centering
 \caption{Selected stage-1 margins by platform (unadjusted study-level sign-flip $p$) and by tissue (mean).}
 \label{tab:split}
-\resizebox{\textwidth}{!}{\input{generated/tab_split.tex}}
+\fittable{\input{generated/tab_split.tex}}
 \end{table}
 
 \section{Native SOFisher run}
@@ -752,8 +763,5 @@ rewards near $-1.7\times10^5$, so the figure shows rolling medians.
 \label{fig:sofisher}
 \end{figure}
 
-\clearpage
-\bibliographystyle{plainnat}
-\bibliography{references}
 
 \end{document}
