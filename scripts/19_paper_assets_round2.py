@@ -138,19 +138,23 @@ write("r2_q2_margins.tex", [r"\begin{tabular}{lcccccccc}", r"\toprule",
       *rows, r"\bottomrule", r"\end{tabular}"])
 
 # ---------------------------------------------------------------- Q2 absolute recall
+# expected recall of random selection: n / N for n = round(b N) regions of N, whatever the ROI set
+N_REG = np.array([J("scale_audit.json")["rows"][l.split(":")[1]]["n_spots_in_tissue"] for l in L], float)
 rows = []
 for b in DET:
     fe, _ = loso(b, "recall")
-    vals = [fe.mean(), col(b, "kmeans", "recall").mean(), col(b, "mi_greedy", "recall").mean(),
+    vals = [(np.round(float(b) * N_REG) / N_REG).mean(),
+            fe.mean(), col(b, "kmeans", "recall").mean(), col(b, "mi_greedy", "recall").mean(),
             col(b, "scr2st", "recall").mean(), col(b, "value_greedy", "recall").mean(),
             col(b, "value_greedy_perm", "recall").mean(), col(b, "value_greedy_const", "recall").mean(),
             C10["rows"][B10[b]]["detection_recall_means"]["oracle"]]
-    facts[f"q2abs_{b}"] = dict(zip(["feasible", "kmeans", "mi", "diversity", "value", "perm", "const", "oracle"], vals))
+    facts[f"q2abs_{b}"] = dict(zip(["random_expected", "feasible", "kmeans", "mi", "diversity", "value", "perm", "const",
+                                    "oracle"], vals))
     rows.append(f"{pct(b)} & " + " & ".join(f"{v:.3f}" for v in vals) + r" \\")
-write("r2_q2_abs.tex", [r"\begin{tabular}{lcccccccc}", r"\toprule",
-      r" & \multicolumn{4}{c}{Non-adaptive} & \multicolumn{3}{c}{Value-conditioned (local variance)} & \\",
-      r"\cmidrule(lr){2-5}\cmidrule(lr){6-8}",
-      r"Budget & feasible & $k$-means & MI-greedy & diversity & observed & permuted & constant & oracle \\",
+write("r2_q2_abs.tex", [r"\begin{tabular}{lccccccccc}", r"\toprule",
+      r" & & \multicolumn{4}{c}{Non-adaptive} & \multicolumn{3}{c}{Value-conditioned (local variance)} & \\",
+      r"\cmidrule(lr){3-6}\cmidrule(lr){7-9}",
+      r"Budget & random & feasible & $k$-means & MI-greedy & diversity & observed & permuted & constant & oracle \\",
       r"\midrule", *rows, r"\bottomrule", r"\end{tabular}"])
 
 # ---------------------------------------------------------------- positive control (Part B)
