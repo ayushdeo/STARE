@@ -16,11 +16,15 @@ python scripts/25_tmlr_supplement.py                                 # paper/tml
 | Upload | File | Status |
 |---|---|---|
 | Paper | `paper/manuscript.pdf` | TMLR template, unmodified style files; anonymous; 21 pages, main body 11 pages |
-| Supplementary material | `paper/tmlr_supplementary.zip` | 12.4 MB (limit 100 MB); anonymized and scanned for identifying strings |
+| Supplementary material | `paper/tmlr_supplementary.zip` | 2.5 MB (limit 100 MB), 86 files; anonymized and scanned |
 
-The supplement contains the code, results, registered plans, and `REGISTRATION_LOG.md`, which lists when each
-analysis plan and its results were committed (commit identifiers withheld). All 20 tables regenerate byte-for-byte
-from it.
+The supplement is a curated reproduction package, built from an allow-list: the package code, the scripts that
+produce the paper's results, tables, and figures, the result files they read, the native SOFisher logs, verbatim
+excerpts of the three registered plans, and `REGISTRATION_LOG.md` (commit dates; identifiers withheld). Files,
+policies, and result keys use the paper's names (a table in its README maps them to the names in the plans);
+working notes, earlier development scripts, tests, and model weights are excluded, and code comments are removed.
+The builder refuses to write the archive unless every table regenerates from it byte-for-byte, all policies run,
+renaming creates no duplicate result keys, and no identifying string or development term remains.
 
 ## Form fields
 

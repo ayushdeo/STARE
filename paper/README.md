@@ -34,8 +34,8 @@ ends on page 11 (TMLR's longer review timeline applies only above 12 pages), no 
 references.
 
 ## Submission materials
-- `python scripts/25_tmlr_supplement.py` writes `tmlr_supplementary.zip`: the anonymized code, results, and
-  registered plans, plus `REGISTRATION_LOG.md` (commit dates of each plan and its results) and checks the archive
-  for identifying strings. Tables regenerate byte-for-byte from the archive.
+- `python scripts/25_tmlr_supplement.py` writes `tmlr_supplementary.zip`, a curated, anonymized reproduction
+  package with paper-aligned names (see `TMLR_SUBMISSION.md`). It is written only if every table regenerates from
+  it byte-for-byte and no identifying string or development term remains.
 - `python scripts/24_arxiv_package.py` builds a de-anonymized arXiv package for later use; see
   [`ARXIV_SUBMISSION.md`](ARXIV_SUBMISSION.md).
