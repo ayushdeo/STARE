@@ -15,8 +15,8 @@ python scripts/25_tmlr_supplement.py                                 # paper/tml
 
 | Upload | File | Status |
 |---|---|---|
-| Paper | `paper/manuscript.pdf` | TMLR template, unmodified style files; anonymous; 21 pages, main body 11 pages |
-| Supplementary material | `paper/tmlr_supplementary.zip` | 2.5 MB (limit 100 MB), 86 files; anonymized and scanned |
+| Paper | `paper/manuscript.pdf` | TMLR template, unmodified style files; anonymous; 25 pages, main body 12 pages |
+| Supplementary material | `paper/tmlr_supplementary.zip` | 2.6 MB (limit 100 MB), 88 files; anonymized and scanned |
 
 The supplement is a curated reproduction package, built from an allow-list: the package code, the scripts that
 produce the paper's results, tables, and figures, the result files they read, the native SOFisher logs, verbatim
@@ -76,7 +76,7 @@ harm.
 - [x] TMLR style files, unmodified; anonymous build (`\usepackage{tmlr}`).
 - [x] No author names, affiliations, or repository links in the PDF; code is referenced only as supplementary
       material.
-- [x] Main body 11 pages; references before the appendix; table titles above tables, figure captions below.
+- [x] Main body 12 pages (the limit for TMLR's normal review timeline; add to it only with cuts); references before the appendix; table titles above tables, figure captions below.
 - [x] All 50 references checked against Crossref, arXiv, JMLR, PMLR, or NeurIPS proceedings, and each cited claim
       checked against its source.
 - [x] Supplement anonymized, under 100 MB, and reproduces every table.

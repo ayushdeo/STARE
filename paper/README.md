@@ -29,8 +29,8 @@ python -u scripts/23_paper_assets_stage3.py    # stage-3 tables + figure
 
 ## Compile
 `pdflatex manuscript && bibtex manuscript && pdflatex manuscript && pdflatex manuscript`, or
-`tectonic --keep-intermediates manuscript.tex`. Verified on 2026-10-26 with Tectonic 0.17: 21 pages, main body
-ends on page 11 (TMLR's longer review timeline applies only above 12 pages), no overfull boxes, no undefined
+`tectonic --keep-intermediates manuscript.tex`. Verified on 2026-10-26 with Tectonic 0.17: 25 pages, main body
+ends on page 12 (TMLR's longer review timeline applies only above 12 pages), no overfull boxes, no undefined
 references.
 
 ## Submission materials

@@ -44,6 +44,7 @@ SCRIPTS = {
     "21_stage3_experiments.py": "stage3_experiments.py",
     "22_stage3_analysis.py": "stage3_analysis.py",
     "23_paper_assets_stage3.py": "tables_stage3.py",
+    "26_posthoc_robustness.py": "posthoc_robustness.py",
 }
 MODULES = {
     "__init__.py": "__init__.py", "config.py": "config.py", "data.py": "data.py", "encoders.py": "encoders.py",
@@ -73,6 +74,7 @@ RESULTS = {
     "stage2_sensitivity.json": "stage2_comparator_inference.json",
     "stage3_runs.json": "stage3_runs.json",
     "stage3_summary.json": "stage3_summary.json",
+    "posthoc_robustness.json": "posthoc_robustness.json",
 }
 LEGACY = ["batched_contiguous.json", "ci_multislide_graphflow.json", "ci_multislide_knn.json",
           "ci_multislide_kriging.json", "competitors.json", "hvg_sensitivity.json", "realdata_detection.json"]
@@ -164,6 +166,7 @@ DOC = {
     "scripts/stage3_experiments.py": "Stage-3 experiments (registered_plans/stage3.md). Part H: coverage-plus-feedback hybrids with permuted controls.\nPart S: further permutation seeds for the stage-2 ablations. Part R: rounds of 5 regions with permuted controls.\nWrites results/stage3_runs.json.  Run: python -u scripts/stage3_experiments.py --part H|S|R",
     "scripts/stage3_analysis.py": "Stage-3 registered analysis: the 20 primary and 24 secondary margins with Holm adjustment, minimum detectable\neffects, and permutation-seed variation; writes results/stage3_summary.json.",
     "scripts/tables_stage3.py": "Writes the stage-3 tables, Figure 3, and the comparator-inference and seed tables from the result files.\nRun: python -u scripts/tables_stage3.py",
+    "scripts/posthoc_robustness.py": "Post hoc robustness checks on existing results (Appendix M): recall above the expectation of random\nselection, intervals from inverting the exact study-level sign-flip test, and the primary analyses without the\nslide used to set the imputer's hyperparameters.  Run: python -u scripts/posthoc_robustness.py",
     "sofisher_resume_patch/apply_resume.py": "Adds checkpoint and resume support to a clone of the SOFisher repository, the only change made for the native\nrun (Appendix L). Training logic, reward, and hyperparameters are unchanged.\nRun: python sofisher_resume_patch/apply_resume.py /path/to/SOFisher",
 }
 
@@ -333,6 +336,7 @@ Selection for Spatial Transcriptomics".
 | Comparator inference (Appendix F) | `stage2_comparator_inference.py` | `stage2_comparator_inference.json` |
 | Stage 3, RQ3 and RQ4 (Tables 5-6, Figure 3) | `stage3_experiments.py`, `stage3_analysis.py` | `stage3_runs.json`, `stage3_summary.json` |
 | Native SOFisher run (Appendix L) | `sofisher_native_curve.py` | `sofisher_native.json` |
+| Post hoc robustness checks (Appendix M) | `posthoc_robustness.py` | `posthoc_robustness.json` |
 | All tables and figures | `tables_stage1.py`, `tables_stage2.py`, `tables_stage3.py` | `paper/generated/`, `paper/*.pdf` |
 
 ## Regenerating every table and figure (no data download)
@@ -341,6 +345,7 @@ Selection for Spatial Transcriptomics".
     python -u scripts/tables_stage1.py
     python -u scripts/tables_stage2.py
     python -u scripts/tables_stage3.py
+    python -u scripts/posthoc_robustness.py
 
 The analysis scripts (`stage1_analysis.py`, `stage2_analysis.py`, `stage2_comparator_inference.py`,
 `stage3_analysis.py`) recompute the summaries from the run files. Rerunning the experiments requires the gated
@@ -472,7 +477,7 @@ def reproduce(blob):
         if r.returncode:
             return [f"policy smoke test failed: {r.stderr[-400:]}"]
         (pkg / "figures").mkdir(exist_ok=True)
-        for s in ("tables_stage1.py", "tables_stage2.py", "tables_stage3.py"):
+        for s in ("tables_stage1.py", "tables_stage2.py", "tables_stage3.py", "posthoc_robustness.py"):
             r = subprocess.run([sys.executable, f"scripts/{s}"], cwd=pkg, capture_output=True, text=True)
             if r.returncode:
                 return [f"{s} failed: {r.stderr[-600:]}"]

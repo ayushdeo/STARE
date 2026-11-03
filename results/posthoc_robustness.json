@@ -497,7 +497,7 @@
   },
   {
    "family": "stage 3",
-   "margin": "RQ3: reconstruction hybrid (50% coverage) - kmeans",
+   "margin": "RQ3: reconstruction hybrid (50% coverage) - $k$-means",
    "budget": "0.005",
    "mean": -0.0362244466058254,
    "ci95_boot": [
@@ -513,7 +513,7 @@
   },
   {
    "family": "stage 3",
-   "margin": "RQ3: reconstruction hybrid (80% coverage) - kmeans",
+   "margin": "RQ3: reconstruction hybrid (80% coverage) - $k$-means",
    "budget": "0.005",
    "mean": -0.008858811937955203,
    "ci95_boot": [
@@ -529,7 +529,7 @@
   },
   {
    "family": "stage 3",
-   "margin": "RQ3: reconstruction hybrid (50% coverage) - kmeans",
+   "margin": "RQ3: reconstruction hybrid (50% coverage) - $k$-means",
    "budget": "0.010",
    "mean": -0.010077865252177798,
    "ci95_boot": [
@@ -545,7 +545,7 @@
   },
   {
    "family": "stage 3",
-   "margin": "RQ3: reconstruction hybrid (80% coverage) - kmeans",
+   "margin": "RQ3: reconstruction hybrid (80% coverage) - $k$-means",
    "budget": "0.010",
    "mean": -0.009435835623395724,
    "ci95_boot": [
@@ -561,7 +561,7 @@
   },
   {
    "family": "stage 3",
-   "margin": "RQ3: reconstruction hybrid (50% coverage) - mi_greedy",
+   "margin": "RQ3: reconstruction hybrid (50% coverage) - MI-greedy",
    "budget": "0.020",
    "mean": 0.0009418613047602584,
    "ci95_boot": [
@@ -577,7 +577,7 @@
   },
   {
    "family": "stage 3",
-   "margin": "RQ3: reconstruction hybrid (80% coverage) - mi_greedy",
+   "margin": "RQ3: reconstruction hybrid (80% coverage) - MI-greedy",
    "budget": "0.020",
    "mean": 0.0066597957921177365,
    "ci95_boot": [
@@ -593,7 +593,7 @@
   },
   {
    "family": "stage 3",
-   "margin": "RQ3: reconstruction hybrid (50% coverage) - mi_greedy",
+   "margin": "RQ3: reconstruction hybrid (50% coverage) - MI-greedy",
    "budget": "0.050",
    "mean": -0.002689786019449028,
    "ci95_boot": [
@@ -609,7 +609,7 @@
   },
   {
    "family": "stage 3",
-   "margin": "RQ3: reconstruction hybrid (80% coverage) - mi_greedy",
+   "margin": "RQ3: reconstruction hybrid (80% coverage) - MI-greedy",
    "budget": "0.050",
    "mean": -0.0007899878145158332,
    "ci95_boot": [
@@ -625,7 +625,7 @@
   },
   {
    "family": "stage 3",
-   "margin": "RQ3: reconstruction hybrid (50% coverage) - mi_greedy",
+   "margin": "RQ3: reconstruction hybrid (50% coverage) - MI-greedy",
    "budget": "0.100",
    "mean": 7.528803911762997e-05,
    "ci95_boot": [
@@ -641,7 +641,7 @@
   },
   {
    "family": "stage 3",
-   "margin": "RQ3: reconstruction hybrid (80% coverage) - mi_greedy",
+   "margin": "RQ3: reconstruction hybrid (80% coverage) - MI-greedy",
    "budget": "0.100",
    "mean": 0.0005536250045960049,
    "ci95_boot": [
@@ -657,7 +657,7 @@
   },
   {
    "family": "stage 3",
-   "margin": "RQ3: reconstruction hybrid (50% coverage) - mi_greedy",
+   "margin": "RQ3: reconstruction hybrid (50% coverage) - MI-greedy",
    "budget": "0.200",
    "mean": -0.0018967592949864901,
    "ci95_boot": [
@@ -673,7 +673,7 @@
   },
   {
    "family": "stage 3",
-   "margin": "RQ3: reconstruction hybrid (80% coverage) - mi_greedy",
+   "margin": "RQ3: reconstruction hybrid (80% coverage) - MI-greedy",
    "budget": "0.200",
    "mean": -0.0007820075835643799,
    "ci95_boot": [
@@ -689,7 +689,7 @@
   },
   {
    "family": "stage 3",
-   "margin": "RQ3: detection hybrid (50% coverage) - var_greedy",
+   "margin": "RQ3: detection hybrid (50% coverage) - variance-greedy",
    "budget": "0.020",
    "mean": 0.002885471275280617,
    "ci95_boot": [
@@ -705,7 +705,7 @@
   },
   {
    "family": "stage 3",
-   "margin": "RQ3: detection hybrid (80% coverage) - var_greedy",
+   "margin": "RQ3: detection hybrid (80% coverage) - variance-greedy",
    "budget": "0.020",
    "mean": 0.0003389173584954708,
    "ci95_boot": [
@@ -721,7 +721,7 @@
   },
   {
    "family": "stage 3",
-   "margin": "RQ3: detection hybrid (50% coverage) - var_greedy",
+   "margin": "RQ3: detection hybrid (50% coverage) - variance-greedy",
    "budget": "0.050",
    "mean": 0.0015573935841436003,
    "ci95_boot": [
@@ -737,7 +737,7 @@
   },
   {
    "family": "stage 3",
-   "margin": "RQ3: detection hybrid (80% coverage) - var_greedy",
+   "margin": "RQ3: detection hybrid (80% coverage) - variance-greedy",
    "budget": "0.050",
    "mean": -0.00037446443308632106,
    "ci95_boot": [
@@ -753,7 +753,7 @@
   },
   {
    "family": "stage 3",
-   "margin": "RQ3: detection hybrid (50% coverage) - var_greedy",
+   "margin": "RQ3: detection hybrid (50% coverage) - variance-greedy",
    "budget": "0.100",
    "mean": 0.006127055025932518,
    "ci95_boot": [
@@ -769,7 +769,7 @@
   },
   {
    "family": "stage 3",
-   "margin": "RQ3: detection hybrid (80% coverage) - var_greedy",
+   "margin": "RQ3: detection hybrid (80% coverage) - variance-greedy",
    "budget": "0.100",
    "mean": 0.0014103776814712902,
    "ci95_boot": [
@@ -785,7 +785,7 @@
   },
   {
    "family": "stage 3",
-   "margin": "RQ3: detection hybrid (50% coverage) - oneshot",
+   "margin": "RQ3: detection hybrid (50% coverage) - one-shot",
    "budget": "0.200",
    "mean": -0.0002151526047941996,
    "ci95_boot": [
@@ -801,7 +801,7 @@
   },
   {
    "family": "stage 3",
-   "margin": "RQ3: detection hybrid (80% coverage) - oneshot",
+   "margin": "RQ3: detection hybrid (80% coverage) - one-shot",
    "budget": "0.200",
    "mean": -0.0031120962185219743,
    "ci95_boot": [
@@ -1093,7 +1093,7 @@
    },
    {
     "family": "stage 3",
-    "margin": "RQ3: reconstruction hybrid (50% coverage) - kmeans",
+    "margin": "RQ3: reconstruction hybrid (50% coverage) - $k$-means",
     "budget": "0.005",
     "mean": -0.03669600959838439,
     "ci95_boot": [
@@ -1108,7 +1108,7 @@
    },
    {
     "family": "stage 3",
-    "margin": "RQ3: reconstruction hybrid (80% coverage) - kmeans",
+    "margin": "RQ3: reconstruction hybrid (80% coverage) - $k$-means",
     "budget": "0.005",
     "mean": -0.00901555791480265,
     "ci95_boot": [
@@ -1123,7 +1123,7 @@
    },
    {
     "family": "stage 3",
-    "margin": "RQ3: reconstruction hybrid (50% coverage) - kmeans",
+    "margin": "RQ3: reconstruction hybrid (50% coverage) - $k$-means",
     "budget": "0.010",
     "mean": -0.009391864618339851,
     "ci95_boot": [
@@ -1138,7 +1138,7 @@
    },
    {
     "family": "stage 3",
-    "margin": "RQ3: reconstruction hybrid (80% coverage) - kmeans",
+    "margin": "RQ3: reconstruction hybrid (80% coverage) - $k$-means",
     "budget": "0.010",
     "mean": -0.011186979454739402,
     "ci95_boot": [
@@ -1153,7 +1153,7 @@
    },
    {
     "family": "stage 3",
-    "margin": "RQ3: reconstruction hybrid (50% coverage) - mi_greedy",
+    "margin": "RQ3: reconstruction hybrid (50% coverage) - MI-greedy",
     "budget": "0.020",
     "mean": 0.0009876035320328577,
     "ci95_boot": [
@@ -1168,7 +1168,7 @@
    },
    {
     "family": "stage 3",
-    "margin": "RQ3: reconstruction hybrid (80% coverage) - mi_greedy",
+    "margin": "RQ3: reconstruction hybrid (80% coverage) - MI-greedy",
     "budget": "0.020",
     "mean": 0.007041252725452511,
     "ci95_boot": [
@@ -1183,7 +1183,7 @@
    },
    {
     "family": "stage 3",
-    "margin": "RQ3: reconstruction hybrid (50% coverage) - mi_greedy",
+    "margin": "RQ3: reconstruction hybrid (50% coverage) - MI-greedy",
     "budget": "0.050",
     "mean": -0.0030189234126317874,
     "ci95_boot": [
@@ -1198,7 +1198,7 @@
    },
    {
     "family": "stage 3",
-    "margin": "RQ3: reconstruction hybrid (80% coverage) - mi_greedy",
+    "margin": "RQ3: reconstruction hybrid (80% coverage) - MI-greedy",
     "budget": "0.050",
     "mean": -0.0009094008994876531,
     "ci95_boot": [
@@ -1213,7 +1213,7 @@
    },
    {
     "family": "stage 3",
-    "margin": "RQ3: reconstruction hybrid (50% coverage) - mi_greedy",
+    "margin": "RQ3: reconstruction hybrid (50% coverage) - MI-greedy",
     "budget": "0.100",
     "mean": 0.00010242929627632535,
     "ci95_boot": [
@@ -1228,7 +1228,7 @@
    },
    {
     "family": "stage 3",
-    "margin": "RQ3: reconstruction hybrid (80% coverage) - mi_greedy",
+    "margin": "RQ3: reconstruction hybrid (80% coverage) - MI-greedy",
     "budget": "0.100",
     "mean": 0.0006069239735121756,
     "ci95_boot": [
@@ -1243,7 +1243,7 @@
    },
    {
     "family": "stage 3",
-    "margin": "RQ3: reconstruction hybrid (50% coverage) - mi_greedy",
+    "margin": "RQ3: reconstruction hybrid (50% coverage) - MI-greedy",
     "budget": "0.200",
     "mean": -0.0019947756741005734,
     "ci95_boot": [
@@ -1258,7 +1258,7 @@
    },
    {
     "family": "stage 3",
-    "margin": "RQ3: reconstruction hybrid (80% coverage) - mi_greedy",
+    "margin": "RQ3: reconstruction hybrid (80% coverage) - MI-greedy",
     "budget": "0.200",
     "mean": -0.0007678523326124324,
     "ci95_boot": [
@@ -1273,7 +1273,7 @@
    },
    {
     "family": "stage 3",
-    "margin": "RQ3: detection hybrid (50% coverage) - var_greedy",
+    "margin": "RQ3: detection hybrid (50% coverage) - variance-greedy",
     "budget": "0.020",
     "mean": 0.002493774140241069,
     "ci95_boot": [
@@ -1288,7 +1288,7 @@
    },
    {
     "family": "stage 3",
-    "margin": "RQ3: detection hybrid (80% coverage) - var_greedy",
+    "margin": "RQ3: detection hybrid (80% coverage) - variance-greedy",
     "budget": "0.020",
     "mean": 0.00014341606868837684,
     "ci95_boot": [
@@ -1303,7 +1303,7 @@
    },
    {
     "family": "stage 3",
-    "margin": "RQ3: detection hybrid (50% coverage) - var_greedy",
+    "margin": "RQ3: detection hybrid (50% coverage) - variance-greedy",
     "budget": "0.050",
     "mean": 0.0016315551833885338,
     "ci95_boot": [
@@ -1318,7 +1318,7 @@
    },
    {
     "family": "stage 3",
-    "margin": "RQ3: detection hybrid (80% coverage) - var_greedy",
+    "margin": "RQ3: detection hybrid (80% coverage) - variance-greedy",
     "budget": "0.050",
     "mean": -0.0003922960727570983,
     "ci95_boot": [
@@ -1333,7 +1333,7 @@
    },
    {
     "family": "stage 3",
-    "margin": "RQ3: detection hybrid (50% coverage) - var_greedy",
+    "margin": "RQ3: detection hybrid (50% coverage) - variance-greedy",
     "budget": "0.100",
     "mean": 0.006312999445156819,
     "ci95_boot": [
@@ -1348,7 +1348,7 @@
    },
    {
     "family": "stage 3",
-    "margin": "RQ3: detection hybrid (80% coverage) - var_greedy",
+    "margin": "RQ3: detection hybrid (80% coverage) - variance-greedy",
     "budget": "0.100",
     "mean": 0.0017949988409064312,
     "ci95_boot": [
@@ -1363,7 +1363,7 @@
    },
    {
     "family": "stage 3",
-    "margin": "RQ3: detection hybrid (50% coverage) - oneshot",
+    "margin": "RQ3: detection hybrid (50% coverage) - one-shot",
     "budget": "0.200",
     "mean": 0.005488887747358458,
     "ci95_boot": [
@@ -1378,7 +1378,7 @@
    },
    {
     "family": "stage 3",
-    "margin": "RQ3: detection hybrid (80% coverage) - oneshot",
+    "margin": "RQ3: detection hybrid (80% coverage) - one-shot",
     "budget": "0.200",
     "mean": -0.0006147886310441849,
     "ci95_boot": [

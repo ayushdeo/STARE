@@ -28,6 +28,7 @@ pct = lambda b: f"{float(b) * 100:g}\\%"
 BUD = ["0.005", "0.010", "0.020", "0.050", "0.100", "0.200"]
 DET = ["0.020", "0.050", "0.100", "0.200"]
 DEV = "prostate:TENX174"
+NAME = {"kmeans": "$k$-means", "mi_greedy": "MI-greedy", "var_greedy": "variance-greedy", "oneshot": "one-shot"}
 
 
 def num(x, d=3):
@@ -115,12 +116,12 @@ def main():
         for b in BUD:
             for f in S3["fracs"]:
                 hyb = np.array([H[l][b][f"hyb_rec_f{f}"]["pcc"] for l, k in zip(L, keep) if k])
-                s3.append((f"RQ3: reconstruction hybrid ({f * 100:g}% coverage) - {S3['rec_rule'][b]}", b,
+                s3.append((f"RQ3: reconstruction hybrid ({f * 100:g}% coverage) - {NAME[S3['rec_rule'][b]]}", b,
                            hyb - col(b, S3["rec_rule"][b], "pcc", keep)))
         for b in DET:
             for f in S3["fracs"]:
                 hyb = np.array([H[l][b][f"hyb_det_f{f}"]["recall"] for l, k in zip(L, keep) if k])
-                s3.append((f"RQ3: detection hybrid ({f * 100:g}% coverage) - {S3['det_rule'][b]}", b,
+                s3.append((f"RQ3: detection hybrid ({f * 100:g}% coverage) - {NAME[S3['det_rule'][b]]}", b,
                            hyb - col(b, S3["det_rule"][b], "recall", keep)))
         return {"stage 2": s2, "stage 3": s3}
 
