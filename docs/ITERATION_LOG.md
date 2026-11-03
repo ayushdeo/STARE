@@ -392,3 +392,11 @@ confirmatory answer.
   Residual - permuted at 0.5%: 2021 +0.031 vs seeds 1, 2 +0.024, +0.016. Descriptive only; conclusions unchanged.
 - Manuscript revised: stage 3 as section "Feedback on top of a coverage design"; Q3 exploratory; Holm-level MDEs;
   post hoc feasible-comparator inference in an appendix; scope of computational ROIs in Limitations.
+
+## Iteration 12 — stage-4 registered plan  [written 2026-11-02, BEFORE scripts/27 is run]
+Full plan: docs/STAGE4_PLAN.md (experiments, families, decision rules). Experiments scripts/27_stage4_experiments.py;
+analysis scripts/28_stage4_analysis.py. Parts: E (common held-out evaluation set, PCC and MSE, constant-feedback
+controls), T (300 um tiles, 12-48 tiles, 2 and 4 rounds, within-tile heterogeneity ROIs), P (local-variance settings
+chosen per held-out study), U (ground-truth greedy upper bound, 4 slides). Post hoc checks of existing results that
+motivated it are in scripts/26_posthoc_robustness.py (random baseline, sign-flip inversion intervals, development
+slide excluded).
