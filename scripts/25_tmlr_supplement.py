@@ -48,6 +48,8 @@ SCRIPTS = {
     "27_stage4_experiments.py": "stage4_experiments.py",
     "28_stage4_analysis.py": "stage4_analysis.py",
     "29_paper_assets_stage4.py": "tables_stage4.py",
+    "30_posthoc_stage4.py": "posthoc_stage4.py",
+    "31_posthoc_tuned_constant.py": "posthoc_tuned_constant.py",
 }
 MODULES = {
     "__init__.py": "__init__.py", "config.py": "config.py", "data.py": "data.py", "encoders.py": "encoders.py",
@@ -80,6 +82,7 @@ RESULTS = {
     "posthoc_robustness.json": "posthoc_robustness.json",
     "stage4_runs.json": "stage4_runs.json",
     "stage4_summary.json": "stage4_summary.json",
+    "stage4_posthoc.json": "stage4_posthoc.json",
 }
 LEGACY = ["batched_contiguous.json", "ci_multislide_graphflow.json", "ci_multislide_knn.json",
           "ci_multislide_kriging.json", "competitors.json", "hvg_sensitivity.json", "realdata_detection.json"]
@@ -176,6 +179,8 @@ DOC = {
     "scripts/stage4_experiments.py": "Stage-4 experiments (registered_plans/stage4.md). Part E: common held-out evaluation set with PCC and MSE,\nconstant-feedback controls. Part T: 300 um tiles, sequential and in 2 or 4 rounds. Part P: local-variance settings\ngrid. Part U: ground-truth greedy bound on four slides. Writes results/stage4_runs.json, checkpointing every slide.\nRun: python -u scripts/stage4_experiments.py --part E|T|P|U",
     "scripts/stage4_analysis.py": "Stage-4 registered analysis: the common-set, tile, and tuning families with Holm adjustment, sign-flip\ninversion intervals, and minimum detectable effects; writes results/stage4_summary.json.",
     "scripts/tables_stage4.py": "Writes the stage-4 tables from the result files.  Run: python -u scripts/tables_stage4.py",
+    "scripts/posthoc_stage4.py": "Post hoc checks of the tuned local-variance policy (Appendix J): constant-feedback control, the diversity\nsampler as comparator, selection-aware bootstrap, and Holm over all stage-4 primary margins; writes\nresults/stage4_posthoc.json.  Run: python -u scripts/posthoc_stage4.py",
+    "scripts/posthoc_tuned_constant.py": "GPU-machine run (needs the slides): the tuned local-variance settings with constant feedback, the exact\ncontrol that Appendix J describes as not yet run.  Run: python -u scripts/posthoc_tuned_constant.py",
     "sofisher_resume_patch/apply_resume.py": "Adds checkpoint and resume support to a clone of the SOFisher repository, the only change made for the native\nrun (Appendix M). Training logic, reward, and hyperparameters are unchanged.\nRun: python sofisher_resume_patch/apply_resume.py /path/to/SOFisher",
 }
 
@@ -355,6 +360,7 @@ Selection for Spatial Transcriptomics".
 | Comparator inference (Appendix F) | `stage2_comparator_inference.py` | `stage2_comparator_inference.json` |
 | Stage 3, RQ3 and RQ4 (Table 3, Figure 3, Appendix I) | `stage3_experiments.py`, `stage3_analysis.py` | `stage3_runs.json`, `stage3_summary.json` |
 | Stage 4 (Table 4, Appendix J) | `stage4_experiments.py`, `stage4_analysis.py` | `stage4_runs.json`, `stage4_summary.json` |
+| Post hoc checks of the tuned policy (Appendix J) | `posthoc_stage4.py` (exact constant control: `posthoc_tuned_constant.py`) | `stage4_posthoc.json` |
 | Native SOFisher run (Appendix M) | `sofisher_native_curve.py` | `sofisher_native.json` |
 | Post hoc robustness checks (Appendix N) | `posthoc_robustness.py` | `posthoc_robustness.json` |
 | All tables and figures | `tables_stage1.py`, `tables_stage2.py`, `tables_stage3.py`, `tables_stage4.py` | `paper/generated/`, `paper/*.pdf` |
@@ -367,6 +373,7 @@ Selection for Spatial Transcriptomics".
     python -u scripts/tables_stage3.py
     python -u scripts/tables_stage4.py
     python -u scripts/posthoc_robustness.py
+    python -u scripts/posthoc_stage4.py
 
 The analysis scripts (`stage1_analysis.py`, `stage2_analysis.py`, `stage2_comparator_inference.py`,
 `stage3_analysis.py`, `stage4_analysis.py`) recompute the summaries from the run files. Rerunning the experiments requires the gated
@@ -498,7 +505,7 @@ def reproduce(blob):
         if r.returncode:
             return [f"policy smoke test failed: {r.stderr[-400:]}"]
         (pkg / "figures").mkdir(exist_ok=True)
-        for s in ("tables_stage1.py", "tables_stage2.py", "tables_stage3.py", "tables_stage4.py", "posthoc_robustness.py"):
+        for s in ("tables_stage1.py", "tables_stage2.py", "tables_stage3.py", "tables_stage4.py", "posthoc_robustness.py", "posthoc_stage4.py"):
             r = subprocess.run([sys.executable, f"scripts/{s}"], cwd=pkg, capture_output=True, text=True)
             if r.returncode:
                 return [f"{s} failed: {r.stderr[-600:]}"]

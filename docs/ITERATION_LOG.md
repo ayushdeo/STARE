@@ -417,3 +417,21 @@ Summary results/stage4_summary.json; paper tables scripts/29_paper_assets_stage4
 - T primary: no positive margin; local-variance in 2 rounds below feasible at 48 tiles (p_H 0.015). No tile budget
   skipped (smallest slide 247 tiles).
 - U: greedy bound exceeds the best fixed design by 0.026-0.166 PCC; residual below the fixed design in all 12 cells.
+
+## Iteration 14 — adversarial review of the stage-4 write-up  [2026-11-11; post hoc, no new slide runs]
+scripts/30_posthoc_stage4.py -> results/stage4_posthoc.json, paper Table (Appendix J). Findings:
+- Diversity sampler (a fixed design, registered as a competitor, not in the feasible pool): a pool including it
+  picks it for all 18 studies at every budget; tuned local-variance - diversity +0.009/+0.020/+0.033/+0.050 recall,
+  raw p 0.027/0.026/0.043/0.070, Holm(4) 0.10. Headline changed: tuned feedback beat the registered fixed designs,
+  not detectably the diversity sampler.
+- Selection-aware bootstrap (both LOSO choices repeated per replicate): tuned - feasible excludes zero at 2-10%.
+- Holm over all 25 stage-4 primary margins: tuned margin survives only at 2% (0.006; 5% 0.108, 10% 0.088).
+- Constant control: tuned - stage-2 constant run +0.012/+0.036/+0.066/+0.112, Holm(4) <= 0.003. APPROXIMATE: the
+  local-variance policy clips the kernel sum at 1e-12, so at width 0.05 a candidate > ~7.4 widths from every profiled
+  region gets a spurious variance (c^2 w(1-w)) under constant values; synthetic check: constant selections identical
+  across beta and widths 0.1/0.2, differ at 0.05 from the second pick (floor active in the first few picks only).
+  Exact control: scripts/31_posthoc_tuned_constant.py on the GPU machine, then rerun script 30.
+- Not reported before: on the common set residual - permuted fell to +0.017/+0.011/+0.011 PCC at 0.5-2% (n.s.).
+- Text: causal wording on the common-set deficit removed (plan forbids); headroom no longer read as achievable gain;
+  tile-null MDEs stated; ROI/policy alignment and failed reconstruction controls in abstract/limitations; reconstruction
+  claims restricted to the tested policies. Stage-3 figure moved to Appendix I to keep the main body at 12 pages.
