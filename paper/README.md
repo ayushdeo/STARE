@@ -25,12 +25,14 @@ python -u scripts/20_stage2_sensitivity.py     # post hoc stage-2 inference chec
 python -u scripts/19_paper_assets_round2.py    # stage-2 tables + figure
 python -u scripts/22_stage3_analysis.py        # stage-3 registered analysis -> results/stage3_summary.json
 python -u scripts/23_paper_assets_stage3.py    # stage-3 tables + figure
-python -u scripts/26_posthoc_robustness.py     # post hoc robustness checks + Appendix M tables
+python -u scripts/28_stage4_analysis.py        # stage-4 registered analysis -> results/stage4_summary.json
+python -u scripts/29_paper_assets_stage4.py    # stage-4 tables
+python -u scripts/26_posthoc_robustness.py     # post hoc robustness checks + Appendix N tables
 ```
 
 ## Compile
 `pdflatex manuscript && bibtex manuscript && pdflatex manuscript && pdflatex manuscript`, or
-`tectonic --keep-intermediates manuscript.tex`. Verified on 2026-10-26 with Tectonic 0.17: 25 pages, main body
+`tectonic --keep-intermediates manuscript.tex`. Verified on 2026-11-10 with Tectonic 0.17: 28 pages, main body
 ends on page 12 (TMLR's longer review timeline applies only above 12 pages), no overfull boxes, no undefined
 references.
 

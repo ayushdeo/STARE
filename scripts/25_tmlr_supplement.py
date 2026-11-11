@@ -45,6 +45,9 @@ SCRIPTS = {
     "22_stage3_analysis.py": "stage3_analysis.py",
     "23_paper_assets_stage3.py": "tables_stage3.py",
     "26_posthoc_robustness.py": "posthoc_robustness.py",
+    "27_stage4_experiments.py": "stage4_experiments.py",
+    "28_stage4_analysis.py": "stage4_analysis.py",
+    "29_paper_assets_stage4.py": "tables_stage4.py",
 }
 MODULES = {
     "__init__.py": "__init__.py", "config.py": "config.py", "data.py": "data.py", "encoders.py": "encoders.py",
@@ -75,6 +78,8 @@ RESULTS = {
     "stage3_runs.json": "stage3_runs.json",
     "stage3_summary.json": "stage3_summary.json",
     "posthoc_robustness.json": "posthoc_robustness.json",
+    "stage4_runs.json": "stage4_runs.json",
+    "stage4_summary.json": "stage4_summary.json",
 }
 LEGACY = ["batched_contiguous.json", "ci_multislide_graphflow.json", "ci_multislide_knn.json",
           "ci_multislide_kriging.json", "competitors.json", "hvg_sensitivity.json", "realdata_detection.json"]
@@ -83,9 +88,9 @@ LEGACY = ["batched_contiguous.json", "ci_multislide_graphflow.json", "ci_multisl
 # file names and output names
 NAME_MAP = [(o, n) for o, n in SCRIPTS.items()] + [(o, n) for o, n in RESULTS.items() if o != n] + [
     ("ci_multislide_", "stage1_reconstruction_"), ("n7_legacy", "earlier_slide_set"),
-    ("facts_r2", "facts_stage2"), ("facts_s3", "facts_stage3"), ('"facts.json"', '"facts_stage1.json"'),
+    ("facts_r2", "facts_stage2"), ("facts_s3", "facts_stage3"), ("facts_s4", "facts_stage4"), ('"facts.json"', '"facts_stage1.json"'),
     ("'facts.json'", "'facts_stage1.json'"), ("fig_r2", "fig_stage2"), ("fig_s3", "fig_stage3"),
-    ('"r2_', '"stage2_'), ("'r2_", "'stage2_"), ('"s3_', '"stage3_'), ("'s3_", "'stage3_"),
+    ('"r2_', '"stage2_'), ("'r2_", "'stage2_"), ('"s3_', '"stage3_'), ("'s3_", "'stage3_"), ('"s4_', '"stage4_'), ("'s4_", "'stage4_"),
     ("figure2_positive_control", "control_synthetic_reconstruction"),
     ("figure3_detection_control", "control_synthetic_detection"),
     ("figure4_sofisher_native", "sofisher_native_curve"),
@@ -118,6 +123,7 @@ TOKEN_RES = [(tok(o), n) for o, n in TOKEN_MAP]
 STRING_MAP = [
     ("pre-registered round-2 analysis (ITERATION_LOG iteration 9)", "registered stage-2 analysis (registered_plans/stage2.md)"),
     ("stage-3 registered analysis (ITERATION_LOG iteration 11)", "registered stage-3 analysis (registered_plans/stage3.md)"),
+    ("(analysed per budget in a revision)", "(analysed per budget)"),
     ("post hoc sensitivity of stage-2 inference (revision round 3, point 2)", "post hoc check of stage-2 comparator inference"),
     ("Run scripts/00_pick_samples.py on the 4070 ", "Run scripts/select_slides.py --apply "),
     ("wrapper is a further upgrade (WS-B scale step)", "imputer is not part of this package"),
@@ -136,7 +142,7 @@ DOC = {
     "src/stare/simulator.py": "Retrospective acquisition simulator: a policy reveals regions up to a budget, one at a time or in rounds,\nand the imputer predicts the unprofiled regions from the revealed ones.",
     "src/stare/slides.py": "Loads the 22-slide set with a per-slide cache and returns the tissue and study grouping used for inference.",
     "src/stare/stats.py": "Study-level inference: bootstrap intervals that resample whole studies, exact sign-flip tests over study\nsign patterns, Holm adjustment, and paired margin summaries.",
-    "src/stare/policies/__init__.py": "Acquisition policies and their registry. select(state) returns the next region to profile.\n\nNon-adaptive: random, grid, kmeans, oneshot, var_greedy, mi_greedy. Sequential fixed designs: error_reduction\n(and its maximum-uncertainty variant). Value-conditioned: residual, local_variance. Competitor objectives:\ndiversity, roi_seeking. Wrappers: FeedbackAblation, HybridPolicy.",
+    "src/stare/policies/__init__.py": "Acquisition policies and their registry. select(state) returns the next region to profile.\n\nNon-adaptive: random, grid, kmeans, oneshot, var_greedy, mi_greedy. Sequential fixed designs: error_reduction\n(and its maximum-uncertainty variant). Feedback policies: residual, local_variance. Competitor objectives:\ndiversity, roi_seeking. Wrappers: FeedbackAblation, HybridPolicy.",
     "src/stare/policies/base.py": "Policy interface. closed_loop marks policies whose selection reads measured expression.",
     "src/stare/policies/naive.py": "Random, grid (farthest-point in space), and k-means (region nearest each centroid of the image embeddings).",
     "src/stare/policies/oneshot.py": "One-shot ranker after SpatialFinder: scores regions once from image embeddings by rare-cluster membership\nand distance to the cluster centroid, a simplification of SpatialFinder's diversity score without its cell\nclassifier or pathologist labelling.",
@@ -145,20 +151,20 @@ DOC = {
     "src/stare/policies/residual.py": "Residual policy: the error-reduction form with the uncertainty replaced by an estimate of the imputer's error,\nthe leave-one-out residual of the image ridge model averaged over each candidate's 10 nearest profiled regions,\ntimes one minus the graph influence.",
     "src/stare/policies/local_variance.py": "Local-variance policy: scores a candidate by the kernel-weighted variance of measured expression around it\nplus beta times its distance to the nearest profiled region (beta = 0.5).",
     "src/stare/policies/feedback.py": "Feedback ablations: run a policy unchanged while it sees permuted values (another region's expression) or\nconstant values (the slide mean). The imputer and the scores always use the true values.",
-    "src/stare/policies/hybrid.py": "Coverage-plus-feedback hybrid: the first ceil(f x budget) regions come from a fixed coverage design and the\nrest from a feedback policy. The coverage phase equals the prefix of the design's own selection.",
+    "src/stare/policies/hybrid.py": "Hybrid: the first ceil(f x budget) regions come from a non-adaptive base design and the rest from a feedback\npolicy. The first phase equals the prefix of the base design's own selection.",
     "src/stare/policies/competitors.py": "Competitor objectives, reimplemented (not the authors' trained models): a diversity sampler (farthest-point\nselection in joint image and spatial features) approximating the coverage and diversity terms of the SCR2-ST\nreward, and an ROI-seeking sampler following the SOFisher reward.",
     "scripts/select_slides.py": "Selects the 22 slides from HEST-1k metadata under the criteria in Section 3.2 and writes\nresults/slide_selection.json.  Run: python -u scripts/select_slides.py [--apply]",
     "scripts/unit_scale_audit.py": "Compares the acquisition unit (one native spot per region) with the square-grid unit of the earlier slide set\n(Appendix A); writes results/unit_scale_audit.json.  Run: python -u scripts/unit_scale_audit.py",
     "scripts/stage1_reconstruction.py": "Stage 1: reconstruction accuracy on the 22 slides for the non-adaptive and sequential fixed designs; writes\nresults/stage1_reconstruction_<imputer>.json.  Run: python -u scripts/stage1_reconstruction.py [--imputers graphflow]",
     "scripts/stage1_detection.py": "Stage 1: local-variance policy against coverage designs for reconstruction and ROI detection; writes\nresults/stage1_detection.json.  Run: python -u scripts/stage1_detection.py",
     "scripts/stage1_competitors.py": "Stage 1: competitor objectives (diversity and ROI-seeking samplers) and the ground-truth ordering for\ndetection; writes results/stage1_competitors.json.  Run: python -u scripts/stage1_competitors.py",
-    "scripts/stage1_gene_sets.py": "Stage 1: sensitivity of the reconstruction margins to the evaluation gene set (Appendix J); writes\nresults/stage1_gene_sets.json.  Run: python -u scripts/stage1_gene_sets.py",
+    "scripts/stage1_gene_sets.py": "Stage 1: sensitivity of the reconstruction margins to the evaluation gene set (Appendix K); writes\nresults/stage1_gene_sets.json.  Run: python -u scripts/stage1_gene_sets.py",
     "scripts/stage1_batched.py": "Stage 1: batched (rounds of 1, 5, 25, or one round) and contiguous-block acquisition at 10% budget; writes\nresults/stage1_batched.json.  Run: python -u scripts/stage1_batched.py",
     "scripts/stage1_analysis.py": "Stage-1 registered analysis: study-level intervals, sign-flip tests, and Holm over the 24 primary margins;\nwrites results/stage1_summary.json.  Run: python -u scripts/stage1_analysis.py",
     "scripts/tables_stage1.py": "Writes the stage-1 tables, Figure 1, the slide table, and the appendix tables (paper/generated/,\npaper/*.pdf) from the result files.  Run: python -u scripts/tables_stage1.py",
     "scripts/control_synthetic_reconstruction.py": "Synthetic positive control for reconstruction (Figure 1a): correlation length of hidden structure versus the\nmargin over coverage; writes results/control_synthetic_reconstruction.json.",
     "scripts/control_synthetic_detection.py": "Synthetic positive control for detection (Figure 1b): ROI amplitude versus the recall margin over coverage;\nwrites results/control_synthetic_detection.json.",
-    "scripts/sofisher_native_curve.py": "Reads the TensorBoard logs of the native SOFisher run (sofisher_native_run/) and writes the evaluation-reward\ncurve (results/sofisher_native.json, Appendix L).  Run: python -u scripts/sofisher_native_curve.py",
+    "scripts/sofisher_native_curve.py": "Reads the TensorBoard logs of the native SOFisher run (sofisher_native_run/) and writes the evaluation-reward\ncurve (results/sofisher_native.json, Appendix M).  Run: python -u scripts/sofisher_native_curve.py",
     "scripts/stage2_experiments.py": "Stage-2 experiments (registered_plans/stage2.md). Part A: all policies, feedback ablations, and the diversity\nsampler on the 22 slides at six budgets. Part B: semi-synthetic positive control with injected hotspot genes.\nWrites results/stage2_runs.json, checkpointing every slide.  Run: python -u scripts/stage2_experiments.py --part A|B",
     "scripts/stage2_analysis.py": "Stage-2 registered analysis: feasible design chosen per held-out study, the 18 primary and the secondary\nmargins with Holm adjustment, and minimum detectable effects; writes results/stage2_summary.json.",
     "scripts/stage2_comparator_inference.py": "Post hoc checks of stage-2 inference (Appendix F): a bootstrap that repeats the feasible selection inside each\nresample, and a fixed MI-greedy comparator; writes results/stage2_comparator_inference.json.",
@@ -166,8 +172,11 @@ DOC = {
     "scripts/stage3_experiments.py": "Stage-3 experiments (registered_plans/stage3.md). Part H: coverage-plus-feedback hybrids with permuted controls.\nPart S: further permutation seeds for the stage-2 ablations. Part R: rounds of 5 regions with permuted controls.\nWrites results/stage3_runs.json.  Run: python -u scripts/stage3_experiments.py --part H|S|R",
     "scripts/stage3_analysis.py": "Stage-3 registered analysis: the 20 primary and 24 secondary margins with Holm adjustment, minimum detectable\neffects, and permutation-seed variation; writes results/stage3_summary.json.",
     "scripts/tables_stage3.py": "Writes the stage-3 tables, Figure 3, and the comparator-inference and seed tables from the result files.\nRun: python -u scripts/tables_stage3.py",
-    "scripts/posthoc_robustness.py": "Post hoc robustness checks on existing results (Appendix M): recall above the expectation of random\nselection, intervals from inverting the exact study-level sign-flip test, and the primary analyses without the\nslide used to set the imputer's hyperparameters.  Run: python -u scripts/posthoc_robustness.py",
-    "sofisher_resume_patch/apply_resume.py": "Adds checkpoint and resume support to a clone of the SOFisher repository, the only change made for the native\nrun (Appendix L). Training logic, reward, and hyperparameters are unchanged.\nRun: python sofisher_resume_patch/apply_resume.py /path/to/SOFisher",
+    "scripts/posthoc_robustness.py": "Post hoc robustness checks on existing results (Appendix N): recall above the expectation of random\nselection, intervals from inverting the exact study-level sign-flip test, and the primary analyses without the\nslide used to set the imputer's hyperparameters.  Run: python -u scripts/posthoc_robustness.py",
+    "scripts/stage4_experiments.py": "Stage-4 experiments (registered_plans/stage4.md). Part E: common held-out evaluation set with PCC and MSE,\nconstant-feedback controls. Part T: 300 um tiles, sequential and in 2 or 4 rounds. Part P: local-variance settings\ngrid. Part U: ground-truth greedy bound on four slides. Writes results/stage4_runs.json, checkpointing every slide.\nRun: python -u scripts/stage4_experiments.py --part E|T|P|U",
+    "scripts/stage4_analysis.py": "Stage-4 registered analysis: the common-set, tile, and tuning families with Holm adjustment, sign-flip\ninversion intervals, and minimum detectable effects; writes results/stage4_summary.json.",
+    "scripts/tables_stage4.py": "Writes the stage-4 tables from the result files.  Run: python -u scripts/tables_stage4.py",
+    "sofisher_resume_patch/apply_resume.py": "Adds checkpoint and resume support to a clone of the SOFisher repository, the only change made for the native\nrun (Appendix M). Training logic, reward, and hyperparameters are unchanged.\nRun: python sofisher_resume_patch/apply_resume.py /path/to/SOFisher",
 }
 
 # comments containing any of these are development notes and are removed
@@ -258,13 +267,22 @@ PLANS = {  # stage: (iteration, [(first, last) line ranges of the section to kee
     "stage3": (11, [(20, 39)]),
 }
 PLAN_TITLES = {"stage1": "Stage 1: expanded 22-slide set", "stage2": "Stage 2: feasible design, residual policy, and feedback ablations",
-               "stage3": "Stage 3: coverage-plus-feedback hybrids and batched acquisition"}
+               "stage3": "Stage 3: coverage-plus-feedback hybrids and batched acquisition",
+               "stage4": "Stage 4: common evaluation set, constant feedback, tiles, tuning, and headroom"}
+STAGE4_PLAN = ("docs/STAGE4_PLAN.md", 6, 84)    # Purpose to Decision rules (lines 7-84 as first committed)
+
+
+def plan_file_excerpt(path, first, last):
+    """Verbatim lines of a registered plan file as first committed, with its commit date."""
+    commit, ts, date = git("log", "--reverse", "--format=%h %at %ad", "--date=iso-strict", "--", path).split("\n")[0].split(" ", 2)
+    lines = git("show", f"{commit}:{path}").splitlines()
+    return date, int(ts), "\n".join(lines[first:last]).rstrip() + "\n"
 
 
 def plans():
     files, rows = {}, []
-    for stage, (n, keep) in PLANS.items():
-        date, ts, text = plan_excerpt(n, keep)
+    items = [(s, plan_excerpt(n, keep)) for s, (n, keep) in PLANS.items()] + [("stage4", plan_file_excerpt(*STAGE4_PLAN))]
+    for stage, (date, ts, text) in items:
         files[f"registered_plans/{stage}.md"] = (f"# {PLAN_TITLES[stage]}: registered plan (excerpt)\n\nCommitted {date}. Verbatim "
                                                  "excerpt of the pre-specified experiments, comparison families, and decision rules; "
                                                  "motivation and interim notes in the same log entry are omitted. Names are those used "
@@ -275,7 +293,7 @@ def plans():
 
 def registration_log(plan_rows):
     governed = {"stage1": ["ci_multislide_graphflow.json", "realdata_detection.json"], "stage2": ["revision_runs.json"],
-                "stage3": ["stage3_runs.json"]}
+                "stage3": ["stage3_runs.json"], "stage4": ["stage4_runs.json"]}
     out = ["# Registration log", "",
            "Commit dates from the project's version history (ISO 8601). Each plan was committed before the results it",
            "governs. Stage-1 result files existed earlier with results from a seven-slide pilot that the stage-1 plan",
@@ -305,6 +323,7 @@ NAME_TABLE = """| Name in the paper | Name in this package | Name in the registe
 | stage-1 experiments and analysis | `scripts/stage1_*.py` | scripts 05, 09, 10, 12, 13, 14 |
 | stage-2 experiments and analysis | `scripts/stage2_*.py` | scripts 17, 18 |
 | stage-3 experiments and analysis | `scripts/stage3_*.py` | scripts 21, 22 |
+| stage-4 experiments and analysis | `scripts/stage4_*.py` | scripts 27, 28 |
 
 In result keys, RQ3 denotes the batched-acquisition question, which the paper numbers RQ4."""
 
@@ -320,7 +339,7 @@ Selection for Spatial Transcriptomics".
 | `src/stare/` | Simulator, imputers, policies, metrics, and study-level statistics |
 | `scripts/` | Experiments, registered analyses, and the scripts that write every table and figure |
 | `results/` | Every result reported in the paper (`earlier_slide_set/`: the seven-slide pilot used in Appendices A and C) |
-| `registered_plans/` | Verbatim excerpts of the three registered analysis plans |
+| `registered_plans/` | Verbatim excerpts of the four registered analysis plans |
 | `REGISTRATION_LOG.md` | When each plan and its results were committed |
 | `sofisher_native_run/`, `sofisher_resume_patch/` | TensorBoard logs of the native SOFisher run and the resume patch used for it |
 | `figures/` | Figure files the table scripts read or write |
@@ -332,12 +351,13 @@ Selection for Spatial Transcriptomics".
 | Slide set (Section 3.2, Appendix A) | `select_slides.py`, `unit_scale_audit.py` | `slide_selection.json`, `unit_scale_audit.json` |
 | Synthetic controls (Figure 1) | `control_synthetic_reconstruction.py`, `control_synthetic_detection.py` | `control_synthetic_*.json` |
 | Stage 1 (Appendix D, RQ4 batched) | `stage1_*.py`; analysis `stage1_analysis.py` | `stage1_*.json` |
-| Stage 2, RQ1 and RQ2 (Tables 1-4, Figure 2) | `stage2_experiments.py`, `stage2_analysis.py` | `stage2_runs.json`, `stage2_summary.json` |
+| Stage 2, RQ1 and RQ2 (Tables 1-2, Figure 2, Appendix G) | `stage2_experiments.py`, `stage2_analysis.py` | `stage2_runs.json`, `stage2_summary.json` |
 | Comparator inference (Appendix F) | `stage2_comparator_inference.py` | `stage2_comparator_inference.json` |
-| Stage 3, RQ3 and RQ4 (Tables 5-6, Figure 3) | `stage3_experiments.py`, `stage3_analysis.py` | `stage3_runs.json`, `stage3_summary.json` |
-| Native SOFisher run (Appendix L) | `sofisher_native_curve.py` | `sofisher_native.json` |
-| Post hoc robustness checks (Appendix M) | `posthoc_robustness.py` | `posthoc_robustness.json` |
-| All tables and figures | `tables_stage1.py`, `tables_stage2.py`, `tables_stage3.py` | `paper/generated/`, `paper/*.pdf` |
+| Stage 3, RQ3 and RQ4 (Table 3, Figure 3, Appendix I) | `stage3_experiments.py`, `stage3_analysis.py` | `stage3_runs.json`, `stage3_summary.json` |
+| Stage 4 (Table 4, Appendix J) | `stage4_experiments.py`, `stage4_analysis.py` | `stage4_runs.json`, `stage4_summary.json` |
+| Native SOFisher run (Appendix M) | `sofisher_native_curve.py` | `sofisher_native.json` |
+| Post hoc robustness checks (Appendix N) | `posthoc_robustness.py` | `posthoc_robustness.json` |
+| All tables and figures | `tables_stage1.py`, `tables_stage2.py`, `tables_stage3.py`, `tables_stage4.py` | `paper/generated/`, `paper/*.pdf` |
 
 ## Regenerating every table and figure (no data download)
 
@@ -345,10 +365,11 @@ Selection for Spatial Transcriptomics".
     python -u scripts/tables_stage1.py
     python -u scripts/tables_stage2.py
     python -u scripts/tables_stage3.py
+    python -u scripts/tables_stage4.py
     python -u scripts/posthoc_robustness.py
 
 The analysis scripts (`stage1_analysis.py`, `stage2_analysis.py`, `stage2_comparator_inference.py`,
-`stage3_analysis.py`) recompute the summaries from the run files. Rerunning the experiments requires the gated
+`stage3_analysis.py`, `stage4_analysis.py`) recompute the summaries from the run files. Rerunning the experiments requires the gated
 HEST-1k dataset (Hugging Face `MahmoodLab/hest`) and UNI2-h weights (`MahmoodLab/UNI2-h`); install PyTorch for
 your CUDA version, then `pip install -r requirements.txt`. All settings and seeds are in `src/stare/config.py`.
 
@@ -455,7 +476,7 @@ def check(files):
 
 def reproduce(blob):
     """Regenerate the paper's tables from the extracted archive and compare with paper/generated."""
-    back = {"stage2_": "r2_", "stage3_": "s3_"}
+    back = {"stage2_": "r2_", "stage3_": "s3_", "stage4_": "s4_"}
     with tempfile.TemporaryDirectory() as d:
         with zipfile.ZipFile(io.BytesIO(blob)) as z:
             z.extractall(d)
@@ -477,7 +498,7 @@ def reproduce(blob):
         if r.returncode:
             return [f"policy smoke test failed: {r.stderr[-400:]}"]
         (pkg / "figures").mkdir(exist_ok=True)
-        for s in ("tables_stage1.py", "tables_stage2.py", "tables_stage3.py", "posthoc_robustness.py"):
+        for s in ("tables_stage1.py", "tables_stage2.py", "tables_stage3.py", "tables_stage4.py", "posthoc_robustness.py"):
             r = subprocess.run([sys.executable, f"scripts/{s}"], cwd=pkg, capture_output=True, text=True)
             if r.returncode:
                 return [f"{s} failed: {r.stderr[-600:]}"]

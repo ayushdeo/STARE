@@ -1,0 +1,39 @@
+\begin{tabular}{llccc}
+\toprule
+Margin & Budget & $\Delta$ [95\% CI] & $p_H$ & MDE$_H$ \\
+\midrule
+\multicolumn{5}{l}{\emph{Reconstruction (held-out PCC; MSE row: feasible $-$ residual, positive favours residual)}} \\
+feasible $-$ residual & 0.5\% & $-0.265$ $[-0.454, -0.126]$ & 0.008 & 0.623 \\
+feasible $-$ residual & 1\% & $-0.124$ $[-0.230, -0.055]$ & 0.004 & 0.348 \\
+feasible $-$ residual & 2\% & $-0.060$ $[-0.099, -0.023]$ & 0.092 & 0.122 \\
+feasible $-$ residual & 5\% & $-0.034$ $[-0.046, -0.020]$ & 0.018 & 0.032 \\
+feasible $-$ residual & 10\% & $-0.012$ $[-0.021, -0.002]$ & 0.222 & 0.017 \\
+feasible $-$ residual & 20\% & ${+}0.007$ $[{+}0.001, {+}0.013]$ & 0.222 & 0.014 \\
+residual $-$ constant feedback & 0.5\% & ${+}0.036$ $[-0.005, {+}0.078]$ & 0.531 & 0.111 \\
+residual $-$ constant feedback & 1\% & ${+}0.067$ $[{+}0.030, {+}0.105]$ & 0.057 & 0.094 \\
+residual $-$ constant feedback & 2\% & ${+}0.074$ $[{+}0.032, {+}0.119]$ & 0.045 & 0.095 \\
+residual $-$ constant feedback & 5\% & ${+}0.068$ $[{+}0.020, {+}0.122]$ & 0.063 & 0.093 \\
+residual $-$ constant feedback & 10\% & ${+}0.063$ $[{+}0.013, {+}0.119]$ & 0.092 & 0.074 \\
+residual $-$ constant feedback & 20\% & ${+}0.049$ $[{+}0.010, {+}0.096]$ & 0.079 & 0.059 \\
+50\% reconstruction hybrid $-$ constant feedback & 0.5\% & ${+}0.033$ $[{+}0.011, {+}0.060]$ & 0.132 & 0.054 \\
+50\% reconstruction hybrid $-$ constant feedback & 1\% & ${+}0.056$ $[{+}0.033, {+}0.083]$ & 0.004 & 0.054 \\
+50\% reconstruction hybrid $-$ constant feedback & 2\% & ${+}0.039$ $[{+}0.026, {+}0.052]$ & $<$0.001 & 0.032 \\
+50\% reconstruction hybrid $-$ constant feedback & 5\% & ${+}0.016$ $[{+}0.008, {+}0.024]$ & 0.004 & 0.016 \\
+50\% reconstruction hybrid $-$ constant feedback & 10\% & ${+}0.009$ $[{+}0.005, {+}0.013]$ & 0.042 & 0.013 \\
+50\% reconstruction hybrid $-$ constant feedback & 20\% & ${+}0.006$ $[{+}0.003, {+}0.009]$ & 0.030 & 0.008 \\
+\midrule
+\multicolumn{5}{l}{\emph{Detection (ROI recall)}} \\
+local-variance $-$ constant feedback & 2\% & ${+}0.010$ $[{+}0.002, {+}0.018]$ & 0.187 & 0.018 \\
+local-variance $-$ constant feedback & 5\% & ${+}0.022$ $[{+}0.007, {+}0.039]$ & 0.097 & 0.037 \\
+local-variance $-$ constant feedback & 10\% & ${+}0.041$ $[{+}0.019, {+}0.067]$ & 0.057 & 0.057 \\
+local-variance $-$ constant feedback & 20\% & ${+}0.096$ $[{+}0.049, {+}0.146]$ & 0.012 & 0.106 \\
+50\% detection hybrid $-$ variance-greedy & 2\% & ${+}0.002$ $[-0.002, {+}0.006]$ & 1.000 & 0.012 \\
+50\% detection hybrid $-$ variance-greedy & 5\% & ${+}0.005$ $[-0.004, {+}0.015]$ & 1.000 & 0.025 \\
+50\% detection hybrid $-$ variance-greedy & 10\% & ${+}0.013$ $[-0.002, {+}0.026]$ & 0.531 & 0.040 \\
+50\% detection hybrid $-$ one-shot & 20\% & $-0.006$ $[-0.038, {+}0.028]$ & 1.000 & 0.075 \\
+50\% detection hybrid $-$ constant feedback & 2\% & ${+}0.005$ $[{+}0.002, {+}0.009]$ & 0.187 & 0.009 \\
+50\% detection hybrid $-$ constant feedback & 5\% & ${+}0.020$ $[{+}0.012, {+}0.027]$ & 0.007 & 0.020 \\
+50\% detection hybrid $-$ constant feedback & 10\% & ${+}0.036$ $[{+}0.020, {+}0.052]$ & 0.022 & 0.043 \\
+50\% detection hybrid $-$ constant feedback & 20\% & ${+}0.037$ $[{+}0.017, {+}0.057]$ & 0.063 & 0.057 \\
+\bottomrule
+\end{tabular}

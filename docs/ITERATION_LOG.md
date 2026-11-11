@@ -400,3 +400,20 @@ controls), T (300 um tiles, 12-48 tiles, 2 and 4 rounds, within-tile heterogenei
 chosen per held-out study), U (ground-truth greedy upper bound, 4 slides). Post hoc checks of existing results that
 motivated it are in scripts/26_posthoc_robustness.py (random baseline, sign-flip inversion intervals, development
 slide excluded).
+
+## Iteration 13 — stage-4 RESULTS  [runs 2307e80; analysed 2026-11-10 with scripts/28 as registered]
+Summary results/stage4_summary.json; paper tables scripts/29_paper_assets_stage4.py. Applying the decision rules:
+- E primary: residual - feasible (held-out PCC) negative at 0.5/1/2% (p_H <= 0.012), no positive margin established;
+  hybrids n.s. -> the reconstruction conclusions hold on a common evaluation set. MSE agrees.
+- Evaluation-set artefact (descriptive): local-variance PCC deficit 0.118/0.129/0.110/0.093 at 2-20% vs stage-2
+  0.120/0.146/0.150/0.163; reported as such.
+- Value of feedback: local-variance - constant significant at 20%, 50% detection hybrid - constant at 5/10%.
+  The residual policy's constant control is DEGENERATE: with constant values every LOO residual is 0, all scores tie
+  and the policy takes regions in index order (checked post hoc on a synthetic slide). Its registered contrasts
+  (E secondary, T secondary) are reported but not interpreted as evidence that values add information.
+- P primary: tuned local-variance beats feasible at 2/5/10% (p_H 0.001/0.013/0.013), not at 20% (0.072) -> per the
+  rule the paper reports that tuning changes the detection conclusion. Every held-out study picked width 0.05
+  (beta 0.5; beta 0.25 at 20%) — descriptive. No constant control for the tuned settings.
+- T primary: no positive margin; local-variance in 2 rounds below feasible at 48 tiles (p_H 0.015). No tile budget
+  skipped (smallest slide 247 tiles).
+- U: greedy bound exceeds the best fixed design by 0.026-0.166 PCC; residual below the fixed design in all 12 cells.
