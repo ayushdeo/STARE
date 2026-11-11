@@ -91,9 +91,9 @@ for b in BUD:
     facts[f"q1abs_{b}"] = dict(zip(["feasible", "hindsight", "errred", "maxunc", "rg", "rg_perm", "localvar"], vals))
     rows.append(f"{pct(b)} & " + " & ".join(f"{v:.3f}" for v in vals) + r" \\")
 write("r2_q1_abs.tex", [r"\begin{tabular}{lccccccc}", r"\toprule",
-      r" & \multicolumn{2}{c}{Non-adaptive} & \multicolumn{2}{c}{Sequential fixed design} & \multicolumn{3}{c}{Value-conditioned} \\",
+      r" & \multicolumn{2}{c}{Non-adaptive} & \multicolumn{2}{c}{Sequential fixed design} & \multicolumn{3}{c}{Feedback} \\",
       r"\cmidrule(lr){2-3}\cmidrule(lr){4-5}\cmidrule(lr){6-8}",
-      r"Budget & feasible & per-slide best & error-red. & max-unc. & residual & residual, perm. & local-var. \\",
+      r"Budget & feasible & hindsight & error-red. & max-unc. & residual & residual, perm. & local-var. \\",
       r"\midrule", *rows, r"\bottomrule", r"\end{tabular}"])
 
 # ---------------------------------------------------------------- Q1 margins
@@ -152,9 +152,9 @@ for b in DET:
                                     "oracle"], vals))
     rows.append(f"{pct(b)} & " + " & ".join(f"{v:.3f}" for v in vals) + r" \\")
 write("r2_q2_abs.tex", [r"\begin{tabular}{lccccccccc}", r"\toprule",
-      r" & & \multicolumn{4}{c}{Non-adaptive} & \multicolumn{3}{c}{Value-conditioned (local variance)} & \\",
+      r" & & \multicolumn{4}{c}{Non-adaptive} & \multicolumn{3}{c}{Feedback (local variance)} & \\",
       r"\cmidrule(lr){3-6}\cmidrule(lr){7-9}",
-      r"Budget & random & feasible & $k$-means & MI-greedy & diversity & observed & permuted & constant & oracle \\",
+      r"Budget & random & feasible & $k$-means & MI-greedy & diversity & informative & permuted & constant & oracle \\",
       r"\midrule", *rows, r"\bottomrule", r"\end{tabular}"])
 
 # ---------------------------------------------------------------- positive control (Part B)
@@ -167,7 +167,7 @@ for r in S["positive_control_B"]:
     rows.append(f"{a:g} & {pct(b)} & {int(round(r['spiked_in_top50_mean']))} & {num(x['mean'])} {ci(x['ci95_unadjusted'])} & "
                 f"{num(y['mean'])} {ci(y['ci95_unadjusted'])} & {num(z['mean'])} {ci(z['ci95_unadjusted'])} \\\\")
 write("r2_spike.tex", [r"\begin{tabular}{cccccc}", r"\toprule",
-      r"$\alpha$ & Budget & spiked genes in top 50 & residual $-$ feasible & residual, perm. $-$ feasible & residual $-$ residual, perm. \\",
+      r"$a_{\mathrm{spike}}$ & Budget & spiked genes in top 50 & residual $-$ feasible & residual, perm. $-$ feasible & residual $-$ residual, perm. \\",
       r"\midrule", *rows, r"\bottomrule", r"\end{tabular}"])
 
 # ---------------------------------------------------------------- appendix: comparator choices and hindsight gap
@@ -180,7 +180,7 @@ for b in BUD:
     facts[f"hindsight_gap_{b}"] = g
     rows.append(f"{pct(b)} & {fmt(ch)} & {fmt(dch) if dch else '--'} & {num(g['mean'])} {ci(g['ci'])} \\\\")
 write("r2_loso.tex", [r"\begin{tabular}{llll}", r"\toprule",
-      r"Budget & feasible choice, reconstruction & feasible choice, detection & per-slide best $-$ feasible (PCC) \\",
+      r"Budget & feasible choice, reconstruction & feasible choice, detection & hindsight benchmark $-$ feasible (PCC) \\",
       r"\midrule", *rows, r"\bottomrule", r"\end{tabular}"])
 
 # ---------------------------------------------------------------- appendix: stage-2 secondary family
@@ -188,7 +188,7 @@ rows = []
 for r in S["secondary"]:
     name = (r["margin"].replace("residual_guided_perm", "residual, perm.").replace("residual_guided", "residual")
             .replace("value_greedy_const", "local-var., constant").replace("value_greedy", "local-var.")
-            .replace("LOSO_recon", "feasible").replace("best_NA hindsight", "per-slide best").replace(" - ", " $-$ "))
+            .replace("LOSO_recon", "feasible").replace("best_NA hindsight", "hindsight benchmark").replace(" - ", " $-$ "))
     rows.append(f"{name} & {pct(r['budget'])} & {num(r['mean'])} {ci(r['ci95_unadjusted'])} & {pf(r['p_holm'])} \\\\")
 write("r2_secondary.tex", [r"\begin{tabular}{llcc}", r"\toprule", r"Margin & Budget & $\Delta$ [95\% CI] & $p_H$ \\",
       r"\midrule", *rows, r"\bottomrule", r"\end{tabular}"])
@@ -207,17 +207,17 @@ def series(ax, pts, color, label, marker, off=1.0):
 
 fig, ax3 = plt.subplots(1, 3, figsize=(7.0, 2.4), constrained_layout=True)
 ax = ax3[0]
-series(ax, [(x * 100, m, c) for x, m, c in fig_a["rg"]], C1, "residual (value-cond.)", "o")
+series(ax, [(x * 100, m, c) for x, m, c in fig_a["rg"]], C1, "residual (feedback)", "o")
 series(ax, [(x * 100, m, c) for x, m, c in fig_a["er"]], GREY, "error-red. (fixed design)", "D", 1.06)
-series(ax, [(x * 100, m, c) for x, m, c in fig_a["lv"]], C2, "local-variance (value-cond.)", "s", 0.94)
+series(ax, [(x * 100, m, c) for x, m, c in fig_a["lv"]], C2, "local-variance (feedback)", "s", 0.94)
 ax.axhline(0, color=GREY, lw=0.8, ls="--"); ax.set_xscale("log")
 xt = [0.5, 1, 2, 5, 10, 20]; ax.set_xticks(xt); ax.set_xticklabels([f"{x:g}" for x in xt])
 ax.xaxis.set_minor_locator(matplotlib.ticker.NullLocator())
-ax.set_ylim(-0.235, 0.105); ax.set_xlabel("budget (% of regions)"); ax.set_ylabel(r"$\Delta$ PCC vs feasible rule")
+ax.set_ylim(-0.235, 0.105); ax.set_xlabel("budget (% of regions)"); ax.set_ylabel(r"$\Delta$ PCC vs feasible design")
 ax.set_title("(a) Reconstruction", loc="left", fontsize=8.5); ax.legend(fontsize=6.3, loc="upper left")
 ax = ax3[1]
 series(ax, [(x * 100, m, c) for x, m, c in fig_b["perm"]], C1, "vs permuted feedback", "o")
-series(ax, [(x * 100, m, c) for x, m, c in fig_b["fe"]], GREY, "vs feasible rule", "D", 1.06)
+series(ax, [(x * 100, m, c) for x, m, c in fig_b["fe"]], GREY, "vs feasible design", "D", 1.06)
 series(ax, [(x * 100, m, c) for x, m, c in fig_b["div"]], C3, "vs diversity sampler", "^", 0.94)
 ax.axhline(0, color=GREY, lw=0.8, ls="--"); ax.set_xscale("log")
 xt = [2, 5, 10, 20]; ax.set_xticks(xt); ax.set_xticklabels([f"{x:g}" for x in xt])
@@ -228,7 +228,7 @@ ax = ax3[2]
 series(ax, fig_c["0.050"], C1, "5% budget", "o")
 series(ax, fig_c["0.100"], C2, "10% budget", "s")
 ax.axhline(0, color=GREY, lw=0.8, ls="--"); ax.set_xticks([0, 1, 2])
-ax.set_xlabel(r"spike amplitude $\alpha$"); ax.set_ylabel(r"$\Delta$ PCC, residual $-$ feasible")
+ax.set_xlabel(r"spike amplitude $a_{\mathrm{spike}}$"); ax.set_ylabel(r"$\Delta$ PCC, residual $-$ feasible")
 ax.set_title("(c) Spiked positive control", loc="left", fontsize=8.5); ax.legend(fontsize=6.3, loc="lower left")
 fig.savefig(PAPER / "fig_r2.pdf"); fig.savefig(ROOT / "docs" / "figures" / "fig_r2.png", dpi=200)
 print(f"[write] {PAPER / 'fig_r2.pdf'}")

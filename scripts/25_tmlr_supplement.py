@@ -160,7 +160,7 @@ DOC = {
     "scripts/control_synthetic_detection.py": "Synthetic positive control for detection (Figure 1b): ROI amplitude versus the recall margin over coverage;\nwrites results/control_synthetic_detection.json.",
     "scripts/sofisher_native_curve.py": "Reads the TensorBoard logs of the native SOFisher run (sofisher_native_run/) and writes the evaluation-reward\ncurve (results/sofisher_native.json, Appendix L).  Run: python -u scripts/sofisher_native_curve.py",
     "scripts/stage2_experiments.py": "Stage-2 experiments (registered_plans/stage2.md). Part A: all policies, feedback ablations, and the diversity\nsampler on the 22 slides at six budgets. Part B: semi-synthetic positive control with injected hotspot genes.\nWrites results/stage2_runs.json, checkpointing every slide.  Run: python -u scripts/stage2_experiments.py --part A|B",
-    "scripts/stage2_analysis.py": "Stage-2 registered analysis: feasible comparator chosen per held-out study, the 18 primary and the secondary\nmargins with Holm adjustment, and minimum detectable effects; writes results/stage2_summary.json.",
+    "scripts/stage2_analysis.py": "Stage-2 registered analysis: feasible design chosen per held-out study, the 18 primary and the secondary\nmargins with Holm adjustment, and minimum detectable effects; writes results/stage2_summary.json.",
     "scripts/stage2_comparator_inference.py": "Post hoc checks of stage-2 inference (Appendix F): a bootstrap that repeats the feasible selection inside each\nresample, and a fixed MI-greedy comparator; writes results/stage2_comparator_inference.json.",
     "scripts/tables_stage2.py": "Writes the stage-2 tables and Figure 2 from the result files.  Run: python -u scripts/tables_stage2.py",
     "scripts/stage3_experiments.py": "Stage-3 experiments (registered_plans/stage3.md). Part H: coverage-plus-feedback hybrids with permuted controls.\nPart S: further permutation seeds for the stage-2 ablations. Part R: rounds of 5 regions with permuted controls.\nWrites results/stage3_runs.json.  Run: python -u scripts/stage3_experiments.py --part H|S|R",
@@ -257,7 +257,7 @@ PLANS = {  # stage: (iteration, [(first, last) line ranges of the section to kee
     "stage2": (9, [(22, 29), (31, 44)]),
     "stage3": (11, [(20, 39)]),
 }
-PLAN_TITLES = {"stage1": "Stage 1: expanded 22-slide set", "stage2": "Stage 2: feasible comparator, residual policy, and feedback ablations",
+PLAN_TITLES = {"stage1": "Stage 1: expanded 22-slide set", "stage2": "Stage 2: feasible design, residual policy, and feedback ablations",
                "stage3": "Stage 3: coverage-plus-feedback hybrids and batched acquisition"}
 
 

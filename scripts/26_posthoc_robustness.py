@@ -116,12 +116,12 @@ def main():
         for b in BUD:
             for f in S3["fracs"]:
                 hyb = np.array([H[l][b][f"hyb_rec_f{f}"]["pcc"] for l, k in zip(L, keep) if k])
-                s3.append((f"RQ3: reconstruction hybrid ({f * 100:g}% coverage) - {NAME[S3['rec_rule'][b]]}", b,
+                s3.append((f"RQ3: reconstruction {f * 100:g}% hybrid - {NAME[S3['rec_rule'][b]]}", b,
                            hyb - col(b, S3["rec_rule"][b], "pcc", keep)))
         for b in DET:
             for f in S3["fracs"]:
                 hyb = np.array([H[l][b][f"hyb_det_f{f}"]["recall"] for l, k in zip(L, keep) if k])
-                s3.append((f"RQ3: detection hybrid ({f * 100:g}% coverage) - {NAME[S3['det_rule'][b]]}", b,
+                s3.append((f"RQ3: detection {f * 100:g}% hybrid - {NAME[S3['det_rule'][b]]}", b,
                            hyb - col(b, S3["det_rule"][b], "recall", keep)))
         return {"stage 2": s2, "stage 3": s3}
 

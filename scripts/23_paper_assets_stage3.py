@@ -90,9 +90,9 @@ for o, rule, m, buds in (("rec", REC_RULE, "pcc", BUD), ("det", DET_RULE, "recal
             cells.append(f"{num(r['mean'])} {ci(r['ci95_unadjusted'])} & {pf(r['p_holm'])} & {r['mde80_family_bound']:.3f}")
         rows.append(f"{pct(b)} & {NAME[rule[b]]} & " + " & ".join(cells) + r" \\")
 write("s3_primary.tex", [r"\begin{tabular}{llcccccc}", r"\toprule",
-      r" & & \multicolumn{3}{c}{coverage for 50\% of budget} & \multicolumn{3}{c}{coverage for 80\% of budget} \\",
+      r" & & \multicolumn{3}{c}{50\% hybrid} & \multicolumn{3}{c}{80\% hybrid} \\",
       r"\cmidrule(lr){3-5}\cmidrule(lr){6-8}",
-      r"Budget & fixed rule & $\Delta$ [95\% CI] & $p_H$ & MDE$_H$ & $\Delta$ [95\% CI] & $p_H$ & MDE$_H$ \\", r"\midrule",
+      r"Budget & base design & $\Delta$ [95\% CI] & $p_H$ & MDE$_H$ & $\Delta$ [95\% CI] & $p_H$ & MDE$_H$ \\", r"\midrule",
       *rows, r"\bottomrule", r"\end{tabular}"])
 
 # ---------------------------------------------------------------- absolute values: fixed, hybrids, pure policy
@@ -109,9 +109,9 @@ for o, rule, m, buds, pure in (("rec", REC_RULE, "pcc", BUD, "residual_guided"),
         facts[f"abs_{o}_{b}"] = dict(zip(["fixed", "hyb05", "hyb05_perm", "hyb08", "hyb08_perm", "pure"], vals))
         rows.append(f"{pct(b)} & " + " & ".join(f"{x:.3f}" for x in vals) + r" \\")
 write("s3_abs.tex", [r"\begin{tabular}{lcccccc}", r"\toprule",
-      r" & & \multicolumn{2}{c}{hybrid, 50\% coverage} & \multicolumn{2}{c}{hybrid, 80\% coverage} & \\",
+      r" & & \multicolumn{2}{c}{50\% hybrid} & \multicolumn{2}{c}{80\% hybrid} & \\",
       r"\cmidrule(lr){3-4}\cmidrule(lr){5-6}",
-      r"Budget & fixed rule & observed & permuted & observed & permuted & feedback policy alone \\", r"\midrule",
+      r"Budget & base design & informative & permuted & informative & permuted & feedback policy alone \\", r"\midrule",
       *rows, r"\bottomrule", r"\end{tabular}"])
 
 # ---------------------------------------------------------------- secondary family (appendix)
@@ -120,7 +120,7 @@ for r in SUM["secondary"]:
     n = r["margin"]
     if n.startswith("hybrid"):
         o, f = n.split()[1], n.split("f=")[1].split()[0]
-        lab = f"{'reconstruction' if o == 'rec' else 'detection'}, hybrid ({float(f) * 100:g}\\% coverage) $-$ permuted"
+        lab = f"{'reconstruction' if o == 'rec' else 'detection'}, {float(f) * 100:g}\\% hybrid $-$ permuted"
     elif "permuted" in n:
         lab = r"rounds of 5: local-variance $-$ permuted"
     else:
@@ -139,9 +139,9 @@ for b in RB[L[0]]:
     rows.append(f"{pct(b)} & {NAME[DET_RULE[b]]} & {fx.mean():.3f} & {seq.mean():.3f} & {obs.mean():.3f} & {pm.mean():.3f} & "
                 f"{num(a['mean'])} {ci(a['ci95_unadjusted'])} & {pf(a['p_holm'])} & {num(c['mean'])} {ci(c['ci95_unadjusted'])} & {pf(c['p_holm'])} \\\\")
 write("s3_batched.tex", [r"\begin{tabular}{llcccccccc}", r"\toprule",
-      r" & & \multicolumn{4}{c}{ROI recall} & \multicolumn{2}{c}{rounds of 5 $-$ fixed rule} & \multicolumn{2}{c}{rounds of 5 $-$ permuted} \\",
+      r" & & \multicolumn{4}{c}{ROI recall} & \multicolumn{2}{c}{rounds of 5 $-$ base design} & \multicolumn{2}{c}{rounds of 5 $-$ permuted} \\",
       r"\cmidrule(lr){3-6}\cmidrule(lr){7-8}\cmidrule(lr){9-10}",
-      r"Budget & fixed rule & fixed & one at a time & rounds of 5 & rounds of 5, perm. & $\Delta$ [95\% CI] & $p_H$ & $\Delta$ [95\% CI] & $p_H$ \\",
+      r"Budget & base design & base & one at a time & rounds of 5 & rounds of 5, perm. & $\Delta$ [95\% CI] & $p_H$ & $\Delta$ [95\% CI] & $p_H$ \\",
       r"\midrule", *rows, r"\bottomrule", r"\end{tabular}"])
 
 # ---------------------------------------------------------------- permutation-seed variation (descriptive, appendix)
@@ -179,7 +179,7 @@ for q, lab in (("Q1", "Reconstruction (PCC): residual policy"), ("Q2", "Detectio
         rows.append(f"{pct(r['budget'])} & {num(r['loso_point'])} & {ci(r['loso_ci_selection_aware'])} & "
                     f"{num(mi['mean'])} {ci(mi['ci95'])} & {pf(mi['p'])} & {pf(mi['p_holm18'])} \\\\")
 write("s2_sensitivity.tex", [r"\begin{tabular}{lccccc}", r"\toprule",
-      r" & \multicolumn{2}{c}{$-$ feasible rule} & \multicolumn{3}{c}{$-$ MI-greedy (fixed)} \\",
+      r" & \multicolumn{2}{c}{$-$ feasible design} & \multicolumn{3}{c}{$-$ MI-greedy on every slide} \\",
       r"\cmidrule(lr){2-3}\cmidrule(lr){4-6}",
       r"Budget & $\Delta$ & selection-aware 95\% CI & $\Delta$ [95\% CI] & $p$ & $p_H$ \\", r"\midrule",
       *rows, r"\bottomrule", r"\end{tabular}"])
@@ -197,8 +197,8 @@ def series(ax, pts, color, label, marker, off=1.0):
 
 
 fig, axs = plt.subplots(1, 2, figsize=(6.2, 2.4), constrained_layout=True)
-for ax, (o, rule, m, buds, ttl, ylab) in zip(axs, (("rec", REC_RULE, "pcc", BUD, "(a) Reconstruction", r"$\Delta$ PCC vs fixed rule"),
-                                                   ("det", DET_RULE, "recall", DET, "(b) ROI detection", r"$\Delta$ ROI recall vs fixed rule"))):
+for ax, (o, rule, m, buds, ttl, ylab) in zip(axs, (("rec", REC_RULE, "pcc", BUD, "(a) Reconstruction", r"$\Delta$ PCC vs base design"),
+                                                   ("det", DET_RULE, "recall", DET, "(b) ROI detection", r"$\Delta$ ROI recall vs base design"))):
     obs5, obs8, prm5 = [], [], []
     for b in buds:
         x, fx = float(b) * 100, v(R2["A"], b, rule[b], m)
@@ -207,9 +207,9 @@ for ax, (o, rule, m, buds, ttl, ylab) in zip(axs, (("rec", REC_RULE, "pcc", BUD,
         facts[f"perm_minus_fixed_{o}_f0.5_{b}"] = p5
         obs5.append((x, r5["mean"], r5["ci95_unadjusted"])); obs8.append((x, r8["mean"], r8["ci95_unadjusted"]))
         prm5.append((x, p5["mean"], p5["ci"]))
-    series(ax, obs5, C1, "50% coverage, observed", "o")
-    series(ax, obs8, C3, "80% coverage, observed", "^", 1.07)
-    series(ax, prm5, C2, "50% coverage, permuted", "s", 0.93)
+    series(ax, obs5, C1, "50% hybrid, informative", "o")
+    series(ax, obs8, C3, "80% hybrid, informative", "^", 1.07)
+    series(ax, prm5, C2, "50% hybrid, permuted", "s", 0.93)
     ax.axhline(0, color=GREY, lw=0.8, ls="--"); ax.set_xscale("log")
     xt = [float(b) * 100 for b in buds]; ax.set_xticks(xt); ax.set_xticklabels([f"{x:g}" for x in xt])
     ax.xaxis.set_minor_locator(matplotlib.ticker.NullLocator())

@@ -117,7 +117,7 @@ write("tab_primary.tex", "\n".join([
     r"\begin{tabular}{lcccccc}", r"\toprule",
     r" & \multicolumn{4}{c}{Reconstruction (PCC, top-50 genes)} & \multicolumn{2}{c}{Detection (ROI recall)} \\",
     r"\cmidrule(lr){2-5}\cmidrule(lr){6-7}",
-    r" & \multicolumn{2}{c}{error-reduction $-$ best non-adapt.} & \multicolumn{2}{c}{local-var. $-$ best coverage} & \multicolumn{2}{c}{local-var. $-$ best coverage} \\",
+    r" & \multicolumn{2}{c}{error-reduction $-$ hindsight (non-adapt.)} & \multicolumn{2}{c}{local-var. $-$ hindsight (coverage)} & \multicolumn{2}{c}{local-var. $-$ hindsight (coverage)} \\",
     r"\cmidrule(lr){2-3}\cmidrule(lr){4-5}\cmidrule(lr){6-7}",
     r"Budget & $\Delta$ [95\% CI] & $p_H$ & $\Delta$ [95\% CI] & $p_H$ & $\Delta$ [95\% CI] & $p_H$ \\", r"\midrule",
     *rows, r"\bottomrule", r"\end{tabular}"]))
@@ -268,7 +268,7 @@ ax = axes[1]
 band(ax, xs9, [facts[f"value_greedy_detect_vs_bestcover_{b}"] for b in BUD09], C2, "local-variance (adaptive)", "s")
 band(ax, xs9, [facts[f"scr2st_detect_{b}"] for b in BUD09], C3, "diversity (non-adaptive)", "^", 1.06)
 ax.axhline(0, color=GREY, lw=0.8, ls="--"); ax.set_xscale("log"); ax.set_xticks(xs9); ax.set_xticklabels([f"{x:g}" for x in xs9])
-ax.set_xlabel("budget (% of regions)"); ax.set_ylabel(r"$\Delta$ ROI recall vs best coverage"); ax.set_title("(b) ROI detection", loc="left", fontsize=8.5)
+ax.set_xlabel("budget (% of regions)"); ax.set_ylabel(r"$\Delta$ ROI recall vs hindsight benchmark"); ax.set_title("(b) ROI detection", loc="left", fontsize=8.5)
 ax.legend(fontsize=6.5, loc="upper left")
 ax = axes[2]
 labs = ["1", "5", "25", "all", "blocks"]
@@ -278,7 +278,7 @@ mean = [m["mean"] for m in ms]
 ax.errorbar(xs, mean, yerr=[[m["mean"] - m["ci"][0] for m in ms], [m["ci"][1] - m["mean"] for m in ms]],
             color=C2, marker="s", ms=4.5, capsize=2, elinewidth=1, ls="none")
 ax.axhline(0, color=GREY, lw=0.8, ls="--"); ax.set_xticks(xs); ax.set_xticklabels(labs)
-ax.set_xlabel("regions per round (10% budget)"); ax.set_ylabel(r"$\Delta$ ROI recall vs best coverage")
+ax.set_xlabel("regions per round (10% budget)"); ax.set_ylabel(r"$\Delta$ ROI recall vs hindsight benchmark")
 ax.set_title("(c) Batched acquisition", loc="left", fontsize=8.5)
 for a in axes[:2]:
     a.xaxis.set_minor_locator(matplotlib.ticker.NullLocator())
@@ -295,7 +295,7 @@ for key, col, lab, mk in [("oracle_vs_bestcover", GREY, "oracle", "D"), ("greedy
     ax.errorbar([float(e) for e in ells], mean, yerr=[[r["mean"] - r["ci95"][0] for r in m], [r["ci95"][1] - r["mean"] for r in m]],
                 color=col, marker=mk, ms=4, capsize=2, elinewidth=1, label=lab)
 ax.axhline(0, color=GREY, lw=0.8, ls="--"); ax.set_xlabel("structure correlation length (regions)")
-ax.set_ylabel(r"$\Delta$ PCC vs best coverage"); ax.set_title("(a) Synthetic reconstruction", loc="left", fontsize=8.5)
+ax.set_ylabel(r"$\Delta$ PCC vs hindsight benchmark"); ax.set_title("(a) Synthetic reconstruction", loc="left", fontsize=8.5)
 ax.legend(fontsize=6.5, loc="lower right")
 ax = axes[1]
 al = [str(a) for a in dc["alphas"]]
@@ -304,8 +304,8 @@ for key, col, lab, mk in [("value_greedy_vs_bestcover", C2, "local-variance", "s
     mean = [r["mean"] for r in m]
     ax.errorbar([float(a) for a in al], mean, yerr=[[r["mean"] - r["ci95"][0] for r in m], [r["ci95"][1] - r["mean"] for r in m]],
                 color=col, marker=mk, ms=4, capsize=2, elinewidth=1, label=lab)
-ax.axhline(0, color=GREY, lw=0.8, ls="--"); ax.set_xlabel(r"ROI signal amplitude $\alpha$")
-ax.set_ylabel(r"$\Delta$ ROI recall vs best coverage"); ax.set_title("(b) Synthetic detection", loc="left", fontsize=8.5)
+ax.axhline(0, color=GREY, lw=0.8, ls="--"); ax.set_xlabel(r"ROI amplitude $a_{\mathrm{ROI}}$")
+ax.set_ylabel(r"$\Delta$ ROI recall vs hindsight benchmark"); ax.set_title("(b) Synthetic detection", loc="left", fontsize=8.5)
 ax.legend(fontsize=6.5, loc="upper left")
 fig.savefig(PAPER / "fig_controls.pdf"); fig.savefig(ROOT / "docs" / "figures" / "fig_controls.png", dpi=200)
 print(f"[write] {PAPER / 'fig_controls.pdf'}")
