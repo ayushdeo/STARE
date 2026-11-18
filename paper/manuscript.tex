@@ -35,27 +35,24 @@
 
 \begin{abstract}
 Spatial transcriptomics is costly, so many studies profile only selected regions of a section, and recent methods
-choose each next region from expression already measured. A recent benchmark of active spot selection for
-training predictors across patients reported inconsistent gains over random sampling; we ask instead whether, within
-a slide, measured feedback improves selection over a fixed design matched to the objective. We built a
-retrospective simulator from 22 human HEST-1k slides (18 studies, four tissues), fixed the image encoder and
-imputer, registered four analysis stages in timestamped commits before running them, and drew inference at the
-study level. Each feedback policy was compared with a non-adaptive design chosen on held-out studies and with
-itself fed uninformative values. \textbf{RQ1:} for whole-section reconstruction, a policy targeting the imputer's
-error was below the fixed design at every budget up to 10\%, by up to 0.092 Pearson correlation and significantly
-at 0.5 and 1\%, both on its own unprofiled regions and on a common held-out set. \textbf{RQ2:} for capturing
-heterogeneous regions, the registered policy did not detectably beat a design chosen for detection, and a
-diversity sampler that uses no feedback did about as well; with its settings chosen on the other studies, the same
-policy beat the design by 0.016 to 0.049 recall at 2--10\%, but not detectably the diversity sampler. \textbf{RQ3:} spending half or more of the budget on a
-fixed design and the rest on feedback never beat that design; from 2\% upward every hybrid was within 0.007
-correlation and 0.006 recall of it, a null with at least 80\% power to detect gains of 0.02 and 0.03 at 2--10\%.
-\textbf{RQ4} (exploratory): batches of five neither eroded nor established a detection advantage. With
-300\,$\mu$m tiles no feedback policy beat the fixed design, a null that could miss gains below about 0.04 to 0.12.
-Within simulated budgets, one imputer, and computational endpoints, the feedback policies we tested lost to a
-well-chosen fixed design for reconstruction, where neither positive control showed that a gain could be detected;
-for detection, a tuned feedback policy beat the registered fixed designs but not detectably a diversity design.
-Adaptive acquisition methods should be benchmarked against the strongest objective-matched fixed designs, against
-themselves without informative feedback, and with settings chosen on held-out data.
+choose each next region from expression already measured. We ask whether, within a slide, this feedback improves
+selection over a fixed design matched to the objective. We built a retrospective simulator from 22 human HEST-1k
+slides (18 studies, four tissues), fixed the image encoder and imputer, registered four analysis stages in
+timestamped commits before running them, and drew inference at the study level. Each feedback policy was compared
+with a non-adaptive design chosen on held-out studies and with itself fed uninformative values. \textbf{RQ1:} for
+whole-section reconstruction, a policy targeting the imputer's error was significantly below the fixed design at
+small budgets (by 0.092 Pearson correlation at 0.5\%), also on a common held-out set; a version of its selection rule
+that ignores measured values trailed by similar amounts, so the gap reflects the rule rather than the feedback.
+\textbf{RQ2:} for capturing heterogeneous regions, the registered policy did not detectably beat a fixed design;
+with settings chosen on other studies it beat the registered fixed designs by 0.016 to 0.049 recall at 2--10\%, but
+not detectably a diversity sampler, the strongest fixed design we evaluated. \textbf{RQ3:} spending the last half or
+fifth of the budget on feedback after a fixed design never beat that design, a null with 80\% power for gains of
+0.02 correlation and 0.03 recall at 2--10\%. \textbf{RQ4} (exploratory): batches of five neither eroded nor
+established a detection advantage, and with 300\,$\mu$m tiles no feedback policy beat the fixed design, a looser
+null. Within simulated budgets, one imputer, and computational endpoints, no feedback policy we tested detectably
+beat the strongest fixed design for either objective, and no positive control showed that a reconstruction gain
+could be detected. Adaptive acquisition methods should be benchmarked against the strongest objective-matched fixed
+designs, against themselves without informative feedback, and with settings chosen on held-out data.
 \end{abstract}
 
 \section{Introduction}
@@ -81,7 +78,7 @@ selections do not depend on measured values, matched to the objective while abla
 Theory gives different expectations for different goals. For reconstructing a Gaussian-process field with a
 known kernel, posterior variance does not depend on the observed values, so a design fixed before any measurement
 is as good as a sequential one; when the model's parameters are uncertain, sequential designs can do
-better~\citep{krause2008near}. Imputers learned from images are not Gaussian processes with known kernels, so for
+better~\citep{krause2008near,rainforth2024modern}. Imputers learned from images are not Gaussian processes with known kernels, so for
 reconstruction the question is empirical. Finding regions defined by their expression is closer to active search,
 in which each choice exploits the labels already observed to locate further targets~\citep{garnett2012bayesian}.
 
@@ -99,16 +96,17 @@ measured expression improve whole-section reconstruction over a feasible non-ada
 it improve the capture of molecularly heterogeneous regions? \textbf{RQ3}: does feedback add to a strong fixed
 design when it allocates only the remainder of the budget? \textbf{RQ4}, an exploratory stress test: does a
 detection advantage persist when measurements arrive in batches? Across four registered stages, no feedback policy
-beat a well-chosen fixed design for reconstruction, which was significantly better at small budgets even when all
-policies were scored on the same held-out regions. For detection, the registered policy did not beat a design
-chosen for detection, but a version tuned on other studies did, modestly, though not detectably better than a
-diversity sampler that uses no feedback. We contribute (i) a reproducible
-simulator on 22 human slides from 18 studies with feasible, objective-matched baselines, feedback ablations, and
-study-level inference; (ii) a registered negative result for reconstruction and a qualified positive result for
-detection, made interpretable by positive controls and minimum detectable effects; and (iii) an account of the
-result: the imputer's uncertainty depends only on where regions are profiled, so feedback can aid reconstruction
-only through its predictions, and for detection a diversity sampler without feedback finds heterogeneous regions
-about as well as the untuned policy.
+we tested beat a well-chosen fixed design for reconstruction. At small budgets the fixed design was significantly
+better, also when all policies were scored on the same held-out regions, but a version of the policy's rule that
+ignores measured values lost by similar amounts, and feedback spent after a strong fixed design did not improve on
+it. For detection, the registered policy did not beat a design chosen for detection; a version tuned on other
+studies beat the registered fixed designs, modestly, but not detectably the diversity sampler, the strongest fixed
+design we evaluated. We contribute (i) a reproducible simulator on 22 human slides from 18 studies with feasible,
+objective-matched baselines, feedback ablations, and study-level inference; (ii) registered negative and null
+results for reconstruction and a qualified positive result for detection, made interpretable by minimum detectable
+effects, with the outcome of every registered primary margin listed (Appendix~\ref{app:ledger}); and (iii) evidence
+that the selection rule accounted for more of the differences than the feedback did, for reconstruction and for
+detection alike.
 
 \section{Related work}
 \label{sec:related}
@@ -127,7 +125,16 @@ guarantees to greedy policies that condition on observations~\citep{golovin2011a
 addresses the related goal of collecting positives~\citep{garnett2012bayesian}. In batch acquisition, the members
 of a batch are chosen without each other's labels~\citep{kirsch2019batchbald}, and global optimisation commonly
 begins with a space-filling design before switching to adaptive queries~\citep{jones1998efficient}. Active feature acquisition casts measurement as a
-sequential policy~\citep{yin2020afa}.
+sequential policy~\citep{yin2020afa}, and adaptive cluster sampling surveys rare, clustered populations by sampling
+around units that meet a criterion~\citep{thompson1990adaptive}.
+
+\paragraph{Evaluating active learning.} Re-evaluations of deep active learning found that reported gains over
+random sampling shrink or become inconsistent when every method is trained and tuned under the same
+protocol~\citep{mittal2019parting,munjal2022towards,luth2023navigating}, and a benchmark on tabular data found that
+most strategies did not significantly beat uniform sampling~\citep{lu2025expanded}. We adopt their remedies, shared
+protocols and tuned baselines, and add two that sequential design permits: the policy is run with its feedback
+removed but its selection rule intact, and both the fixed comparator and the policy's settings are chosen on held-out
+studies.
 
 \paragraph{Design in spatial omics.} Gene-panel selectors fix which genes to
 measure~\citep{covert2023persist,reconst2026}. Region selectors range from image-based rankers such as SpatialFinder,
@@ -305,7 +312,7 @@ families of 12 margins on a common evaluation set (residual and 50\% reconstruct
 comparators at six budgets), 9 at tile scale, and 4 for tuning, and a secondary family of 30 with the MSE,
 detection-hybrid, and constant-feedback contrasts. In every stage a benefit was to be claimed only for a
 positive margin with $p_H<0.05$. Results are labelled confirmatory (registered primary), secondary (registered,
-Holm within the secondary family), descriptive, or post hoc.
+Holm within the secondary family), descriptive, or post hoc; Appendix~\ref{app:ledger} lists every primary margin.
 
 \subsection{Positive controls}
 A null result is informative only if the protocol could have registered an effect. In synthetic slides of
@@ -342,7 +349,8 @@ $+0.033$ to $+0.071$) at $a_{\mathrm{ROI}}=4$ and $+0.101$ ($+0.065$ to $+0.135$
 on all 8 slides at both amplitudes (Figure~\ref{fig:controls}b). Reconstruction behaved differently: even an oracle
 that orders regions by true local difficulty, which no policy could deploy, stayed below the benchmark at every
 correlation length, by $0.105$ and $0.066$ PCC at the two
-shortest and $0.013$ to $0.020$ at the longer ones (Figure~\ref{fig:controls}a).
+shortest and $0.013$ to $0.020$ at the longer ones (Figure~\ref{fig:controls}a). This setting therefore shows only
+that the coverage benchmark is hard to beat; it is not a positive control for reconstruction.
 
 The semi-synthetic control failed its criterion. At $a_{\mathrm{spike}}=1$ and $2$, all 20 injected genes entered
 the evaluation set on every slide, yet at $a_{\mathrm{spike}}=2$ the residual policy remained below the feasible design, by $0.021$ ($0.012$ to
@@ -374,7 +382,8 @@ policy gained $0.031$, $0.039$, and $0.030$ PCC at 0.5--2\% (secondary, Appendix
 difference at 10--20\%. Feedback moved the policy toward the feasible design without closing the gap. The
 error-reduction design, which shares the residual policy's structure but uses value-independent uncertainty, trailed
 the feasible design by similar amounts ($0.107$, $0.067$, and $0.024$ at 0.5--2\%; post hoc), and both converged on
-it as the budget grew. The only design to exceed the feasible design was maximum-uncertainty, by $0.003$ PCC at 20\%
+it as the budget grew. The deficit therefore came mainly from the selection rule the two share, not from the
+feedback; RQ3 tests feedback on top of strong designs. The only design to exceed the feasible design was maximum-uncertainty, by $0.003$ PCC at 20\%
 (95\% CI $0.002$ to $0.004$, $p=0.0007$, post hoc), a fixed design that uses no feedback. The hindsight benchmark
 exceeded the feasible design by $0.016$ to $0.021$ PCC at budgets up to 2\% and by at most $0.002$ above
 (Appendix~\ref{app:comparators}).
@@ -418,11 +427,9 @@ design (0.252); the diversity sampler reached 0.266 without feedback. Part of th
 recovers ground that the selection rule loses on its own. The margin over constant feedback at 20\% was the only
 significant detection effect of feedback in stage 2 ($+0.074$, $p_H=0.038$, secondary).
 
-The apparent advantage also depends on the comparator. Against MI-greedy used on every slide, the local-variance
-policy gained $0.043$ and $0.078$ recall at 10 and 20\% ($p_H=0.043$ for both; post hoc). MI-greedy, however, is a
-reconstruction design whose detection recall never exceeded that expected of random selection (0.200 at 20\%,
-against 0.247 for variance-greedy and 0.252 for the one-shot ranker), so this comparison shows only that feedback
-beats chance-level placement. Selection-aware intervals against the feasible design included zero at every budget
+Against MI-greedy on every slide, the policy gained $0.043$ and $0.078$ recall at 10 and 20\% ($p_H=0.043$; post
+hoc), but MI-greedy's detection recall never exceeded that of random selection (0.200 at 20\%), so this shows only
+that feedback beats chance-level placement. Selection-aware intervals against the feasible design included zero at every budget
 (Appendix~\ref{app:sensitivity}). The ROI-seeking port did not improve on the coverage designs
 in stage 1 (Appendix~\ref{app:stage1}); it is not a test of the trained SOFisher, which learned on its own data in a
 native run (Appendix~\ref{app:sofisher}). SCR$^2$-ST's processed training data were not public.
@@ -445,16 +452,12 @@ These nulls are tight: at 2--10\% the MDE$_H$ values were 0.004 to 0.017 PCC and
 above about 0.02 PCC or 0.03 recall would probably have been detected. At 20\% the detection bound widens to
 0.035--0.068.
 
-The hybrids responded to the values they were shown. With permuted values they did worse at 2\%, by $0.016$ and
+The hybrids responded to the values they were shown: with permuted values they did worse at 2\%, by $0.016$ and
 $0.007$ PCC for the two reconstruction hybrids and $0.007$ recall for the 50\% detection hybrid (secondary,
-$p_H\le0.027$). For that detection hybrid the difference grew to $0.014$--$0.035$ at 5--20\% without surviving
-correction; for reconstruction at 10--20\% the permuted versions were marginally ahead, by at most $0.003$ PCC
-($p_H\ge0.12$; Appendix~\ref{app:stage3}). In absolute terms (Table~\ref{tab:s3abs}), with permuted values the
-feedback phase lost ground relative to continuing the base design, for example from 0.127 to 0.110 recall at
-10\%, and informative values brought the hybrid back to about the level of the design (0.133). Because permuted
-values can actively mislead, this shows that informative values did better than wrong ones, not that they added to
-the design. In detection, the local-variance policy run alone (0.137 at 10\%, 0.278 at 20\%) scored above
-both hybrids at every budget (descriptive).
+$p_H\le0.027$; Appendix~\ref{app:stage3}). With permuted values the feedback phase lost ground relative to the base
+design, and informative values brought the hybrid back to about its level (Table~\ref{tab:s3abs}), so informative
+values did better than wrong ones without adding to the design. The local-variance policy run alone scored above
+both detection hybrids at every budget (descriptive).
 
 \begin{table}[t]
 \centering
@@ -485,9 +488,7 @@ correction ($p_H\ge0.11$).
 unchanged (Table~\ref{tab:s4}). The residual policy stayed below the feasible design at 0.5, 1, and 2\%, by $0.082$,
 $0.062$, and $0.032$ PCC ($p_H\le0.012$), no margin above zero was established at any budget, and MSE agreed
 (Appendix~\ref{app:stage4}). The 50\% hybrid was within $0.019$ PCC of its base design at every budget, with no
-significant margin. The local-variance policy's PCC deficit on the common set was $0.118$ at 2\% against $0.120$ in
-stage 2, and $0.093$ against $0.163$ at 20\% (descriptive); the common set changes both the scored regions and the
-candidate pool, so we do not attribute the difference to either.
+significant margin.
 
 \emph{Value of the measurements.} Against its constant-feedback version, a coverage rule, the local-variance policy
 gained $0.010$ to $0.096$ recall, significantly at 20\% ($p_H=0.012$), and the 50\% detection hybrid gained $0.020$
@@ -514,9 +515,8 @@ the random rate (within 0.047 recall of it). These nulls are loose: MDE$_H$ rang
 0.036 to 0.083 recall.
 
 \emph{Headroom.} On four slides at 0.5--2\%, the greedy bound exceeded the best fixed design by $0.026$ to $0.166$
-PCC, while the residual policy stayed below the fixed design in all 12 cases (Appendix~\ref{app:stage4}). Because the bound
-selects on the score it is evaluated on, much of this gap may be optimism, and it does not show that a deployable
-policy could do better (descriptive).
+PCC while the residual policy stayed below it in all 12 cases; the bound selects on its own evaluation score, so
+much of this gap may be optimism (descriptive; Appendix~\ref{app:stage4}).
 
 \begin{table}[t]
 \centering
@@ -536,28 +536,24 @@ Appendix~\ref{app:stage3}) and evaluation genes chosen on a 15\% reference subse
 
 \section{Discussion}
 
-\paragraph{Reconstruction.} Informative feedback beat permuted feedback by up to 0.039 PCC in stage 2 but by at most
-0.017, not significantly, on the common set, and neither the policy nor the hybrids improved on a fixed design. Permuted values can mislead a policy, and constant
-values reduce the residual policy to index order, so neither contrast measures how much the values were worth for
-reconstruction. The pattern fits sensor-placement theory, under which placement matters more than the observed
-values when uncertainty depends on locations alone~\citep{krause2008near}. Our imputer's uncertainty has this
-property while its predictions do not, so any benefit of feedback had to come through the predictions. The
-evaluation does not test the theory, and because neither positive control showed that a reconstruction gain could
-be detected and the residual policy was not tuned, it cannot rule out a better feedback policy. What it establishes is that the residual
-policy, which targets the imputer's own error and received exact measurements, lost to a fixed design chosen
-without the target slide.
+\paragraph{Reconstruction.} The residual policy, which targets the imputer's own error and received exact
+measurements, lost to a fixed design chosen without the target slide, and a value-independent version of its rule
+lost by similar amounts, so the selection rule mattered more than the feedback. Informative feedback beat permuted
+feedback by up to 0.039 PCC in stage 2 but by at most 0.017, not significantly, on the common set, and spent after a
+strong fixed design it did not improve on that design. The pattern fits sensor-placement theory, under which
+placement matters more than observed values when uncertainty depends on locations alone~\citep{krause2008near}; our
+imputer's uncertainty has this property while its predictions do not. Because no positive control showed that a
+reconstruction gain could be detected and the residual policy was not tuned, the evaluation cannot rule out a
+better feedback policy.
 
-\paragraph{Detection.} Feedback beat weak baselines, and once tuned it beat the registered detection designs. It outperformed MI-greedy,
-a reconstruction design that performed at chance level for detection (post hoc), and its own constant-feedback
-version, a coverage rule, at the largest budget; such gains are what active-search reasoning
-predicts~\citep{garnett2012bayesian}, and the synthetic control confirmed that the simulator detects them. With its
-registered settings, the policy's margins over a design chosen for detection and over a diversity sampler were
-small and not significant, and the diversity sampler's near-parity indicates that heterogeneous regions on these
-slides are spread widely enough for broad coverage to find many of them. With a narrower kernel chosen on other
-studies, the policy beat the detection design by 0.016 to 0.049 recall at 2--10\% and its own constant-feedback
-version by more, so the measured values contributed. The gain is modest: the diversity sampler came within 0.009 to
-0.033 recall of the tuned policy at 2--10\%, every design stayed close to random selection, and the oracle shows how
-much heterogeneity all of them missed.
+\paragraph{Detection.} No feedback policy detectably beat the strongest fixed design we evaluated, the diversity
+sampler, whose near-parity suggests that heterogeneous regions on these slides are spread widely enough for broad
+coverage to find many of them. Feedback beat weak baselines: MI-greedy, which performed at chance level for
+detection, and the policy's own constant-feedback version, a coverage rule, as active-search reasoning
+predicts~\citep{garnett2012bayesian} and the synthetic control showed the simulator can detect. With a narrower
+kernel chosen on other studies, the policy beat the registered detection designs by 0.016 to 0.049 recall at
+2--10\% and its constant-feedback version by more, so the measured values contributed. The gain is modest: every
+design stayed close to random selection, and the oracle shows how much heterogeneity all of them missed.
 
 \paragraph{Implications.} For developers of adaptive acquisition, the lessons are methodological. Beating random
 selection is not evidence that feedback helps, and three comparisons should be standard: the strongest fixed designs available, simple diversity samplers included,
@@ -568,8 +564,10 @@ simulated acquisition at 0.5--20\% of regions or 12--48 tiles, one imputer, and 
 fixed design is the practical default for reconstruction: $k$-means at the smallest budgets and MI-greedy above
 them. It is computed before any measurement, avoids the turnaround that sequential selection requires, and won
 under conditions generous to feedback, since simulated measurements are exact and arrive at once. For capturing
-heterogeneous spots, a tuned feedback policy offers 0.02 to 0.05 recall at 2--10\% over the registered detection
-designs and 0.01 to 0.03 over a diversity sampler, which has to be weighed against that turnaround; at tile scale it offered no detectable gain. Whether these results hold for other predictors or annotated
+heterogeneous spots, a tuned feedback policy gained 0.02 to 0.05 recall at 2--10\% over the registered
+detection designs, but its estimated 0.01 to 0.03 over a diversity sampler was not detectable, so the diversity
+sampler is the default unless a gain of that size justifies the turnaround. At tile scale, the unit closest to ROI
+practice, no policy showed a detectable gain, but those nulls are loose, so this advice rests mainly on spots. Whether these results hold for other predictors or annotated
 biological targets would need prospective or annotated data. They agree with the benchmark's result for predictor
 training~\citep{zhu2026benchmarking}, although the two studies address different decisions.
 
@@ -587,7 +585,8 @@ toward the ROIs' neighbourhood scale, so the detection comparisons are set up fa
 
 \emph{Models and policies.} The 22-slide results use one imputer, whose hyperparameters were set on one of the 22
 slides (excluding it changed no conclusion; Appendix~\ref{app:robust}); the $k$-NN and kriging comparisons rest on
-five slides. The two feedback policies are hand-built heuristics. Tuning local-variance changed the detection
+five slides. The two feedback policies are hand-built heuristics, and no positive control showed that the protocol can detect
+a reconstruction gain from feedback, which limits what RQ1 says about feedback in general. Tuning local-variance changed the detection
 result, and the residual policy was not tuned, so the reconstruction result bounds what this policy achieves, not
 what feedback can achieve. At the tuned kernel width a numerical floor in the implementation affects the first few picks; the results
 describe the policy as implemented (Appendix~\ref{app:stage4}).
@@ -595,8 +594,9 @@ The competitor samplers reimplement objectives; SOFisher was run natively only o
 own data and SCR$^2$-ST not at all.
 
 \emph{Inference.} The registered stage-2 ablation tests use one permutation, with further seeds descriptive.
-Multiplicity is controlled within each registered family, not across the four stages or the post
-hoc analyses. The plans were registered in our own version-controlled repository rather than with an external
+Multiplicity is controlled within each registered family; with Benjamini--Hochberg over all 87 primary margins,
+the tuned detection margins at 2--10\% and one stage-1 batched margin are the only positive ones
+(Appendix~\ref{app:ledger}). The plans were registered in our own version-controlled repository rather than with an external
 registry, so their timing rests on commit records, which the supplementary material lists; each stage's design was
 chosen after earlier results were known, although each was registered before its experiments. The stage-4
 constant-feedback contrasts for the residual policy, though registered, are not a valid control. The diversity
@@ -608,12 +608,11 @@ were not tested.
 Across 22 human slides from 18 studies and four registered stages, the feedback policies we tested did not earn their
 measurement turnaround for reconstruction: the residual policy was significantly worse than a well-chosen fixed design at small budgets,
 also when every policy was scored on the same withheld regions, and spending only the remainder of the budget on
-feedback did not improve on that design. For capturing heterogeneous regions, the registered policy did not
-detectably beat a design built for detection, but with settings chosen on other studies it did, by 0.02 to 0.05
-recall at 2--10\%, though not detectably better than a diversity sampler without feedback. The strongest
-objective-matched fixed baselines, uninformative-feedback controls, tuning on held-out data,
-and study-level inference with positive controls and minimum detectable effects separate the value of feedback from
-the value of a good selection rule; new adaptive acquisition methods should be judged against them.
+feedback did not improve on that design. For capturing heterogeneous regions, no policy detectably beat a
+diversity sampler without feedback; with settings chosen on other studies, the policy beat the registered fixed
+designs by 0.02 to 0.05 recall at 2--10\%. Strong objective-matched fixed baselines, uninformative-feedback
+controls, tuning on held-out data, and study-level inference separate the value of feedback from the value of a
+good selection rule; new adaptive acquisition methods should be judged against them.
 
 \paragraph{Reproducibility.}
 The supplementary material contains the code, configuration, result files, the registered plans with their commit
@@ -977,6 +976,50 @@ study-level sign-flip test.}
 each family over 17 studies.}
 \label{tab:robust_devslide}
 \fittable{\small\input{generated/robust_devslide.tex}}
+\end{table}
+
+\section{Registered primary margins and policies}
+\label{app:ledger}
+
+Table~\ref{tab:ledger} groups the 87 registered primary margins of the four stages and counts those with a positive
+or negative margin significant after Holm adjustment within the registered family, the decision rule of every
+plan, and, post hoc, after Benjamini--Hochberg adjustment over all 87 together~\citep{benjamini1995controlling}.
+Stage-1 margins are taken over hindsight benchmarks and later stages over feasible designs. The one positive stage-1
+margin under Benjamini--Hochberg is local-variance in rounds of 5 regions against the coverage benchmark at 10\%
+($+0.034$ recall). Table~\ref{tab:policies} summarises the designs and policies.
+
+\begin{table}[H]
+\centering
+\caption{Every registered primary margin, grouped by comparison. ``$+$'' and ``$-$'' count margins with a positive
+or negative mean and adjusted $p<0.05$: Holm within the registered family (24, 18, 20, and 12, 9, 4 margins), or
+Benjamini--Hochberg over all 87 (post hoc).}
+\label{tab:ledger}
+\fittable{\small\input{generated/claims_ledger.tex}}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Designs and policies. A fixed design's selections do not depend on measured expression.}
+\label{tab:policies}
+\fittable{\small\begin{tabular}{llll}
+\toprule
+Name & Kind & Selection rule & Role \\
+\midrule
+Random & non-adaptive & uniform & reference \\
+Grid & non-adaptive & farthest-point cover in space & feasible-design candidate \\
+$k$-means & non-adaptive & region nearest each centroid of image embeddings & feasible-design candidate \\
+Variance-greedy & non-adaptive & greedy GP posterior variance & feasible-design candidate \\
+MI-greedy & non-adaptive & greedy GP mutual information & feasible-design candidate \\
+One-shot & non-adaptive & rare-cluster ranking of image embeddings & feasible-design candidate \\
+Diversity & non-adaptive & farthest-point cover in image and space & competitor (SCR$^2$-ST objective) \\
+Error-reduction & sequential fixed & imputer uncertainty of neighbours & reconstruction \\
+Maximum-uncertainty & sequential fixed & most uncertain region & reconstruction \\
+Residual & feedback & leave-one-out error $\times$ uncertainty & reconstruction policy \\
+Local-variance & feedback & local expression variance $+$ distance & detection policy \\
+ROI-seeking & feedback & SOFisher reward & competitor (SOFisher objective) \\
+Hybrids & feedback & base design, then a feedback policy & RQ3 \\
+\bottomrule
+\end{tabular}}
 \end{table}
 
 \end{document}

@@ -1,0 +1,1455 @@
+{
+ "margins": [
+  {
+   "group": [
+    "1",
+    "error-reduction $-$ hindsight best design",
+    "PCC"
+   ],
+   "family": "stage 1 primary (24)",
+   "margin": "margins/0.005/ours_vs_best_nonadapt",
+   "mean": -0.1276,
+   "p": 7.62939453125e-06,
+   "p_holm": 0.00018310546875,
+   "q_bh_all": 5.53131103515625e-05
+  },
+  {
+   "group": [
+    "1",
+    "error-reduction $-$ hindsight best design",
+    "PCC"
+   ],
+   "family": "stage 1 primary (24)",
+   "margin": "margins/0.010/ours_vs_best_nonadapt",
+   "mean": -0.0826,
+   "p": 7.62939453125e-06,
+   "p_holm": 0.00018310546875,
+   "q_bh_all": 5.53131103515625e-05
+  },
+  {
+   "group": [
+    "1",
+    "error-reduction $-$ hindsight best design",
+    "PCC"
+   ],
+   "family": "stage 1 primary (24)",
+   "margin": "margins/0.020/ours_vs_best_nonadapt",
+   "mean": -0.0402,
+   "p": 1.52587890625e-05,
+   "p_holm": 0.0001983642578125,
+   "q_bh_all": 0.00010211651141826923
+  },
+  {
+   "group": [
+    "1",
+    "error-reduction $-$ hindsight best design",
+    "PCC"
+   ],
+   "family": "stage 1 primary (24)",
+   "margin": "margins/0.050/ours_vs_best_nonadapt",
+   "mean": -0.0109,
+   "p": 0.00518798828125,
+   "p_holm": 0.05706787109375,
+   "q_bh_all": 0.01805419921875
+  },
+  {
+   "group": [
+    "1",
+    "error-reduction $-$ hindsight best design",
+    "PCC"
+   ],
+   "family": "stage 1 primary (24)",
+   "margin": "margins/0.100/ours_vs_best_nonadapt",
+   "mean": -0.0023,
+   "p": 0.33994293212890625,
+   "p_holm": 0.6870574951171875,
+   "q_bh_all": 0.4694450015113467
+  },
+  {
+   "group": [
+    "1",
+    "error-reduction $-$ hindsight best design",
+    "PCC"
+   ],
+   "family": "stage 1 primary (24)",
+   "margin": "margins/0.200/ours_vs_best_nonadapt",
+   "mean": -0.0015,
+   "p": 0.2290191650390625,
+   "p_holm": 0.6870574951171875,
+   "q_bh_all": 0.34352874755859375
+  },
+  {
+   "group": [
+    "1",
+    "local-variance $-$ hindsight coverage design",
+    "PCC"
+   ],
+   "family": "stage 1 primary (24)",
+   "margin": "rows/0.02/value_greedy_recon_vs_bestcover",
+   "mean": -0.1362,
+   "p": 7.62939453125e-06,
+   "p_holm": 0.00018310546875,
+   "q_bh_all": 5.53131103515625e-05
+  },
+  {
+   "group": [
+    "1",
+    "local-variance $-$ hindsight coverage design",
+    "recall"
+   ],
+   "family": "stage 1 primary (24)",
+   "margin": "rows/0.02/value_greedy_detect_vs_bestcover",
+   "mean": 0.001,
+   "p": 0.7232208251953125,
+   "p_holm": 0.7232208251953125,
+   "q_bh_all": 0.8252120384803185
+  },
+  {
+   "group": [
+    "1",
+    "local-variance $-$ hindsight coverage design",
+    "PCC"
+   ],
+   "family": "stage 1 primary (24)",
+   "margin": "rows/0.05/value_greedy_recon_vs_bestcover",
+   "mean": -0.1476,
+   "p": 7.62939453125e-06,
+   "p_holm": 0.00018310546875,
+   "q_bh_all": 5.53131103515625e-05
+  },
+  {
+   "group": [
+    "1",
+    "local-variance $-$ hindsight coverage design",
+    "recall"
+   ],
+   "family": "stage 1 primary (24)",
+   "margin": "rows/0.05/value_greedy_detect_vs_bestcover",
+   "mean": 0.0134,
+   "p": 0.041961669921875,
+   "p_holm": 0.3615875244140625,
+   "q_bh_all": 0.09610507362767269
+  },
+  {
+   "group": [
+    "1",
+    "local-variance $-$ hindsight coverage design",
+    "PCC"
+   ],
+   "family": "stage 1 primary (24)",
+   "margin": "rows/0.10/value_greedy_recon_vs_bestcover",
+   "mean": -0.1516,
+   "p": 7.62939453125e-06,
+   "p_holm": 0.00018310546875,
+   "q_bh_all": 5.53131103515625e-05
+  },
+  {
+   "group": [
+    "1",
+    "local-variance $-$ hindsight coverage design",
+    "recall"
+   ],
+   "family": "stage 1 primary (24)",
+   "margin": "rows/0.10/value_greedy_detect_vs_bestcover",
+   "mean": 0.0209,
+   "p": 0.0401763916015625,
+   "p_holm": 0.3615875244140625,
+   "q_bh_all": 0.09610507362767269
+  },
+  {
+   "group": [
+    "1",
+    "local-variance $-$ hindsight coverage design",
+    "PCC"
+   ],
+   "family": "stage 1 primary (24)",
+   "margin": "rows/0.20/value_greedy_recon_vs_bestcover",
+   "mean": -0.1655,
+   "p": 7.62939453125e-06,
+   "p_holm": 0.00018310546875,
+   "q_bh_all": 5.53131103515625e-05
+  },
+  {
+   "group": [
+    "1",
+    "local-variance $-$ hindsight coverage design",
+    "recall"
+   ],
+   "family": "stage 1 primary (24)",
+   "margin": "rows/0.20/value_greedy_detect_vs_bestcover",
+   "mean": 0.0416,
+   "p": 0.04352569580078125,
+   "p_holm": 0.3615875244140625,
+   "q_bh_all": 0.09709578294020432
+  },
+  {
+   "group": [
+    "1",
+    "local-variance $-$ hindsight coverage, batched or contiguous",
+    "PCC"
+   ],
+   "family": "stage 1 primary (24)",
+   "margin": "partA_batched/1/recon_margin",
+   "mean": -0.1516,
+   "p": 7.62939453125e-06,
+   "p_holm": 0.00018310546875,
+   "q_bh_all": 5.53131103515625e-05
+  },
+  {
+   "group": [
+    "1",
+    "local-variance $-$ hindsight coverage, batched or contiguous",
+    "recall"
+   ],
+   "family": "stage 1 primary (24)",
+   "margin": "partA_batched/1/detect_margin",
+   "mean": 0.0209,
+   "p": 0.0401763916015625,
+   "p_holm": 0.3615875244140625,
+   "q_bh_all": 0.09610507362767269
+  },
+  {
+   "group": [
+    "1",
+    "local-variance $-$ hindsight coverage, batched or contiguous",
+    "PCC"
+   ],
+   "family": "stage 1 primary (24)",
+   "margin": "partA_batched/5/recon_margin",
+   "mean": -0.129,
+   "p": 7.62939453125e-06,
+   "p_holm": 0.00018310546875,
+   "q_bh_all": 5.53131103515625e-05
+  },
+  {
+   "group": [
+    "1",
+    "local-variance $-$ hindsight coverage, batched or contiguous",
+    "recall"
+   ],
+   "family": "stage 1 primary (24)",
+   "margin": "partA_batched/5/detect_margin",
+   "mean": 0.0337,
+   "p": 0.0073089599609375,
+   "p_holm": 0.073089599609375,
+   "q_bh_all": 0.02270998273577009
+  },
+  {
+   "group": [
+    "1",
+    "local-variance $-$ hindsight coverage, batched or contiguous",
+    "PCC"
+   ],
+   "family": "stage 1 primary (24)",
+   "margin": "partA_batched/25/recon_margin",
+   "mean": -0.1299,
+   "p": 7.62939453125e-06,
+   "p_holm": 0.00018310546875,
+   "q_bh_all": 5.53131103515625e-05
+  },
+  {
+   "group": [
+    "1",
+    "local-variance $-$ hindsight coverage, batched or contiguous",
+    "recall"
+   ],
+   "family": "stage 1 primary (24)",
+   "margin": "partA_batched/25/detect_margin",
+   "mean": 0.0106,
+   "p": 0.0817108154296875,
+   "p_holm": 0.3615875244140625,
+   "q_bh_all": 0.14217681884765626
+  },
+  {
+   "group": [
+    "1",
+    "local-variance $-$ hindsight coverage, batched or contiguous",
+    "PCC"
+   ],
+   "family": "stage 1 primary (24)",
+   "margin": "partA_batched/oneshot/recon_margin",
+   "mean": -0.2357,
+   "p": 7.62939453125e-06,
+   "p_holm": 0.00018310546875,
+   "q_bh_all": 5.53131103515625e-05
+  },
+  {
+   "group": [
+    "1",
+    "local-variance $-$ hindsight coverage, batched or contiguous",
+    "recall"
+   ],
+   "family": "stage 1 primary (24)",
+   "margin": "partA_batched/oneshot/detect_margin",
+   "mean": -0.0507,
+   "p": 0.0006866455078125,
+   "p_holm": 0.00823974609375,
+   "q_bh_all": 0.002986907958984375
+  },
+  {
+   "group": [
+    "1",
+    "local-variance $-$ hindsight coverage, batched or contiguous",
+    "PCC"
+   ],
+   "family": "stage 1 primary (24)",
+   "margin": "partB_contiguous/recon_margin",
+   "mean": -0.0867,
+   "p": 7.62939453125e-06,
+   "p_holm": 0.00018310546875,
+   "q_bh_all": 5.53131103515625e-05
+  },
+  {
+   "group": [
+    "1",
+    "local-variance $-$ hindsight coverage, batched or contiguous",
+    "recall"
+   ],
+   "family": "stage 1 primary (24)",
+   "margin": "partB_contiguous/detect_margin",
+   "mean": 0.0236,
+   "p": 0.04924774169921875,
+   "p_holm": 0.3615875244140625,
+   "q_bh_all": 0.10711383819580078
+  },
+  {
+   "group": [
+    "2",
+    "residual $-$ feasible design",
+    "PCC"
+   ],
+   "family": "stage 2 primary (18)",
+   "margin": "Q1 residual_guided - LOSO_recon (PCC)",
+   "budget": "0.005",
+   "mean": -0.0921,
+   "p": 0.0001373291015625,
+   "p_holm": 0.002471923828125,
+   "q_bh_all": 0.0008534022739955357
+  },
+  {
+   "group": [
+    "2",
+    "residual $-$ feasible design",
+    "PCC"
+   ],
+   "family": "stage 2 primary (18)",
+   "margin": "Q1 residual_guided - LOSO_recon (PCC)",
+   "budget": "0.010",
+   "mean": -0.0569,
+   "p": 0.0006103515625,
+   "p_holm": 0.009765625,
+   "q_bh_all": 0.002899571468955592
+  },
+  {
+   "group": [
+    "2",
+    "residual $-$ feasible design",
+    "PCC"
+   ],
+   "family": "stage 2 primary (18)",
+   "margin": "Q1 residual_guided - LOSO_recon (PCC)",
+   "budget": "0.020",
+   "mean": -0.0245,
+   "p": 0.007080078125,
+   "p_holm": 0.09912109375,
+   "q_bh_all": 0.02270998273577009
+  },
+  {
+   "group": [
+    "2",
+    "local-variance $-$ permuted feedback",
+    "recall"
+   ],
+   "family": "stage 2 primary (18)",
+   "margin": "Q2 value_greedy - value_greedy_perm (recall)",
+   "budget": "0.020",
+   "mean": 0.0052,
+   "p": 0.13074493408203125,
+   "p_holm": 1.0,
+   "q_bh_all": 0.20312159402029856
+  },
+  {
+   "group": [
+    "2",
+    "local-variance $-$ feasible design",
+    "recall"
+   ],
+   "family": "stage 2 primary (18)",
+   "margin": "Q2 value_greedy - LOSO_detect (recall)",
+   "budget": "0.020",
+   "mean": 0.0082,
+   "p": 0.0208740234375,
+   "p_holm": 0.25048828125,
+   "q_bh_all": 0.056751251220703125
+  },
+  {
+   "group": [
+    "2",
+    "local-variance $-$ diversity sampler",
+    "recall"
+   ],
+   "family": "stage 2 primary (18)",
+   "margin": "Q2 value_greedy - scr2st (recall)",
+   "budget": "0.020",
+   "mean": 0.0008,
+   "p": 0.77630615234375,
+   "p_holm": 1.0,
+   "q_bh_all": 0.85491943359375
+  },
+  {
+   "group": [
+    "2",
+    "residual $-$ feasible design",
+    "PCC"
+   ],
+   "family": "stage 2 primary (18)",
+   "margin": "Q1 residual_guided - LOSO_recon (PCC)",
+   "budget": "0.050",
+   "mean": -0.0164,
+   "p": 0.000152587890625,
+   "p_holm": 0.002593994140625,
+   "q_bh_all": 0.000885009765625
+  },
+  {
+   "group": [
+    "2",
+    "local-variance $-$ permuted feedback",
+    "recall"
+   ],
+   "family": "stage 2 primary (18)",
+   "margin": "Q2 value_greedy - value_greedy_perm (recall)",
+   "budget": "0.050",
+   "mean": 0.0168,
+   "p": 0.05741119384765625,
+   "p_holm": 0.529937744140625,
+   "q_bh_all": 0.11351758783513849
+  },
+  {
+   "group": [
+    "2",
+    "local-variance $-$ feasible design",
+    "recall"
+   ],
+   "family": "stage 2 primary (18)",
+   "margin": "Q2 value_greedy - LOSO_detect (recall)",
+   "budget": "0.050",
+   "mean": 0.0061,
+   "p": 0.30323028564453125,
+   "p_holm": 1.0,
+   "q_bh_all": 0.4258431465395035
+  },
+  {
+   "group": [
+    "2",
+    "local-variance $-$ diversity sampler",
+    "recall"
+   ],
+   "family": "stage 2 primary (18)",
+   "margin": "Q2 value_greedy - scr2st (recall)",
+   "budget": "0.050",
+   "mean": 0.0028,
+   "p": 0.628143310546875,
+   "p_holm": 1.0,
+   "q_bh_all": 0.7696967326419454
+  },
+  {
+   "group": [
+    "2",
+    "residual $-$ feasible design",
+    "PCC"
+   ],
+   "family": "stage 2 primary (18)",
+   "margin": "Q1 residual_guided - LOSO_recon (PCC)",
+   "budget": "0.100",
+   "mean": -0.0068,
+   "p": 0.00063323974609375,
+   "p_holm": 0.009765625,
+   "q_bh_all": 0.002899571468955592
+  },
+  {
+   "group": [
+    "2",
+    "local-variance $-$ permuted feedback",
+    "recall"
+   ],
+   "family": "stage 2 primary (18)",
+   "margin": "Q2 value_greedy - value_greedy_perm (recall)",
+   "budget": "0.100",
+   "mean": 0.0295,
+   "p": 0.0529937744140625,
+   "p_holm": 0.529937744140625,
+   "q_bh_all": 0.10977281842912946
+  },
+  {
+   "group": [
+    "2",
+    "local-variance $-$ feasible design",
+    "recall"
+   ],
+   "family": "stage 2 primary (18)",
+   "margin": "Q2 value_greedy - LOSO_detect (recall)",
+   "budget": "0.100",
+   "mean": 0.0169,
+   "p": 0.2437286376953125,
+   "p_holm": 1.0,
+   "q_bh_all": 0.3593964657541049
+  },
+  {
+   "group": [
+    "2",
+    "local-variance $-$ diversity sampler",
+    "recall"
+   ],
+   "family": "stage 2 primary (18)",
+   "margin": "Q2 value_greedy - scr2st (recall)",
+   "budget": "0.100",
+   "mean": 0.0014,
+   "p": 0.9189605712890625,
+   "p_holm": 1.0,
+   "q_bh_all": 0.9405831729664522
+  },
+  {
+   "group": [
+    "2",
+    "residual $-$ feasible design",
+    "PCC"
+   ],
+   "family": "stage 2 primary (18)",
+   "margin": "Q1 residual_guided - LOSO_recon (PCC)",
+   "budget": "0.200",
+   "mean": -0.0023,
+   "p": 0.0097198486328125,
+   "p_holm": 0.1263580322265625,
+   "q_bh_all": 0.0291595458984375
+  },
+  {
+   "group": [
+    "2",
+    "local-variance $-$ permuted feedback",
+    "recall"
+   ],
+   "family": "stage 2 primary (18)",
+   "margin": "Q2 value_greedy - value_greedy_perm (recall)",
+   "budget": "0.200",
+   "mean": 0.0633,
+   "p": 0.026702880859375,
+   "p_holm": 0.293731689453125,
+   "q_bh_all": 0.0683279598460478
+  },
+  {
+   "group": [
+    "2",
+    "local-variance $-$ feasible design",
+    "recall"
+   ],
+   "family": "stage 2 primary (18)",
+   "margin": "Q2 value_greedy - LOSO_detect (recall)",
+   "budget": "0.200",
+   "mean": 0.0261,
+   "p": 0.40425872802734375,
+   "p_holm": 1.0,
+   "q_bh_all": 0.5410847590519832
+  },
+  {
+   "group": [
+    "2",
+    "local-variance $-$ diversity sampler",
+    "recall"
+   ],
+   "family": "stage 2 primary (18)",
+   "margin": "Q2 value_greedy - scr2st (recall)",
+   "budget": "0.200",
+   "mean": 0.0122,
+   "p": 0.6243743896484375,
+   "p_holm": 1.0,
+   "q_bh_all": 0.7696967326419454
+  },
+  {
+   "group": [
+    "3",
+    "hybrid $-$ its base design",
+    "PCC"
+   ],
+   "family": "stage 3 primary (20)",
+   "margin": "hybrid rec f=0.5 - fixed kmeans",
+   "budget": "0.005",
+   "mean": -0.0362,
+   "p": 0.00028228759765625,
+   "p_holm": 0.005645751953125,
+   "q_bh_all": 0.0014446482938878676
+  },
+  {
+   "group": [
+    "3",
+    "hybrid $-$ its base design",
+    "PCC"
+   ],
+   "family": "stage 3 primary (20)",
+   "margin": "hybrid rec f=0.8 - fixed kmeans",
+   "budget": "0.005",
+   "mean": -0.0089,
+   "p": 0.20394134521484375,
+   "p_holm": 1.0,
+   "q_bh_all": 0.3112788953279194
+  },
+  {
+   "group": [
+    "3",
+    "hybrid $-$ its base design",
+    "PCC"
+   ],
+   "family": "stage 3 primary (20)",
+   "margin": "hybrid rec f=0.5 - fixed kmeans",
+   "budget": "0.010",
+   "mean": -0.0101,
+   "p": 0.1058807373046875,
+   "p_holm": 1.0,
+   "q_bh_all": 0.17380422916052476
+  },
+  {
+   "group": [
+    "3",
+    "hybrid $-$ its base design",
+    "PCC"
+   ],
+   "family": "stage 3 primary (20)",
+   "margin": "hybrid rec f=0.8 - fixed kmeans",
+   "budget": "0.010",
+   "mean": -0.0094,
+   "p": 0.065887451171875,
+   "p_holm": 1.0,
+   "q_bh_all": 0.12461322286854619
+  },
+  {
+   "group": [
+    "3",
+    "hybrid $-$ its base design",
+    "PCC"
+   ],
+   "family": "stage 3 primary (20)",
+   "margin": "hybrid rec f=0.5 - fixed mi_greedy",
+   "budget": "0.020",
+   "mean": 0.0009,
+   "p": 0.84515380859375,
+   "p_holm": 1.0,
+   "q_bh_all": 0.8858841126223644
+  },
+  {
+   "group": [
+    "3",
+    "hybrid $-$ its base design",
+    "recall"
+   ],
+   "family": "stage 3 primary (20)",
+   "margin": "hybrid det f=0.5 - fixed var_greedy",
+   "budget": "0.020",
+   "mean": 0.0029,
+   "p": 0.0419769287109375,
+   "p_holm": 0.755584716796875,
+   "q_bh_all": 0.09610507362767269
+  },
+  {
+   "group": [
+    "3",
+    "hybrid $-$ its base design",
+    "PCC"
+   ],
+   "family": "stage 3 primary (20)",
+   "margin": "hybrid rec f=0.8 - fixed mi_greedy",
+   "budget": "0.020",
+   "mean": 0.0067,
+   "p": 0.01891326904296875,
+   "p_holm": 0.35935211181640625,
+   "q_bh_all": 0.0530791744109123
+  },
+  {
+   "group": [
+    "3",
+    "hybrid $-$ its base design",
+    "recall"
+   ],
+   "family": "stage 3 primary (20)",
+   "margin": "hybrid det f=0.8 - fixed var_greedy",
+   "budget": "0.020",
+   "mean": 0.0003,
+   "p": 0.66998291015625,
+   "p_holm": 1.0,
+   "q_bh_all": 0.7874728393554687
+  },
+  {
+   "group": [
+    "3",
+    "hybrid $-$ its base design",
+    "PCC"
+   ],
+   "family": "stage 3 primary (20)",
+   "margin": "hybrid rec f=0.5 - fixed mi_greedy",
+   "budget": "0.050",
+   "mean": -0.0027,
+   "p": 0.30347442626953125,
+   "p_holm": 1.0,
+   "q_bh_all": 0.4258431465395035
+  },
+  {
+   "group": [
+    "3",
+    "hybrid $-$ its base design",
+    "recall"
+   ],
+   "family": "stage 3 primary (20)",
+   "margin": "hybrid det f=0.5 - fixed var_greedy",
+   "budget": "0.050",
+   "mean": 0.0016,
+   "p": 0.7355499267578125,
+   "p_holm": 1.0,
+   "q_bh_all": 0.8252120384803185
+  },
+  {
+   "group": [
+    "3",
+    "hybrid $-$ its base design",
+    "PCC"
+   ],
+   "family": "stage 3 primary (20)",
+   "margin": "hybrid rec f=0.8 - fixed mi_greedy",
+   "budget": "0.050",
+   "mean": -0.0008,
+   "p": 0.6619491577148438,
+   "p_holm": 1.0,
+   "q_bh_all": 0.7874728393554687
+  },
+  {
+   "group": [
+    "3",
+    "hybrid $-$ its base design",
+    "recall"
+   ],
+   "family": "stage 3 primary (20)",
+   "margin": "hybrid det f=0.8 - fixed var_greedy",
+   "budget": "0.050",
+   "mean": -0.0004,
+   "p": 0.8021240234375,
+   "p_holm": 1.0,
+   "q_bh_all": 0.8615406177662037
+  },
+  {
+   "group": [
+    "3",
+    "hybrid $-$ its base design",
+    "PCC"
+   ],
+   "family": "stage 3 primary (20)",
+   "margin": "hybrid rec f=0.5 - fixed mi_greedy",
+   "budget": "0.100",
+   "mean": 0.0001,
+   "p": 0.9482345581054688,
+   "p_holm": 1.0,
+   "q_bh_all": 0.9592605413392533
+  },
+  {
+   "group": [
+    "3",
+    "hybrid $-$ its base design",
+    "recall"
+   ],
+   "family": "stage 3 primary (20)",
+   "margin": "hybrid det f=0.5 - fixed var_greedy",
+   "budget": "0.100",
+   "mean": 0.0061,
+   "p": 0.3669586181640625,
+   "p_holm": 1.0,
+   "q_bh_all": 0.49883437156677246
+  },
+  {
+   "group": [
+    "3",
+    "hybrid $-$ its base design",
+    "PCC"
+   ],
+   "family": "stage 3 primary (20)",
+   "margin": "hybrid rec f=0.8 - fixed mi_greedy",
+   "budget": "0.100",
+   "mean": 0.0006,
+   "p": 0.5211868286132812,
+   "p_holm": 1.0,
+   "q_bh_all": 0.6668125601375804
+  },
+  {
+   "group": [
+    "3",
+    "hybrid $-$ its base design",
+    "recall"
+   ],
+   "family": "stage 3 primary (20)",
+   "margin": "hybrid det f=0.8 - fixed var_greedy",
+   "budget": "0.100",
+   "mean": 0.0014,
+   "p": 0.6531753540039062,
+   "p_holm": 1.0,
+   "q_bh_all": 0.7874728393554687
+  },
+  {
+   "group": [
+    "3",
+    "hybrid $-$ its base design",
+    "PCC"
+   ],
+   "family": "stage 3 primary (20)",
+   "margin": "hybrid rec f=0.5 - fixed mi_greedy",
+   "budget": "0.200",
+   "mean": -0.0019,
+   "p": 0.08100128173828125,
+   "p_holm": 1.0,
+   "q_bh_all": 0.14217681884765626
+  },
+  {
+   "group": [
+    "3",
+    "hybrid $-$ its base design",
+    "recall"
+   ],
+   "family": "stage 3 primary (20)",
+   "margin": "hybrid det f=0.5 - fixed oneshot",
+   "budget": "0.200",
+   "mean": -0.0002,
+   "p": 0.9914321899414062,
+   "p_holm": 1.0,
+   "q_bh_all": 0.9914321899414062
+  },
+  {
+   "group": [
+    "3",
+    "hybrid $-$ its base design",
+    "PCC"
+   ],
+   "family": "stage 3 primary (20)",
+   "margin": "hybrid rec f=0.8 - fixed mi_greedy",
+   "budget": "0.200",
+   "mean": -0.0008,
+   "p": 0.449432373046875,
+   "p_holm": 1.0,
+   "q_bh_all": 0.5835912903743004
+  },
+  {
+   "group": [
+    "3",
+    "hybrid $-$ its base design",
+    "recall"
+   ],
+   "family": "stage 3 primary (20)",
+   "margin": "hybrid det f=0.8 - fixed oneshot",
+   "budget": "0.200",
+   "mean": -0.0031,
+   "p": 0.7398452758789062,
+   "p_holm": 1.0,
+   "q_bh_all": 0.8252120384803185
+  },
+  {
+   "group": [
+    "4",
+    "residual $-$ feasible, common set",
+    "PCC"
+   ],
+   "family": "stage 4 common set (12)",
+   "margin": "residual - feasible (held-out PCC)",
+   "budget": "0.005",
+   "mean": -0.08170385716505557,
+   "p": 0.001190185546875,
+   "p_holm": 0.01190185546875,
+   "q_bh_all": 0.004706642844460227
+  },
+  {
+   "group": [
+    "4",
+    "50\\% hybrid $-$ base design, common set",
+    "PCC"
+   ],
+   "family": "stage 4 common set (12)",
+   "margin": "reconstruction hybrid - kmeans (held-out PCC)",
+   "budget": "0.005",
+   "mean": -0.018787407114143097,
+   "p": 0.1043853759765625,
+   "p_holm": 0.42987823486328125,
+   "q_bh_all": 0.17380422916052476
+  },
+  {
+   "group": [
+    "4",
+    "residual $-$ feasible, common set",
+    "PCC"
+   ],
+   "family": "stage 4 common set (12)",
+   "margin": "residual - feasible (held-out PCC)",
+   "budget": "0.010",
+   "mean": -0.06231991067645534,
+   "p": 7.62939453125e-06,
+   "p_holm": 9.1552734375e-05,
+   "q_bh_all": 5.53131103515625e-05
+  },
+  {
+   "group": [
+    "4",
+    "50\\% hybrid $-$ base design, common set",
+    "PCC"
+   ],
+   "family": "stage 4 common set (12)",
+   "margin": "reconstruction hybrid - kmeans (held-out PCC)",
+   "budget": "0.010",
+   "mean": -0.013676919505823998,
+   "p": 0.0642852783203125,
+   "p_holm": 0.40704345703125,
+   "q_bh_all": 0.12428487141927083
+  },
+  {
+   "group": [
+    "4",
+    "residual $-$ feasible, common set",
+    "PCC"
+   ],
+   "family": "stage 4 common set (12)",
+   "margin": "residual - feasible (held-out PCC)",
+   "budget": "0.020",
+   "mean": -0.03184989847489009,
+   "p": 0.00078582763671875,
+   "p_holm": 0.00864410400390625,
+   "q_bh_all": 0.0032555716378348215
+  },
+  {
+   "group": [
+    "4",
+    "50\\% hybrid $-$ base design, common set",
+    "PCC"
+   ],
+   "family": "stage 4 common set (12)",
+   "margin": "reconstruction hybrid - mi_greedy (held-out PCC)",
+   "budget": "0.020",
+   "mean": 0.0017850196861076695,
+   "p": 0.7906494140625,
+   "p_holm": 1.0,
+   "q_bh_all": 0.8598312377929688
+  },
+  {
+   "group": [
+    "4",
+    "residual $-$ feasible, common set",
+    "PCC"
+   ],
+   "family": "stage 4 common set (12)",
+   "margin": "residual - feasible (held-out PCC)",
+   "budget": "0.050",
+   "mean": -0.01054007705412145,
+   "p": 0.017425537109375,
+   "p_holm": 0.156829833984375,
+   "q_bh_all": 0.0505340576171875
+  },
+  {
+   "group": [
+    "4",
+    "50\\% hybrid $-$ base design, common set",
+    "PCC"
+   ],
+   "family": "stage 4 common set (12)",
+   "margin": "reconstruction hybrid - mi_greedy (held-out PCC)",
+   "budget": "0.050",
+   "mean": 0.0037915282671576607,
+   "p": 0.11484527587890625,
+   "p_holm": 0.42987823486328125,
+   "q_bh_all": 0.181664345481179
+  },
+  {
+   "group": [
+    "4",
+    "residual $-$ feasible, common set",
+    "PCC"
+   ],
+   "family": "stage 4 common set (12)",
+   "margin": "residual - feasible (held-out PCC)",
+   "budget": "0.100",
+   "mean": -0.00152934318132889,
+   "p": 0.6788558959960938,
+   "p_holm": 1.0,
+   "q_bh_all": 0.7874728393554687
+  },
+  {
+   "group": [
+    "4",
+    "50\\% hybrid $-$ base design, common set",
+    "PCC"
+   ],
+   "family": "stage 4 common set (12)",
+   "margin": "reconstruction hybrid - mi_greedy (held-out PCC)",
+   "budget": "0.100",
+   "mean": 0.0029610921093344063,
+   "p": 0.05088043212890625,
+   "p_holm": 0.40704345703125,
+   "q_bh_all": 0.10796579500524009
+  },
+  {
+   "group": [
+    "4",
+    "residual $-$ feasible, common set",
+    "PCC"
+   ],
+   "family": "stage 4 common set (12)",
+   "margin": "residual - feasible (held-out PCC)",
+   "budget": "0.200",
+   "mean": 0.0031659704348311586,
+   "p": 0.08597564697265625,
+   "p_holm": 0.42987823486328125,
+   "q_bh_all": 0.1466643389533548
+  },
+  {
+   "group": [
+    "4",
+    "50\\% hybrid $-$ base design, common set",
+    "PCC"
+   ],
+   "family": "stage 4 common set (12)",
+   "margin": "reconstruction hybrid - mi_greedy (held-out PCC)",
+   "budget": "0.200",
+   "mean": 0.0027179853478249165,
+   "p": 0.056976318359375,
+   "p_holm": 0.40704345703125,
+   "q_bh_all": 0.11351758783513849
+  },
+  {
+   "group": [
+    "4",
+    "residual $-$ feasible, tiles",
+    "PCC"
+   ],
+   "family": "stage 4 tiles (9)",
+   "margin": "residual - feasible (held-out tile PCC)",
+   "budget": "12",
+   "mean": -0.006393641477405315,
+   "p": 0.8320541381835938,
+   "p_holm": 1.0,
+   "q_bh_all": 0.8827891466094226
+  },
+  {
+   "group": [
+    "4",
+    "local-variance $-$ feasible, tiles",
+    "recall"
+   ],
+   "family": "stage 4 tiles (9)",
+   "margin": "local-variance - feasible (tile-ROI recall)",
+   "budget": "12",
+   "mean": 0.01212475959926912,
+   "p": 0.11370849609375,
+   "p_holm": 0.6822509765625,
+   "q_bh_all": 0.181664345481179
+  },
+  {
+   "group": [
+    "4",
+    "local-variance, 2 rounds $-$ feasible, tiles",
+    "recall"
+   ],
+   "family": "stage 4 tiles (9)",
+   "margin": "local-variance, 2 rounds - feasible (recall)",
+   "budget": "12",
+   "mean": 0.0038987589435362474,
+   "p": 0.575042724609375,
+   "p_holm": 1.0,
+   "q_bh_all": 0.7250538701596467
+  },
+  {
+   "group": [
+    "4",
+    "residual $-$ feasible, tiles",
+    "PCC"
+   ],
+   "family": "stage 4 tiles (9)",
+   "margin": "residual - feasible (held-out tile PCC)",
+   "budget": "24",
+   "mean": 0.0030927742477751085,
+   "p": 0.8946075439453125,
+   "p_holm": 1.0,
+   "q_bh_all": 0.9265578133719308
+  },
+  {
+   "group": [
+    "4",
+    "local-variance $-$ feasible, tiles",
+    "recall"
+   ],
+   "family": "stage 4 tiles (9)",
+   "margin": "local-variance - feasible (tile-ROI recall)",
+   "budget": "24",
+   "mean": 0.00892950510695797,
+   "p": 0.41552734375,
+   "p_holm": 1.0,
+   "q_bh_all": 0.5477405894886364
+  },
+  {
+   "group": [
+    "4",
+    "local-variance, 2 rounds $-$ feasible, tiles",
+    "recall"
+   ],
+   "family": "stage 4 tiles (9)",
+   "margin": "local-variance, 2 rounds - feasible (recall)",
+   "budget": "24",
+   "mean": -0.02242992808297736,
+   "p": 0.0253753662109375,
+   "p_holm": 0.2030029296875,
+   "q_bh_all": 0.06689869273792613
+  },
+  {
+   "group": [
+    "4",
+    "residual $-$ feasible, tiles",
+    "PCC"
+   ],
+   "family": "stage 4 tiles (9)",
+   "margin": "residual - feasible (held-out tile PCC)",
+   "budget": "48",
+   "mean": -0.01790260289490925,
+   "p": 0.068084716796875,
+   "p_holm": 0.476593017578125,
+   "q_bh_all": 0.12602915662400266
+  },
+  {
+   "group": [
+    "4",
+    "local-variance $-$ feasible, tiles",
+    "recall"
+   ],
+   "family": "stage 4 tiles (9)",
+   "margin": "local-variance - feasible (tile-ROI recall)",
+   "budget": "48",
+   "mean": 0.018205715368928437,
+   "p": 0.30298614501953125,
+   "p_holm": 1.0,
+   "q_bh_all": 0.4258431465395035
+  },
+  {
+   "group": [
+    "4",
+    "local-variance, 2 rounds $-$ feasible, tiles",
+    "recall"
+   ],
+   "family": "stage 4 tiles (9)",
+   "margin": "local-variance, 2 rounds - feasible (recall)",
+   "budget": "48",
+   "mean": -0.05901915071197994,
+   "p": 0.00165557861328125,
+   "p_holm": 0.01490020751953125,
+   "q_bh_all": 0.006262406058933424
+  },
+  {
+   "group": [
+    "4",
+    "tuned local-variance $-$ feasible design",
+    "recall"
+   ],
+   "family": "stage 4 tuning (4)",
+   "margin": "tuned local-variance - feasible (recall)",
+   "budget": "0.020",
+   "mean": 0.01590788741615957,
+   "p": 0.000244140625,
+   "p_holm": 0.0009765625,
+   "q_bh_all": 0.0013275146484375
+  },
+  {
+   "group": [
+    "4",
+    "tuned local-variance $-$ feasible design",
+    "recall"
+   ],
+   "family": "stage 4 tuning (4)",
+   "margin": "tuned local-variance - feasible (recall)",
+   "budget": "0.050",
+   "mean": 0.023325924427736153,
+   "p": 0.00568389892578125,
+   "p_holm": 0.01325225830078125,
+   "q_bh_all": 0.019019200251652643
+  },
+  {
+   "group": [
+    "4",
+    "tuned local-variance $-$ feasible design",
+    "recall"
+   ],
+   "family": "stage 4 tuning (4)",
+   "margin": "tuned local-variance - feasible (recall)",
+   "budget": "0.100",
+   "mean": 0.04877962234183193,
+   "p": 0.00441741943359375,
+   "p_holm": 0.01325225830078125,
+   "q_bh_all": 0.016013145446777344
+  },
+  {
+   "group": [
+    "4",
+    "tuned local-variance $-$ feasible design",
+    "recall"
+   ],
+   "family": "stage 4 tuning (4)",
+   "margin": "tuned local-variance - feasible (recall)",
+   "budget": "0.200",
+   "mean": 0.06404444145901034,
+   "p": 0.071807861328125,
+   "p_holm": 0.071807861328125,
+   "q_bh_all": 0.13015174865722656
+  }
+ ],
+ "groups": [
+  {
+   "stage": "1",
+   "comparison": "error-reduction $-$ hindsight best design",
+   "objective": "PCC",
+   "n": 6,
+   "family": "stage 1 primary (24)",
+   "holm_pos": 0,
+   "holm_neg": 3,
+   "bh_pos": 0,
+   "bh_neg": 4,
+   "mean_range": [
+    -0.1276,
+    -0.0015
+   ]
+  },
+  {
+   "stage": "1",
+   "comparison": "local-variance $-$ hindsight coverage design",
+   "objective": "PCC",
+   "n": 4,
+   "family": "stage 1 primary (24)",
+   "holm_pos": 0,
+   "holm_neg": 4,
+   "bh_pos": 0,
+   "bh_neg": 4,
+   "mean_range": [
+    -0.1655,
+    -0.1362
+   ]
+  },
+  {
+   "stage": "1",
+   "comparison": "local-variance $-$ hindsight coverage design",
+   "objective": "recall",
+   "n": 4,
+   "family": "stage 1 primary (24)",
+   "holm_pos": 0,
+   "holm_neg": 0,
+   "bh_pos": 0,
+   "bh_neg": 0,
+   "mean_range": [
+    0.001,
+    0.0416
+   ]
+  },
+  {
+   "stage": "1",
+   "comparison": "local-variance $-$ hindsight coverage, batched or contiguous",
+   "objective": "PCC",
+   "n": 5,
+   "family": "stage 1 primary (24)",
+   "holm_pos": 0,
+   "holm_neg": 5,
+   "bh_pos": 0,
+   "bh_neg": 5,
+   "mean_range": [
+    -0.2357,
+    -0.0867
+   ]
+  },
+  {
+   "stage": "1",
+   "comparison": "local-variance $-$ hindsight coverage, batched or contiguous",
+   "objective": "recall",
+   "n": 5,
+   "family": "stage 1 primary (24)",
+   "holm_pos": 0,
+   "holm_neg": 1,
+   "bh_pos": 1,
+   "bh_neg": 1,
+   "mean_range": [
+    -0.0507,
+    0.0337
+   ]
+  },
+  {
+   "stage": "2",
+   "comparison": "residual $-$ feasible design",
+   "objective": "PCC",
+   "n": 6,
+   "family": "stage 2 primary (18)",
+   "holm_pos": 0,
+   "holm_neg": 4,
+   "bh_pos": 0,
+   "bh_neg": 6,
+   "mean_range": [
+    -0.0921,
+    -0.0023
+   ]
+  },
+  {
+   "stage": "2",
+   "comparison": "local-variance $-$ permuted feedback",
+   "objective": "recall",
+   "n": 4,
+   "family": "stage 2 primary (18)",
+   "holm_pos": 0,
+   "holm_neg": 0,
+   "bh_pos": 0,
+   "bh_neg": 0,
+   "mean_range": [
+    0.0052,
+    0.0633
+   ]
+  },
+  {
+   "stage": "2",
+   "comparison": "local-variance $-$ feasible design",
+   "objective": "recall",
+   "n": 4,
+   "family": "stage 2 primary (18)",
+   "holm_pos": 0,
+   "holm_neg": 0,
+   "bh_pos": 0,
+   "bh_neg": 0,
+   "mean_range": [
+    0.0061,
+    0.0261
+   ]
+  },
+  {
+   "stage": "2",
+   "comparison": "local-variance $-$ diversity sampler",
+   "objective": "recall",
+   "n": 4,
+   "family": "stage 2 primary (18)",
+   "holm_pos": 0,
+   "holm_neg": 0,
+   "bh_pos": 0,
+   "bh_neg": 0,
+   "mean_range": [
+    0.0008,
+    0.0122
+   ]
+  },
+  {
+   "stage": "3",
+   "comparison": "hybrid $-$ its base design",
+   "objective": "PCC",
+   "n": 12,
+   "family": "stage 3 primary (20)",
+   "holm_pos": 0,
+   "holm_neg": 1,
+   "bh_pos": 0,
+   "bh_neg": 1,
+   "mean_range": [
+    -0.0362,
+    0.0067
+   ]
+  },
+  {
+   "stage": "3",
+   "comparison": "hybrid $-$ its base design",
+   "objective": "recall",
+   "n": 8,
+   "family": "stage 3 primary (20)",
+   "holm_pos": 0,
+   "holm_neg": 0,
+   "bh_pos": 0,
+   "bh_neg": 0,
+   "mean_range": [
+    -0.0031,
+    0.0061
+   ]
+  },
+  {
+   "stage": "4",
+   "comparison": "residual $-$ feasible, common set",
+   "objective": "PCC",
+   "n": 6,
+   "family": "stage 4 common set (12)",
+   "holm_pos": 0,
+   "holm_neg": 3,
+   "bh_pos": 0,
+   "bh_neg": 3,
+   "mean_range": [
+    -0.08170385716505557,
+    0.0031659704348311586
+   ]
+  },
+  {
+   "stage": "4",
+   "comparison": "50\\% hybrid $-$ base design, common set",
+   "objective": "PCC",
+   "n": 6,
+   "family": "stage 4 common set (12)",
+   "holm_pos": 0,
+   "holm_neg": 0,
+   "bh_pos": 0,
+   "bh_neg": 0,
+   "mean_range": [
+    -0.018787407114143097,
+    0.0037915282671576607
+   ]
+  },
+  {
+   "stage": "4",
+   "comparison": "residual $-$ feasible, tiles",
+   "objective": "PCC",
+   "n": 3,
+   "family": "stage 4 tiles (9)",
+   "holm_pos": 0,
+   "holm_neg": 0,
+   "bh_pos": 0,
+   "bh_neg": 0,
+   "mean_range": [
+    -0.01790260289490925,
+    0.0030927742477751085
+   ]
+  },
+  {
+   "stage": "4",
+   "comparison": "local-variance $-$ feasible, tiles",
+   "objective": "recall",
+   "n": 3,
+   "family": "stage 4 tiles (9)",
+   "holm_pos": 0,
+   "holm_neg": 0,
+   "bh_pos": 0,
+   "bh_neg": 0,
+   "mean_range": [
+    0.00892950510695797,
+    0.018205715368928437
+   ]
+  },
+  {
+   "stage": "4",
+   "comparison": "local-variance, 2 rounds $-$ feasible, tiles",
+   "objective": "recall",
+   "n": 3,
+   "family": "stage 4 tiles (9)",
+   "holm_pos": 0,
+   "holm_neg": 1,
+   "bh_pos": 0,
+   "bh_neg": 1,
+   "mean_range": [
+    -0.05901915071197994,
+    0.0038987589435362474
+   ]
+  },
+  {
+   "stage": "4",
+   "comparison": "tuned local-variance $-$ feasible design",
+   "objective": "recall",
+   "n": 4,
+   "family": "stage 4 tuning (4)",
+   "holm_pos": 3,
+   "holm_neg": 0,
+   "bh_pos": 3,
+   "bh_neg": 0,
+   "mean_range": [
+    0.01590788741615957,
+    0.06404444145901034
+   ]
+  }
+ ]
+}

@@ -29,11 +29,12 @@ python -u scripts/28_stage4_analysis.py        # stage-4 registered analysis -> 
 python -u scripts/29_paper_assets_stage4.py    # stage-4 tables
 python -u scripts/30_posthoc_stage4.py         # post hoc checks of the tuned policy (Appendix J; reads 31 output)
 python -u scripts/26_posthoc_robustness.py     # post hoc robustness checks + Appendix N tables
+python -u scripts/32_claims_ledger.py          # every registered primary margin (Appendix O)
 ```
 
 ## Compile
 `pdflatex manuscript && bibtex manuscript && pdflatex manuscript && pdflatex manuscript`, or
-`tectonic --keep-intermediates manuscript.tex`. Verified on 2026-11-17 with Tectonic 0.17: 28 pages, main body
+`tectonic --keep-intermediates manuscript.tex`. Verified on 2026-11-17 with Tectonic 0.17: 30 pages, main body
 ends on page 12 (TMLR's longer review timeline applies only above 12 pages), no overfull boxes, no undefined
 references.
 

@@ -1,0 +1,30 @@
+\begin{tabular}{llcccccc}
+\toprule
+ & & & & \multicolumn{2}{c}{Holm in family} & \multicolumn{2}{c}{BH over all 87} \\
+\cmidrule(lr){5-6}\cmidrule(lr){7-8}
+Stage & Comparison (objective) & Margins & Range of $\Delta$ & $+$ & $-$ & $+$ & $-$ \\
+\midrule
+1 & error-reduction $-$ hindsight best design (PCC) & 6 & $-0.128$ to $-0.002$ & 0 & 3 & 0 & 4 \\
+1 & local-variance $-$ hindsight coverage design (PCC) & 4 & $-0.166$ to $-0.136$ & 0 & 4 & 0 & 4 \\
+1 & local-variance $-$ hindsight coverage design (recall) & 4 & ${+}0.001$ to ${+}0.042$ & 0 & 0 & 0 & 0 \\
+1 & local-variance $-$ hindsight coverage, batched or contiguous (PCC) & 5 & $-0.236$ to $-0.087$ & 0 & 5 & 0 & 5 \\
+1 & local-variance $-$ hindsight coverage, batched or contiguous (recall) & 5 & $-0.051$ to ${+}0.034$ & 0 & 1 & 1 & 1 \\
+\midrule
+2 & residual $-$ feasible design (PCC) & 6 & $-0.092$ to $-0.002$ & 0 & 4 & 0 & 6 \\
+2 & local-variance $-$ permuted feedback (recall) & 4 & ${+}0.005$ to ${+}0.063$ & 0 & 0 & 0 & 0 \\
+2 & local-variance $-$ feasible design (recall) & 4 & ${+}0.006$ to ${+}0.026$ & 0 & 0 & 0 & 0 \\
+2 & local-variance $-$ diversity sampler (recall) & 4 & ${+}0.001$ to ${+}0.012$ & 0 & 0 & 0 & 0 \\
+\midrule
+3 & hybrid $-$ its base design (PCC) & 12 & $-0.036$ to ${+}0.007$ & 0 & 1 & 0 & 1 \\
+3 & hybrid $-$ its base design (recall) & 8 & $-0.003$ to ${+}0.006$ & 0 & 0 & 0 & 0 \\
+\midrule
+4 & residual $-$ feasible, common set (PCC) & 6 & $-0.082$ to ${+}0.003$ & 0 & 3 & 0 & 3 \\
+4 & 50\% hybrid $-$ base design, common set (PCC) & 6 & $-0.019$ to ${+}0.004$ & 0 & 0 & 0 & 0 \\
+4 & residual $-$ feasible, tiles (PCC) & 3 & $-0.018$ to ${+}0.003$ & 0 & 0 & 0 & 0 \\
+4 & local-variance $-$ feasible, tiles (recall) & 3 & ${+}0.009$ to ${+}0.018$ & 0 & 0 & 0 & 0 \\
+4 & local-variance, 2 rounds $-$ feasible, tiles (recall) & 3 & $-0.059$ to ${+}0.004$ & 0 & 1 & 0 & 1 \\
+4 & tuned local-variance $-$ feasible design (recall) & 4 & ${+}0.016$ to ${+}0.064$ & 3 & 0 & 3 & 0 \\
+\midrule
+ & All primary margins & 87 & & 3 & 22 & 4 & 25 \\
+\bottomrule
+\end{tabular}

@@ -446,3 +446,20 @@ locally byte-for-byte). For each held-out study the constant run of its chosen s
   Limitations and Appendix J say so.
 - Other post hoc results unchanged (diversity Holm 0.104; Holm over 25: 0.006/0.108/0.088/0.900).
 - Supplement now ships stage4_posthoc_runs.json (98 files, 2.7 MB); 29/29 tables reproduce.
+
+## Iteration 16 — text fixes from a TMLR-style adversarial review  [2026-11-17; post hoc summary only]
+- RQ1 reframed: error-reduction (value-independent, same rule) trails the feasible design by about as much as the
+  residual policy, so the deficit reflects the selection rule, not the feedback; RQ3 is the test of feedback on a
+  strong design. Abstract, intro, RQ1 results, discussion updated.
+- Detection now leads with "no policy detectably beat the strongest fixed design we evaluated (diversity sampler)".
+- Synthetic reconstruction setting described as showing the benchmark is hard to beat, not as a positive control;
+  the lack of a working reconstruction positive control is listed as a limitation on RQ1.
+- Implications: the non-significant 0.01-0.03 over the diversity sampler no longer stated as an offered gain; tile
+  nulls loose, so practical advice rests mainly on spots.
+- New related-work paragraph on active-learning re-evaluations (Mittal 2019, Munjal 2022, Luth 2023, Lu 2025 TMLR),
+  plus adaptive cluster sampling (Thompson 1990), Rainforth 2024, Benjamini-Hochberg 1995; all verified.
+- scripts/32_claims_ledger.py -> results/claims_ledger.json, Appendix O Table: 87 registered primary margins;
+  Holm in family: 3 positive (tuned detection 2/5/10%), 22 negative; BH over all 87: 4 positive (adds stage-1
+  local-variance in rounds of 5 at 10%, +0.034), 25 negative. Appendix O also has a designs/policies table.
+- Abstract trimmed to 2,093 characters. Main body 12 pages after trimming RQ3, headroom, discussion, conclusion;
+  30 pages total. Supplement 100 files, 30/30 tables reproduce.
