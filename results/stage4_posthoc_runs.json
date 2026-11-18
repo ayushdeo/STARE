@@ -1,0 +1,1095 @@
+{
+ "slides": [
+  "prostate:TENX174",
+  "prostate:TENX40",
+  "prostate:MEND160",
+  "prostate:TENX46",
+  "prostate:TENX41",
+  "prostate:MEND144",
+  "kidney:TENX173",
+  "kidney:TENX71",
+  "kidney:INT21",
+  "kidney:INT19",
+  "lung:TENX171",
+  "lung:TENX170",
+  "lung:TENX163",
+  "lung:TENX72",
+  "lung:TENX62",
+  "lung:MISC20",
+  "colon:TENX156",
+  "colon:TENX155",
+  "colon:TENX70",
+  "colon:TENX92",
+  "colon:MISC47",
+  "colon:ZEN48"
+ ],
+ "grouping": {
+  "clusters": [
+   "Visium HD Spatial Gene Expression Library, Human Prostate Cancer (FFPE)",
+   "Human Prostate Cancer, Adenocarcinoma with Invasive Carcinoma (FFPE)",
+   "Spatially resolved clonal copy number alterations in benign and malignant tissue",
+   "Human Prostate Cancer, Acinar Cell Carcinoma (FFPE)",
+   "Normal Human Prostate (FFPE)",
+   "Spatially resolved clonal copy number alterations in benign and malignant tissue",
+   "Visium HD Spatial Gene Expression Library, Human Kidney (FFPE)",
+   "Human Kidney, 11 mm Capture Area (FFPE)",
+   "Tertiary lymphoid structures generate and propagate anti-tumor antibody-producin",
+   "Tertiary lymphoid structures generate and propagate anti-tumor antibody-producin",
+   "Visium HD Spatial Gene Expression Libraries, Post-Xenium, Human Lung Cancer (FFP",
+   "Visium HD Spatial Gene Expression Libraries, Post-Xenium, Human Lung Cancer (FFP",
+   "Visium HD Spatial Gene Expression Library, Human Lung Cancer (Fixed Frozen)",
+   "Human Lung Cancer, 11 mm Capture Area (FFPE)",
+   "Human Lung Cancer (FFPE)",
+   "A spatially resolved atlas of the human lung characterizes a gland-associated im",
+   "Characterization of immune cell populations in the tumor microenvironment of col",
+   "Characterization of immune cell populations in the tumor microenvironment of col",
+   "Human Colorectal Cancer, 11 mm Capture Area (FFPE)",
+   "Visium CytAssist Gene Expression Libraries of Post-Xenium Human Colon Cancer (FF",
+   "COLON MAP: Colon Molecular Atlas Project",
+   "Charting the Heterogeneity of Colorectal Cancer Consensus Molecular Subtypes usi"
+  ],
+  "strata": [
+   "prostate",
+   "prostate",
+   "prostate",
+   "prostate",
+   "prostate",
+   "prostate",
+   "kidney",
+   "kidney",
+   "kidney",
+   "kidney",
+   "lung",
+   "lung",
+   "lung",
+   "lung",
+   "lung",
+   "lung",
+   "colon",
+   "colon",
+   "colon",
+   "colon",
+   "colon",
+   "colon"
+  ]
+ },
+ "runs": [
+  "local_variance:0.25:0.05_const",
+  "local_variance:0.5:0.05_const",
+  "local_variance:0.5:0.1_const"
+ ],
+ "P_const": {
+  "prostate:TENX174": {
+   "0.020": {
+    "local_variance:0.25:0.05_const": {
+     "recall": 0.03333333333333333
+    },
+    "local_variance:0.5:0.05_const": {
+     "recall": 0.03333333333333333
+    },
+    "local_variance:0.5:0.1_const": {
+     "recall": 0.02666666666666667
+    }
+   },
+   "0.050": {
+    "local_variance:0.25:0.05_const": {
+     "recall": 0.06
+    },
+    "local_variance:0.5:0.05_const": {
+     "recall": 0.06
+    },
+    "local_variance:0.5:0.1_const": {
+     "recall": 0.04666666666666667
+    }
+   },
+   "0.100": {
+    "local_variance:0.25:0.05_const": {
+     "recall": 0.10666666666666667
+    },
+    "local_variance:0.5:0.05_const": {
+     "recall": 0.10666666666666667
+    },
+    "local_variance:0.5:0.1_const": {
+     "recall": 0.10222222222222223
+    }
+   },
+   "0.200": {
+    "local_variance:0.25:0.05_const": {
+     "recall": 0.2088888888888889
+    },
+    "local_variance:0.5:0.05_const": {
+     "recall": 0.2088888888888889
+    },
+    "local_variance:0.5:0.1_const": {
+     "recall": 0.21333333333333335
+    }
+   }
+  },
+  "prostate:TENX40": {
+   "0.020": {
+    "local_variance:0.25:0.05_const": {
+     "recall": 0.016
+    },
+    "local_variance:0.5:0.05_const": {
+     "recall": 0.016
+    },
+    "local_variance:0.5:0.1_const": {
+     "recall": 0.025142857142857144
+    }
+   },
+   "0.050": {
+    "local_variance:0.25:0.05_const": {
+     "recall": 0.05142857142857143
+    },
+    "local_variance:0.5:0.05_const": {
+     "recall": 0.05142857142857143
+    },
+    "local_variance:0.5:0.1_const": {
+     "recall": 0.061714285714285715
+    }
+   },
+   "0.100": {
+    "local_variance:0.25:0.05_const": {
+     "recall": 0.11085714285714286
+    },
+    "local_variance:0.5:0.05_const": {
+     "recall": 0.11085714285714286
+    },
+    "local_variance:0.5:0.1_const": {
+     "recall": 0.11314285714285714
+    }
+   },
+   "0.200": {
+    "local_variance:0.25:0.05_const": {
+     "recall": 0.21485714285714286
+    },
+    "local_variance:0.5:0.05_const": {
+     "recall": 0.21485714285714286
+    },
+    "local_variance:0.5:0.1_const": {
+     "recall": 0.21371428571428572
+    }
+   }
+  },
+  "prostate:MEND160": {
+   "0.020": {
+    "local_variance:0.25:0.05_const": {
+     "recall": 0.018404907975460124
+    },
+    "local_variance:0.5:0.05_const": {
+     "recall": 0.018404907975460124
+    },
+    "local_variance:0.5:0.1_const": {
+     "recall": 0.0196319018404908
+    }
+   },
+   "0.050": {
+    "local_variance:0.25:0.05_const": {
+     "recall": 0.04539877300613497
+    },
+    "local_variance:0.5:0.05_const": {
+     "recall": 0.04539877300613497
+    },
+    "local_variance:0.5:0.1_const": {
+     "recall": 0.046625766871165646
+    }
+   },
+   "0.100": {
+    "local_variance:0.25:0.05_const": {
+     "recall": 0.0834355828220859
+    },
+    "local_variance:0.5:0.05_const": {
+     "recall": 0.0834355828220859
+    },
+    "local_variance:0.5:0.1_const": {
+     "recall": 0.09693251533742331
+    }
+   },
+   "0.200": {
+    "local_variance:0.25:0.05_const": {
+     "recall": 0.18282208588957055
+    },
+    "local_variance:0.5:0.05_const": {
+     "recall": 0.18282208588957055
+    },
+    "local_variance:0.5:0.1_const": {
+     "recall": 0.1901840490797546
+    }
+   }
+  },
+  "prostate:TENX46": {
+   "0.020": {
+    "local_variance:0.25:0.05_const": {
+     "recall": 0.026272577996715927
+    },
+    "local_variance:0.5:0.05_const": {
+     "recall": 0.026272577996715927
+    },
+    "local_variance:0.5:0.1_const": {
+     "recall": 0.03284072249589491
+    }
+   },
+   "0.050": {
+    "local_variance:0.25:0.05_const": {
+     "recall": 0.05747126436781609
+    },
+    "local_variance:0.5:0.05_const": {
+     "recall": 0.05747126436781609
+    },
+    "local_variance:0.5:0.1_const": {
+     "recall": 0.06568144499178982
+    }
+   },
+   "0.100": {
+    "local_variance:0.25:0.05_const": {
+     "recall": 0.10509031198686371
+    },
+    "local_variance:0.5:0.05_const": {
+     "recall": 0.10509031198686371
+    },
+    "local_variance:0.5:0.1_const": {
+     "recall": 0.11330049261083744
+    }
+   },
+   "0.200": {
+    "local_variance:0.25:0.05_const": {
+     "recall": 0.19376026272577998
+    },
+    "local_variance:0.5:0.05_const": {
+     "recall": 0.19376026272577998
+    },
+    "local_variance:0.5:0.1_const": {
+     "recall": 0.21182266009852216
+    }
+   }
+  },
+  "prostate:TENX41": {
+   "0.020": {
+    "local_variance:0.25:0.05_const": {
+     "recall": 0.015717092337917484
+    },
+    "local_variance:0.5:0.05_const": {
+     "recall": 0.015717092337917484
+    },
+    "local_variance:0.5:0.1_const": {
+     "recall": 0.015717092337917484
+    }
+   },
+   "0.050": {
+    "local_variance:0.25:0.05_const": {
+     "recall": 0.043222003929273084
+    },
+    "local_variance:0.5:0.05_const": {
+     "recall": 0.043222003929273084
+    },
+    "local_variance:0.5:0.1_const": {
+     "recall": 0.04518664047151277
+    }
+   },
+   "0.100": {
+    "local_variance:0.25:0.05_const": {
+     "recall": 0.10019646365422397
+    },
+    "local_variance:0.5:0.05_const": {
+     "recall": 0.10019646365422397
+    },
+    "local_variance:0.5:0.1_const": {
+     "recall": 0.10019646365422397
+    }
+   },
+   "0.200": {
+    "local_variance:0.25:0.05_const": {
+     "recall": 0.1905697445972495
+    },
+    "local_variance:0.5:0.05_const": {
+     "recall": 0.1905697445972495
+    },
+    "local_variance:0.5:0.1_const": {
+     "recall": 0.21218074656188604
+    }
+   }
+  },
+  "prostate:MEND144": {
+   "0.020": {
+    "local_variance:0.25:0.05_const": {
+     "recall": 0.022085889570552148
+    },
+    "local_variance:0.5:0.05_const": {
+     "recall": 0.022085889570552148
+    },
+    "local_variance:0.5:0.1_const": {
+     "recall": 0.0196319018404908
+    }
+   },
+   "0.050": {
+    "local_variance:0.25:0.05_const": {
+     "recall": 0.046625766871165646
+    },
+    "local_variance:0.5:0.05_const": {
+     "recall": 0.046625766871165646
+    },
+    "local_variance:0.5:0.1_const": {
+     "recall": 0.05521472392638037
+    }
+   },
+   "0.100": {
+    "local_variance:0.25:0.05_const": {
+     "recall": 0.09938650306748466
+    },
+    "local_variance:0.5:0.05_const": {
+     "recall": 0.09938650306748466
+    },
+    "local_variance:0.5:0.1_const": {
+     "recall": 0.10184049079754601
+    }
+   },
+   "0.200": {
+    "local_variance:0.25:0.05_const": {
+     "recall": 0.2098159509202454
+    },
+    "local_variance:0.5:0.05_const": {
+     "recall": 0.2098159509202454
+    },
+    "local_variance:0.5:0.1_const": {
+     "recall": 0.21226993865030674
+    }
+   }
+  },
+  "kidney:TENX173": {
+   "0.020": {
+    "local_variance:0.25:0.05_const": {
+     "recall": 0.01876172607879925
+    },
+    "local_variance:0.5:0.05_const": {
+     "recall": 0.01876172607879925
+    },
+    "local_variance:0.5:0.1_const": {
+     "recall": 0.0225140712945591
+    }
+   },
+   "0.050": {
+    "local_variance:0.25:0.05_const": {
+     "recall": 0.05628517823639775
+    },
+    "local_variance:0.5:0.05_const": {
+     "recall": 0.05628517823639775
+    },
+    "local_variance:0.5:0.1_const": {
+     "recall": 0.05065666041275797
+    }
+   },
+   "0.100": {
+    "local_variance:0.25:0.05_const": {
+     "recall": 0.09380863039399624
+    },
+    "local_variance:0.5:0.05_const": {
+     "recall": 0.09380863039399624
+    },
+    "local_variance:0.5:0.1_const": {
+     "recall": 0.0975609756097561
+    }
+   },
+   "0.200": {
+    "local_variance:0.25:0.05_const": {
+     "recall": 0.1894934333958724
+    },
+    "local_variance:0.5:0.05_const": {
+     "recall": 0.1894934333958724
+    },
+    "local_variance:0.5:0.1_const": {
+     "recall": 0.20637898686679174
+    }
+   }
+  },
+  "kidney:TENX71": {
+   "0.020": {
+    "local_variance:0.25:0.05_const": {
+     "recall": 0.01694915254237288
+    },
+    "local_variance:0.5:0.05_const": {
+     "recall": 0.01694915254237288
+    },
+    "local_variance:0.5:0.1_const": {
+     "recall": 0.026271186440677965
+    }
+   },
+   "0.050": {
+    "local_variance:0.25:0.05_const": {
+     "recall": 0.04406779661016949
+    },
+    "local_variance:0.5:0.05_const": {
+     "recall": 0.04406779661016949
+    },
+    "local_variance:0.5:0.1_const": {
+     "recall": 0.05677966101694915
+    }
+   },
+   "0.100": {
+    "local_variance:0.25:0.05_const": {
+     "recall": 0.10254237288135593
+    },
+    "local_variance:0.5:0.05_const": {
+     "recall": 0.10254237288135593
+    },
+    "local_variance:0.5:0.1_const": {
+     "recall": 0.11440677966101695
+    }
+   },
+   "0.200": {
+    "local_variance:0.25:0.05_const": {
+     "recall": 0.19406779661016949
+    },
+    "local_variance:0.5:0.05_const": {
+     "recall": 0.19406779661016949
+    },
+    "local_variance:0.5:0.1_const": {
+     "recall": 0.21440677966101696
+    }
+   }
+  },
+  "kidney:INT21": {
+   "0.020": {
+    "local_variance:0.25:0.05_const": {
+     "recall": 0.023185483870967742
+    },
+    "local_variance:0.5:0.05_const": {
+     "recall": 0.023185483870967742
+    },
+    "local_variance:0.5:0.1_const": {
+     "recall": 0.02721774193548387
+    }
+   },
+   "0.050": {
+    "local_variance:0.25:0.05_const": {
+     "recall": 0.055443548387096774
+    },
+    "local_variance:0.5:0.05_const": {
+     "recall": 0.055443548387096774
+    },
+    "local_variance:0.5:0.1_const": {
+     "recall": 0.057459677419354836
+    }
+   },
+   "0.100": {
+    "local_variance:0.25:0.05_const": {
+     "recall": 0.1028225806451613
+    },
+    "local_variance:0.5:0.05_const": {
+     "recall": 0.1028225806451613
+    },
+    "local_variance:0.5:0.1_const": {
+     "recall": 0.1028225806451613
+    }
+   },
+   "0.200": {
+    "local_variance:0.25:0.05_const": {
+     "recall": 0.20362903225806453
+    },
+    "local_variance:0.5:0.05_const": {
+     "recall": 0.20362903225806453
+    },
+    "local_variance:0.5:0.1_const": {
+     "recall": 0.20463709677419356
+    }
+   }
+  },
+  "kidney:INT19": {
+   "0.020": {
+    "local_variance:0.25:0.05_const": {
+     "recall": 0.022222222222222223
+    },
+    "local_variance:0.5:0.05_const": {
+     "recall": 0.022222222222222223
+    },
+    "local_variance:0.5:0.1_const": {
+     "recall": 0.014141414141414142
+    }
+   },
+   "0.050": {
+    "local_variance:0.25:0.05_const": {
+     "recall": 0.050505050505050504
+    },
+    "local_variance:0.5:0.05_const": {
+     "recall": 0.050505050505050504
+    },
+    "local_variance:0.5:0.1_const": {
+     "recall": 0.04040404040404041
+    }
+   },
+   "0.100": {
+    "local_variance:0.25:0.05_const": {
+     "recall": 0.10303030303030303
+    },
+    "local_variance:0.5:0.05_const": {
+     "recall": 0.10303030303030303
+    },
+    "local_variance:0.5:0.1_const": {
+     "recall": 0.09393939393939393
+    }
+   },
+   "0.200": {
+    "local_variance:0.25:0.05_const": {
+     "recall": 0.201010101010101
+    },
+    "local_variance:0.5:0.05_const": {
+     "recall": 0.201010101010101
+    },
+    "local_variance:0.5:0.1_const": {
+     "recall": 0.1919191919191919
+    }
+   }
+  },
+  "lung:TENX171": {
+   "0.020": {
+    "local_variance:0.25:0.05_const": {
+     "recall": 0.023880597014925373
+    },
+    "local_variance:0.5:0.05_const": {
+     "recall": 0.023880597014925373
+    },
+    "local_variance:0.5:0.1_const": {
+     "recall": 0.011940298507462687
+    }
+   },
+   "0.050": {
+    "local_variance:0.25:0.05_const": {
+     "recall": 0.056716417910447764
+    },
+    "local_variance:0.5:0.05_const": {
+     "recall": 0.056716417910447764
+    },
+    "local_variance:0.5:0.1_const": {
+     "recall": 0.04477611940298507
+    }
+   },
+   "0.100": {
+    "local_variance:0.25:0.05_const": {
+     "recall": 0.09850746268656717
+    },
+    "local_variance:0.5:0.05_const": {
+     "recall": 0.09850746268656717
+    },
+    "local_variance:0.5:0.1_const": {
+     "recall": 0.11044776119402985
+    }
+   },
+   "0.200": {
+    "local_variance:0.25:0.05_const": {
+     "recall": 0.18208955223880596
+    },
+    "local_variance:0.5:0.05_const": {
+     "recall": 0.18208955223880596
+    },
+    "local_variance:0.5:0.1_const": {
+     "recall": 0.208955223880597
+    }
+   }
+  },
+  "lung:TENX170": {
+   "0.020": {
+    "local_variance:0.25:0.05_const": {
+     "recall": 0.026627218934911243
+    },
+    "local_variance:0.5:0.05_const": {
+     "recall": 0.026627218934911243
+    },
+    "local_variance:0.5:0.1_const": {
+     "recall": 0.026627218934911243
+    }
+   },
+   "0.050": {
+    "local_variance:0.25:0.05_const": {
+     "recall": 0.05325443786982249
+    },
+    "local_variance:0.5:0.05_const": {
+     "recall": 0.05325443786982249
+    },
+    "local_variance:0.5:0.1_const": {
+     "recall": 0.05029585798816568
+    }
+   },
+   "0.100": {
+    "local_variance:0.25:0.05_const": {
+     "recall": 0.09467455621301775
+    },
+    "local_variance:0.5:0.05_const": {
+     "recall": 0.09467455621301775
+    },
+    "local_variance:0.5:0.1_const": {
+     "recall": 0.10650887573964497
+    }
+   },
+   "0.200": {
+    "local_variance:0.25:0.05_const": {
+     "recall": 0.1952662721893491
+    },
+    "local_variance:0.5:0.05_const": {
+     "recall": 0.1952662721893491
+    },
+    "local_variance:0.5:0.1_const": {
+     "recall": 0.20118343195266272
+    }
+   }
+  },
+  "lung:TENX163": {
+   "0.020": {
+    "local_variance:0.25:0.05_const": {
+     "recall": 0.022587268993839837
+    },
+    "local_variance:0.5:0.05_const": {
+     "recall": 0.022587268993839837
+    },
+    "local_variance:0.5:0.1_const": {
+     "recall": 0.03285420944558522
+    }
+   },
+   "0.050": {
+    "local_variance:0.25:0.05_const": {
+     "recall": 0.059548254620123205
+    },
+    "local_variance:0.5:0.05_const": {
+     "recall": 0.059548254620123205
+    },
+    "local_variance:0.5:0.1_const": {
+     "recall": 0.059548254620123205
+    }
+   },
+   "0.100": {
+    "local_variance:0.25:0.05_const": {
+     "recall": 0.11088295687885011
+    },
+    "local_variance:0.5:0.05_const": {
+     "recall": 0.11088295687885011
+    },
+    "local_variance:0.5:0.1_const": {
+     "recall": 0.11293634496919917
+    }
+   },
+   "0.200": {
+    "local_variance:0.25:0.05_const": {
+     "recall": 0.20123203285420946
+    },
+    "local_variance:0.5:0.05_const": {
+     "recall": 0.20123203285420946
+    },
+    "local_variance:0.5:0.1_const": {
+     "recall": 0.22176591375770022
+    }
+   }
+  },
+  "lung:TENX72": {
+   "0.020": {
+    "local_variance:0.25:0.05_const": {
+     "recall": 0.025121555915721232
+    },
+    "local_variance:0.5:0.05_const": {
+     "recall": 0.025121555915721232
+    },
+    "local_variance:0.5:0.1_const": {
+     "recall": 0.022690437601296597
+    }
+   },
+   "0.050": {
+    "local_variance:0.25:0.05_const": {
+     "recall": 0.055105348460291734
+    },
+    "local_variance:0.5:0.05_const": {
+     "recall": 0.055105348460291734
+    },
+    "local_variance:0.5:0.1_const": {
+     "recall": 0.05834683954619125
+    }
+   },
+   "0.100": {
+    "local_variance:0.25:0.05_const": {
+     "recall": 0.10615883306320907
+    },
+    "local_variance:0.5:0.05_const": {
+     "recall": 0.10615883306320907
+    },
+    "local_variance:0.5:0.1_const": {
+     "recall": 0.11102106969205834
+    }
+   },
+   "0.200": {
+    "local_variance:0.25:0.05_const": {
+     "recall": 0.2106969205834684
+    },
+    "local_variance:0.5:0.05_const": {
+     "recall": 0.2106969205834684
+    },
+    "local_variance:0.5:0.1_const": {
+     "recall": 0.21393841166936792
+    }
+   }
+  },
+  "lung:TENX62": {
+   "0.020": {
+    "local_variance:0.25:0.05_const": {
+     "recall": 0.021052631578947368
+    },
+    "local_variance:0.5:0.05_const": {
+     "recall": 0.021052631578947368
+    },
+    "local_variance:0.5:0.1_const": {
+     "recall": 0.013157894736842105
+    }
+   },
+   "0.050": {
+    "local_variance:0.25:0.05_const": {
+     "recall": 0.046052631578947366
+    },
+    "local_variance:0.5:0.05_const": {
+     "recall": 0.046052631578947366
+    },
+    "local_variance:0.5:0.1_const": {
+     "recall": 0.04078947368421053
+    }
+   },
+   "0.100": {
+    "local_variance:0.25:0.05_const": {
+     "recall": 0.09868421052631579
+    },
+    "local_variance:0.5:0.05_const": {
+     "recall": 0.09868421052631579
+    },
+    "local_variance:0.5:0.1_const": {
+     "recall": 0.08157894736842106
+    }
+   },
+   "0.200": {
+    "local_variance:0.25:0.05_const": {
+     "recall": 0.2013157894736842
+    },
+    "local_variance:0.5:0.05_const": {
+     "recall": 0.2013157894736842
+    },
+    "local_variance:0.5:0.1_const": {
+     "recall": 0.18552631578947368
+    }
+   }
+  },
+  "lung:MISC20": {
+   "0.020": {
+    "local_variance:0.25:0.05_const": {
+     "recall": 0.01529051987767584
+    },
+    "local_variance:0.5:0.05_const": {
+     "recall": 0.01529051987767584
+    },
+    "local_variance:0.5:0.1_const": {
+     "recall": 0.012232415902140673
+    }
+   },
+   "0.050": {
+    "local_variance:0.25:0.05_const": {
+     "recall": 0.04128440366972477
+    },
+    "local_variance:0.5:0.05_const": {
+     "recall": 0.04128440366972477
+    },
+    "local_variance:0.5:0.1_const": {
+     "recall": 0.04434250764525994
+    }
+   },
+   "0.100": {
+    "local_variance:0.25:0.05_const": {
+     "recall": 0.09938837920489296
+    },
+    "local_variance:0.5:0.05_const": {
+     "recall": 0.09938837920489296
+    },
+    "local_variance:0.5:0.1_const": {
+     "recall": 0.09174311926605505
+    }
+   },
+   "0.200": {
+    "local_variance:0.25:0.05_const": {
+     "recall": 0.19724770642201836
+    },
+    "local_variance:0.5:0.05_const": {
+     "recall": 0.19724770642201836
+    },
+    "local_variance:0.5:0.1_const": {
+     "recall": 0.18807339449541285
+    }
+   }
+  },
+  "colon:TENX156": {
+   "0.020": {
+    "local_variance:0.25:0.05_const": {
+     "recall": 0.014705882352941176
+    },
+    "local_variance:0.5:0.05_const": {
+     "recall": 0.014705882352941176
+    },
+    "local_variance:0.5:0.1_const": {
+     "recall": 0.022058823529411766
+    }
+   },
+   "0.050": {
+    "local_variance:0.25:0.05_const": {
+     "recall": 0.05392156862745098
+    },
+    "local_variance:0.5:0.05_const": {
+     "recall": 0.05392156862745098
+    },
+    "local_variance:0.5:0.1_const": {
+     "recall": 0.04411764705882353
+    }
+   },
+   "0.100": {
+    "local_variance:0.25:0.05_const": {
+     "recall": 0.09313725490196079
+    },
+    "local_variance:0.5:0.05_const": {
+     "recall": 0.09313725490196079
+    },
+    "local_variance:0.5:0.1_const": {
+     "recall": 0.10049019607843138
+    }
+   },
+   "0.200": {
+    "local_variance:0.25:0.05_const": {
+     "recall": 0.18137254901960784
+    },
+    "local_variance:0.5:0.05_const": {
+     "recall": 0.18137254901960784
+    },
+    "local_variance:0.5:0.1_const": {
+     "recall": 0.19117647058823528
+    }
+   }
+  },
+  "colon:TENX155": {
+   "0.020": {
+    "local_variance:0.25:0.05_const": {
+     "recall": 0.025943396226415096
+    },
+    "local_variance:0.5:0.05_const": {
+     "recall": 0.025943396226415096
+    },
+    "local_variance:0.5:0.1_const": {
+     "recall": 0.02830188679245283
+    }
+   },
+   "0.050": {
+    "local_variance:0.25:0.05_const": {
+     "recall": 0.06367924528301887
+    },
+    "local_variance:0.5:0.05_const": {
+     "recall": 0.06132075471698113
+    },
+    "local_variance:0.5:0.1_const": {
+     "recall": 0.054245283018867926
+    }
+   },
+   "0.100": {
+    "local_variance:0.25:0.05_const": {
+     "recall": 0.12735849056603774
+    },
+    "local_variance:0.5:0.05_const": {
+     "recall": 0.125
+    },
+    "local_variance:0.5:0.1_const": {
+     "recall": 0.10613207547169812
+    }
+   },
+   "0.200": {
+    "local_variance:0.25:0.05_const": {
+     "recall": 0.2169811320754717
+    },
+    "local_variance:0.5:0.05_const": {
+     "recall": 0.2169811320754717
+    },
+    "local_variance:0.5:0.1_const": {
+     "recall": 0.21933962264150944
+    }
+   }
+  },
+  "colon:TENX70": {
+   "0.020": {
+    "local_variance:0.25:0.05_const": {
+     "recall": 0.023982152816508645
+    },
+    "local_variance:0.5:0.05_const": {
+     "recall": 0.023982152816508645
+    },
+    "local_variance:0.5:0.1_const": {
+     "recall": 0.020078081427774678
+    }
+   },
+   "0.050": {
+    "local_variance:0.25:0.05_const": {
+     "recall": 0.0501952035694367
+    },
+    "local_variance:0.5:0.05_const": {
+     "recall": 0.0501952035694367
+    },
+    "local_variance:0.5:0.1_const": {
+     "recall": 0.047406581148912434
+    }
+   },
+   "0.100": {
+    "local_variance:0.25:0.05_const": {
+     "recall": 0.10485220301171222
+    },
+    "local_variance:0.5:0.05_const": {
+     "recall": 0.10485220301171222
+    },
+    "local_variance:0.5:0.1_const": {
+     "recall": 0.09927495817066369
+    }
+   },
+   "0.200": {
+    "local_variance:0.25:0.05_const": {
+     "recall": 0.21193530395984383
+    },
+    "local_variance:0.5:0.05_const": {
+     "recall": 0.21193530395984383
+    },
+    "local_variance:0.5:0.1_const": {
+     "recall": 0.20635805911879532
+    }
+   }
+  },
+  "colon:TENX92": {
+   "0.020": {
+    "local_variance:0.25:0.05_const": {
+     "recall": 0.024288107202680067
+    },
+    "local_variance:0.5:0.05_const": {
+     "recall": 0.024288107202680067
+    },
+    "local_variance:0.5:0.1_const": {
+     "recall": 0.02763819095477387
+    }
+   },
+   "0.050": {
+    "local_variance:0.25:0.05_const": {
+     "recall": 0.05611390284757119
+    },
+    "local_variance:0.5:0.05_const": {
+     "recall": 0.05611390284757119
+    },
+    "local_variance:0.5:0.1_const": {
+     "recall": 0.05360134003350084
+    }
+   },
+   "0.100": {
+    "local_variance:0.25:0.05_const": {
+     "recall": 0.10217755443886097
+    },
+    "local_variance:0.5:0.05_const": {
+     "recall": 0.10217755443886097
+    },
+    "local_variance:0.5:0.1_const": {
+     "recall": 0.10385259631490787
+    }
+   },
+   "0.200": {
+    "local_variance:0.25:0.05_const": {
+     "recall": 0.1968174204355109
+    },
+    "local_variance:0.5:0.05_const": {
+     "recall": 0.1968174204355109
+    },
+    "local_variance:0.5:0.1_const": {
+     "recall": 0.20016750418760468
+    }
+   }
+  },
+  "colon:MISC47": {
+   "0.020": {
+    "local_variance:0.25:0.05_const": {
+     "recall": 0.018730489073881373
+    },
+    "local_variance:0.5:0.05_const": {
+     "recall": 0.018730489073881373
+    },
+    "local_variance:0.5:0.1_const": {
+     "recall": 0.021852237252861603
+    }
+   },
+   "0.050": {
+    "local_variance:0.25:0.05_const": {
+     "recall": 0.05098855359001041
+    },
+    "local_variance:0.5:0.05_const": {
+     "recall": 0.05098855359001041
+    },
+    "local_variance:0.5:0.1_const": {
+     "recall": 0.046826222684703434
+    }
+   },
+   "0.100": {
+    "local_variance:0.25:0.05_const": {
+     "recall": 0.09573361082206035
+    },
+    "local_variance:0.5:0.05_const": {
+     "recall": 0.09573361082206035
+    },
+    "local_variance:0.5:0.1_const": {
+     "recall": 0.09885535900104059
+    }
+   },
+   "0.200": {
+    "local_variance:0.25:0.05_const": {
+     "recall": 0.19042663891779396
+    },
+    "local_variance:0.5:0.05_const": {
+     "recall": 0.19042663891779396
+    },
+    "local_variance:0.5:0.1_const": {
+     "recall": 0.1987513007284079
+    }
+   }
+  },
+  "colon:ZEN48": {
+   "0.020": {
+    "local_variance:0.25:0.05_const": {
+     "recall": 0.020964360587002098
+    },
+    "local_variance:0.5:0.05_const": {
+     "recall": 0.020964360587002098
+    },
+    "local_variance:0.5:0.1_const": {
+     "recall": 0.018867924528301886
+    }
+   },
+   "0.050": {
+    "local_variance:0.25:0.05_const": {
+     "recall": 0.05660377358490566
+    },
+    "local_variance:0.5:0.05_const": {
+     "recall": 0.05660377358490566
+    },
+    "local_variance:0.5:0.1_const": {
+     "recall": 0.04821802935010482
+    }
+   },
+   "0.100": {
+    "local_variance:0.25:0.05_const": {
+     "recall": 0.09853249475890985
+    },
+    "local_variance:0.5:0.05_const": {
+     "recall": 0.09853249475890985
+    },
+    "local_variance:0.5:0.1_const": {
+     "recall": 0.10482180293501048
+    }
+   },
+   "0.200": {
+    "local_variance:0.25:0.05_const": {
+     "recall": 0.19077568134171907
+    },
+    "local_variance:0.5:0.05_const": {
+     "recall": 0.19077568134171907
+    },
+    "local_variance:0.5:0.1_const": {
+     "recall": 0.18867924528301888
+    }
+   }
+  }
+ }
+}
