@@ -435,3 +435,14 @@ scripts/30_posthoc_stage4.py -> results/stage4_posthoc.json, paper Table (Append
 - Text: causal wording on the common-set deficit removed (plan forbids); headroom no longer read as achievable gain;
   tile-null MDEs stated; ROI/policy alignment and failed reconstruction controls in abstract/limitations; reconstruction
   claims restricted to the tested policies. Stage-3 figure moved to Appendix I to keep the main body at 12 pages.
+
+## Iteration 15 — exact constant-feedback control for the tuned policy  [2026-11-17; post hoc]
+scripts/31_posthoc_tuned_constant.py (GPU machine) -> results/stage4_posthoc_runs.json; scripts/30 rerun (reproduced
+locally byte-for-byte). For each held-out study the constant run of its chosen setting (width 0.05) is the control.
+- Tuned local-variance - constant feedback: +0.013/+0.035/+0.067/+0.118 recall at 2/5/10/20%, Holm(4) < 0.001 at
+  every budget, positive on 18-19 of 22 slides. Within 0.006 of the approximate width-0.1 control
+  (+0.012/+0.036/+0.066/+0.112), so the conclusion is unchanged and no longer approximate.
+- The 1e-12 kernel-sum floor also acts under informative feedback, so it is part of the policy as evaluated;
+  Limitations and Appendix J say so.
+- Other post hoc results unchanged (diversity Holm 0.104; Holm over 25: 0.006/0.108/0.088/0.900).
+- Supplement now ships stage4_posthoc_runs.json (98 files, 2.7 MB); 29/29 tables reproduce.

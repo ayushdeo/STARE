@@ -502,8 +502,8 @@ study on the other studies, the local-variance policy beat the feasible detectio
 $0.049$ recall at 2, 5, and 10\% ($p_H=0.001$, $0.013$, $0.013$), and by $0.064$ at 20\% ($p_H=0.072$;
 Table~\ref{tab:s4}). Every study received the grid's narrowest kernel, 0.05 of the slide diagonal against the
 registered 0.1 (descriptive). Post hoc checks support and qualify the gain (Appendix Table~\ref{tab:s4posthoc}). It
-held under a bootstrap that repeats both choices in every replicate (2--10\%) and against constant feedback
-($+0.012$ to $+0.112$, $p_H\le0.003$; an approximate control, Appendix~\ref{app:stage4}). But with Holm over all
+held under a bootstrap that repeats both choices in every replicate (2--10\%) and against the policy's own
+constant-feedback version at the tuned settings ($+0.013$ to $+0.118$, $p_H<0.001$). But with Holm over all
 25 stage-4 primary margins only the 2\% margin stays below 0.05, and the diversity sampler, which would have been the
 feasible design for every study had it been a candidate, came within $0.009$ to $0.050$ recall ($p_H=0.10$).
 
@@ -589,7 +589,8 @@ toward the ROIs' neighbourhood scale, so the detection comparisons are set up fa
 slides (excluding it changed no conclusion; Appendix~\ref{app:robust}); the $k$-NN and kriging comparisons rest on
 five slides. The two feedback policies are hand-built heuristics. Tuning local-variance changed the detection
 result, and the residual policy was not tuned, so the reconstruction result bounds what this policy achieves, not
-what feedback can achieve. At the tuned kernel width a numerical floor in the policy perturbs its first picks (Appendix~\ref{app:stage4}).
+what feedback can achieve. At the tuned kernel width a numerical floor in the implementation affects the first few picks; the results
+describe the policy as implemented (Appendix~\ref{app:stage4}).
 The competitor samplers reimplement objectives; SOFisher was run natively only on its
 own data and SCR$^2$-ST not at all.
 
@@ -864,9 +865,11 @@ that the stage-2 constant run would serve as the control for every tuned setting
 kernel-weighted sums by the kernel sum clipped below at $10^{-12}$. A candidate more than about 7.4 kernel widths from
 every profiled region then receives a spurious variance even under constant values. On three synthetic slides, the
 constant-feedback selections were identical across the four exploration weights and the widths 0.1 and 0.2, but
-differed at width 0.05 from the second pick onward, the floor acting only in the first few picks. The constant control
-in Table~\ref{tab:s4posthoc} therefore uses the width-0.1 run and is approximate for the tuned settings; the exact
-control requires running the width-0.05 settings with constant feedback.
+differed at width 0.05 from the second pick onward, the floor acting only in the first few picks. The floor applies
+under informative feedback as well, so it is part of the policy as evaluated. We therefore reran the constant-feedback
+version at every tuned setting (post hoc), and Table~\ref{tab:s4posthoc} compares each study with the constant run of
+the setting chosen for it. These margins, $+0.013$ to $+0.118$ recall, differ by at most 0.006 from those against
+the stage-2 constant run at width 0.1.
 
 \begin{table}[H]
 \centering
@@ -896,7 +899,7 @@ per tissue (descriptive). The bound selects on its own evaluation score and over
 \begin{table}[H]
 \centering
 \caption{Post hoc checks of the tuned local-variance policy (recall, 22 slides). Margins of the tuned policy over its
-constant-feedback version (width-0.1 run; approximate, see text) and over the diversity sampler, which a feasible
+constant-feedback version, run at the setting chosen for each study, and over the diversity sampler, which a feasible
 pool including it chose for every study at every budget; unadjusted 95\% CIs resampling studies, Holm over the four
 budgets. Selection-aware intervals repeat both leave-one-study-out choices in every bootstrap replicate.}
 \label{tab:s4posthoc}

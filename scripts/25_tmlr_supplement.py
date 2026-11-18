@@ -83,6 +83,7 @@ RESULTS = {
     "stage4_runs.json": "stage4_runs.json",
     "stage4_summary.json": "stage4_summary.json",
     "stage4_posthoc.json": "stage4_posthoc.json",
+    "stage4_posthoc_runs.json": "stage4_posthoc_runs.json",
 }
 LEGACY = ["batched_contiguous.json", "ci_multislide_graphflow.json", "ci_multislide_knn.json",
           "ci_multislide_kriging.json", "competitors.json", "hvg_sensitivity.json", "realdata_detection.json"]
@@ -180,7 +181,7 @@ DOC = {
     "scripts/stage4_analysis.py": "Stage-4 registered analysis: the common-set, tile, and tuning families with Holm adjustment, sign-flip\ninversion intervals, and minimum detectable effects; writes results/stage4_summary.json.",
     "scripts/tables_stage4.py": "Writes the stage-4 tables from the result files.  Run: python -u scripts/tables_stage4.py",
     "scripts/posthoc_stage4.py": "Post hoc checks of the tuned local-variance policy (Appendix J): constant-feedback control, the diversity\nsampler as comparator, selection-aware bootstrap, and Holm over all stage-4 primary margins; writes\nresults/stage4_posthoc.json.  Run: python -u scripts/posthoc_stage4.py",
-    "scripts/posthoc_tuned_constant.py": "GPU-machine run (needs the slides): the tuned local-variance settings with constant feedback, the exact\ncontrol that Appendix J describes as not yet run.  Run: python -u scripts/posthoc_tuned_constant.py",
+    "scripts/posthoc_tuned_constant.py": "GPU-machine run (needs the slides): the tuned local-variance settings with constant feedback, the\nconstant-feedback control in Appendix J; writes results/stage4_posthoc_runs.json, which posthoc_stage4.py reads.\nRun: python -u scripts/posthoc_tuned_constant.py",
     "sofisher_resume_patch/apply_resume.py": "Adds checkpoint and resume support to a clone of the SOFisher repository, the only change made for the native\nrun (Appendix M). Training logic, reward, and hyperparameters are unchanged.\nRun: python sofisher_resume_patch/apply_resume.py /path/to/SOFisher",
 }
 
@@ -360,7 +361,7 @@ Selection for Spatial Transcriptomics".
 | Comparator inference (Appendix F) | `stage2_comparator_inference.py` | `stage2_comparator_inference.json` |
 | Stage 3, RQ3 and RQ4 (Table 3, Figure 3, Appendix I) | `stage3_experiments.py`, `stage3_analysis.py` | `stage3_runs.json`, `stage3_summary.json` |
 | Stage 4 (Table 4, Appendix J) | `stage4_experiments.py`, `stage4_analysis.py` | `stage4_runs.json`, `stage4_summary.json` |
-| Post hoc checks of the tuned policy (Appendix J) | `posthoc_stage4.py` (exact constant control: `posthoc_tuned_constant.py`) | `stage4_posthoc.json` |
+| Post hoc checks of the tuned policy (Appendix J) | `posthoc_stage4.py` (constant control at the tuned settings: `posthoc_tuned_constant.py`) | `stage4_posthoc.json`, `stage4_posthoc_runs.json` |
 | Native SOFisher run (Appendix M) | `sofisher_native_curve.py` | `sofisher_native.json` |
 | Post hoc robustness checks (Appendix N) | `posthoc_robustness.py` | `posthoc_robustness.json` |
 | All tables and figures | `tables_stage1.py`, `tables_stage2.py`, `tables_stage3.py`, `tables_stage4.py` | `paper/generated/`, `paper/*.pdf` |

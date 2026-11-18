@@ -16,7 +16,7 @@ python scripts/25_tmlr_supplement.py                                 # paper/tml
 | Upload | File | Status |
 |---|---|---|
 | Paper | `paper/manuscript.pdf` | TMLR template, unmodified style files; anonymous; 28 pages, main body 12 pages |
-| Supplementary material | `paper/tmlr_supplementary.zip` | 2.6 MB (limit 100 MB), 88 files; anonymized and scanned |
+| Supplementary material | `paper/tmlr_supplementary.zip` | 2.7 MB (limit 100 MB), 98 files; anonymized and scanned |
 
 The supplement is a curated reproduction package, built from an allow-list: the package code, the scripts that
 produce the paper's results, tables, and figures, the result files they read, the native SOFisher logs, verbatim
